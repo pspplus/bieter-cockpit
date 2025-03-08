@@ -15,6 +15,8 @@ import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { useTender } from "@/context/TenderContext";
 import { useNavigate } from "react-router-dom";
+import { LanguageSwitcher } from "./LanguageSwitcher";
+import { useTranslation } from 'react-i18next';
 
 interface HeaderProps {
   toggleSidebar?: () => void;
@@ -22,13 +24,14 @@ interface HeaderProps {
 }
 
 export function Header({ toggleSidebar, title = "Tender Management" }: HeaderProps) {
+  const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState("");
   const { createTender } = useTender();
   const navigate = useNavigate();
 
   const handleCreateTender = () => {
     const newTender = createTender({
-      title: "New Tender"
+      title: t('tenders.newTender')
     });
     navigate(`/tenders/${newTender.id}`);
   };
@@ -56,7 +59,7 @@ export function Header({ toggleSidebar, title = "Tender Management" }: HeaderPro
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-tender-400" />
             <Input
               type="search"
-              placeholder="Search tenders..."
+              placeholder={t('navigation.search')}
               className="w-full bg-tender-50 border-tender-100 pl-9 rounded-full h-9"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -70,7 +73,7 @@ export function Header({ toggleSidebar, title = "Tender Management" }: HeaderPro
             className="hidden md:flex items-center gap-1.5 rounded-full"
           >
             <PlusCircle className="h-4 w-4" />
-            <span>New Tender</span>
+            <span>{t('general.createNewTender')}</span>
           </Button>
           
           <Button
@@ -79,8 +82,10 @@ export function Header({ toggleSidebar, title = "Tender Management" }: HeaderPro
             className="text-tender-500 hover:text-tender-600"
           >
             <Bell className="h-5 w-5" />
-            <span className="sr-only">Notifications</span>
+            <span className="sr-only">{t('navigation.notifications')}</span>
           </Button>
+
+          <LanguageSwitcher />
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -95,12 +100,12 @@ export function Header({ toggleSidebar, title = "Tender Management" }: HeaderPro
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56" align="end">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuLabel>{t('navigation.myAccount')}</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Profile</DropdownMenuItem>
-              <DropdownMenuItem>Settings</DropdownMenuItem>
+              <DropdownMenuItem>{t('navigation.profile')}</DropdownMenuItem>
+              <DropdownMenuItem>{t('navigation.settings')}</DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Log out</DropdownMenuItem>
+              <DropdownMenuItem>{t('navigation.logout')}</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

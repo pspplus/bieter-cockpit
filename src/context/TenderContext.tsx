@@ -5,6 +5,7 @@ import { mockTenders } from "@/data/mock-tenders";
 import { v4 as uuidv4 } from 'uuid';
 import { generateMilestones } from "@/data/milestones";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 interface TenderContextType {
   tenders: Tender[];
@@ -19,6 +20,7 @@ interface TenderContextType {
 const TenderContext = createContext<TenderContextType | undefined>(undefined);
 
 export const TenderProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { t } = useTranslation();
   const [tenders, setTenders] = useState<Tender[]>([]);
   const [activeTender, setActiveTender] = useState<Tender | null>(null);
 
@@ -35,7 +37,7 @@ export const TenderProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const createTender = (tenderData: Partial<Tender>): Tender => {
     const newTender: Tender = {
       id: uuidv4(),
-      title: tenderData.title || "New Tender",
+      title: tenderData.title || t('tenders.newTender'),
       reference: tenderData.reference || `REF-${Date.now().toString().slice(-6)}`,
       client: tenderData.client || "",
       status: "draft",
@@ -47,7 +49,7 @@ export const TenderProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     };
 
     setTenders(prev => [...prev, newTender]);
-    toast.success("New tender created successfully");
+    toast.success(t('toasts.tenderCreated'));
     return newTender;
   };
 
@@ -64,7 +66,7 @@ export const TenderProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       setActiveTender(prev => prev ? { ...prev, ...updates, updatedAt: new Date() } : null);
     }
     
-    toast.success("Tender updated successfully");
+    toast.success(t('toasts.tenderUpdated'));
   };
 
   const updateMilestone = (tenderId: string, milestoneId: string, updates: Partial<Milestone>) => {
@@ -113,14 +115,14 @@ export const TenderProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     
     updateMilestone(tenderId, milestoneId, updates);
     
-    const statusMessages = {
-      'pending': 'Milestone reset to pending',
-      'in-progress': 'Milestone marked as in progress',
-      'completed': 'Milestone completed',
-      'skipped': 'Milestone skipped'
+    const statusToastMessages = {
+      'pending': t('toasts.milestoneReset'),
+      'in-progress': t('toasts.milestoneInProgress'),
+      'completed': t('toasts.milestoneCompleted'),
+      'skipped': t('toasts.milestoneSkipped')
     };
     
-    toast.success(statusMessages[status]);
+    toast.success(statusToastMessages[status]);
   };
 
   const value = {

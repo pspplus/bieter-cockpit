@@ -8,8 +8,10 @@ import { useTender } from "@/context/TenderContext";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowLeft } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 export default function TenderDetailPage() {
+  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const { loadTender, activeTender } = useTender();
   const navigate = useNavigate();
@@ -24,12 +26,12 @@ export default function TenderDetailPage() {
     return (
       <Layout>
         <div className="text-center py-16">
-          <h1 className="text-2xl font-semibold mb-4">Tender Not Found</h1>
+          <h1 className="text-2xl font-semibold mb-4">{t('tenders.tenderNotFound')}</h1>
           <p className="text-tender-500 mb-6">
-            The tender you're looking for doesn't exist or has been removed.
+            {t('tenders.tenderNotFoundDescription')}
           </p>
           <Button onClick={() => navigate("/tenders")}>
-            Back to Tenders
+            {t('tenders.backToTenders')}
           </Button>
         </div>
       </Layout>
@@ -46,15 +48,15 @@ export default function TenderDetailPage() {
           onClick={() => navigate("/tenders")}
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to Tenders
+          {t('tenders.backToTenders')}
         </Button>
         
         <Tabs defaultValue="overview" className="w-full">
           <TabsList className="mb-6">
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="milestones">Milestones</TabsTrigger>
-            <TabsTrigger value="documents">Documents</TabsTrigger>
-            <TabsTrigger value="notes">Notes</TabsTrigger>
+            <TabsTrigger value="overview">{t('tabs.overview')}</TabsTrigger>
+            <TabsTrigger value="milestones">{t('tabs.milestones')}</TabsTrigger>
+            <TabsTrigger value="documents">{t('tabs.documents')}</TabsTrigger>
+            <TabsTrigger value="notes">{t('tabs.notes')}</TabsTrigger>
           </TabsList>
           
           <TabsContent value="overview" className="animate-fade-in">
@@ -67,17 +69,17 @@ export default function TenderDetailPage() {
           
           <TabsContent value="documents" className="animate-fade-in">
             <div className="rounded-lg border border-tender-100 p-8 text-center">
-              <h3 className="text-lg font-medium mb-2">Document Management</h3>
-              <p className="text-tender-500 mb-4">Upload and manage all tender-related documents here.</p>
-              <Button>Upload Documents</Button>
+              <h3 className="text-lg font-medium mb-2">{t('tabs.documentManagement')}</h3>
+              <p className="text-tender-500 mb-4">{t('tabs.documentDescription')}</p>
+              <Button>{t('tabs.uploadDocuments')}</Button>
             </div>
           </TabsContent>
           
           <TabsContent value="notes" className="animate-fade-in">
             <div className="rounded-lg border border-tender-100 p-8 text-center">
-              <h3 className="text-lg font-medium mb-2">Tender Notes</h3>
-              <p className="text-tender-500 mb-4">Add important notes and comments about this tender.</p>
-              <Button>Add Notes</Button>
+              <h3 className="text-lg font-medium mb-2">{t('tabs.tenderNotes')}</h3>
+              <p className="text-tender-500 mb-4">{t('tabs.notesDescription')}</p>
+              <Button>{t('tabs.addNotes')}</Button>
             </div>
           </TabsContent>
         </Tabs>
