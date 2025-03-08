@@ -4,6 +4,7 @@ import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useTranslation } from "react-i18next";
 import {
   ChevronLeft,
   FileCheck,
@@ -25,6 +26,7 @@ interface SidebarProps {
 export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const location = useLocation();
+  const { t } = useTranslation();
   
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -44,7 +46,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
       <div className="flex h-16 items-center border-b border-tender-100 px-6">
         <Link to="/" className="flex items-center gap-2 font-semibold tracking-tight">
           <Briefcase className="h-6 w-6 text-primary" />
-          <span className="text-xl">TenderFlow</span>
+          <span className="text-xl">{t('general.appName')}</span>
         </Link>
         {isMobile && (
           <Button

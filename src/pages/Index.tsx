@@ -2,9 +2,11 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ChevronRight, Briefcase, FileText, CheckCircle } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 export default function Index() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -12,10 +14,10 @@ export default function Index() {
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center gap-2">
             <Briefcase className="h-6 w-6 text-primary" />
-            <span className="text-xl font-semibold">TenderFlow</span>
+            <span className="text-xl font-semibold">{t('general.appName')}</span>
           </div>
           <Button onClick={() => navigate("/dashboard")} className="rounded-full">
-            Get Started
+            {t('general.getStarted')}
           </Button>
         </div>
       </header>
@@ -24,13 +26,13 @@ export default function Index() {
         <section className="py-16 md:py-24">
           <div className="container mx-auto px-4 text-center max-w-3xl">
             <div className="inline-block px-3 py-1 bg-primary/10 text-primary rounded-full text-sm font-medium mb-6 animate-fade-in">
-              Public Tender Management Simplified
+              {t('general.slogan')}
             </div>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight mb-6 animate-slide-up">
-              Streamline Your Public Tender Process
+              {t('landing.headline')}
             </h1>
             <p className="text-lg text-tender-600 mb-8 animate-slide-up" style={{ animationDelay: "100ms" }}>
-              Efficiently manage every stage of your public tender workflow with our intuitive platform. From initial document review to project implementation.
+              {t('landing.subheadline')}
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4 animate-slide-up" style={{ animationDelay: "200ms" }}>
               <Button 
@@ -38,7 +40,7 @@ export default function Index() {
                 onClick={() => navigate("/dashboard")}
                 className="rounded-full"
               >
-                Get Started
+                {t('general.getStarted')}
                 <ChevronRight className="h-4 w-4 ml-1" />
               </Button>
               <Button 
@@ -47,7 +49,7 @@ export default function Index() {
                 onClick={() => navigate("/tenders")}
                 className="rounded-full"
               >
-                View Tenders
+                {t('general.viewTenders')}
               </Button>
             </div>
           </div>
@@ -99,7 +101,7 @@ export default function Index() {
       
       <footer className="bg-white border-t border-tender-100 py-8">
         <div className="container mx-auto px-4 text-center text-tender-500 text-sm">
-          <p>© 2023 TenderFlow. All rights reserved.</p>
+          <p>© 2023 {t('general.appName')}. All rights reserved.</p>
         </div>
       </footer>
     </div>
