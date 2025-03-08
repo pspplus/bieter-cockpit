@@ -46,8 +46,8 @@ export default {
           950: '#272a33',
         },
         primary: {
-          DEFAULT: 'hsl(var(--primary))',
-          foreground: 'hsl(var(--primary-foreground))'
+          DEFAULT: '#004494', // PSP Blue
+          foreground: '#ffffff'
         },
         secondary: {
           DEFAULT: 'hsl(var(--secondary))',

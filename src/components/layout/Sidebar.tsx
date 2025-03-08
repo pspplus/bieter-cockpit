@@ -45,7 +45,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
     <div className="flex h-full flex-col">
       <div className="flex h-16 items-center border-b border-tender-100 px-6">
         <Link to="/" className="flex items-center gap-2 font-semibold tracking-tight">
-          <Briefcase className="h-6 w-6 text-primary" />
+          <img src="/lovable-uploads/8d9b2e36-d9ae-456f-9e6b-28d57ee1e7e1.png" alt="PSP Logo" className="h-9" />
           <span className="text-xl">{t('general.appName')}</span>
         </Link>
         {isMobile && (
