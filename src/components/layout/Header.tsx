@@ -17,7 +17,6 @@ import { useTender } from "@/hooks/useTender";
 import { useNavigate } from "react-router-dom";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { ThemeSwitcher } from "./ThemeSwitcher";
-import { useTranslation } from "react-i18next";
 import { useAuth } from "@/context/AuthContext";
 
 interface HeaderProps {
@@ -26,7 +25,6 @@ interface HeaderProps {
 }
 
 export function Header({ toggleSidebar, title = "Tender Management" }: HeaderProps) {
-  const { t } = useTranslation(['general', 'auth']);
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
   const { user, isAuthenticated, logout, getUserName } = useAuth();
@@ -43,7 +41,7 @@ export function Header({ toggleSidebar, title = "Tender Management" }: HeaderPro
               className="md:hidden"
             >
               <Menu className="h-5 w-5" />
-              <span className="sr-only">Toggle sidebar</span>
+              <span className="sr-only">Sidebar umschalten</span>
             </Button>
           )}
           <h1 className="text-xl font-medium tracking-tight">{title}</h1>
@@ -54,7 +52,7 @@ export function Header({ toggleSidebar, title = "Tender Management" }: HeaderPro
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-tender-400 dark:text-tender-500" />
             <Input
               type="search"
-              placeholder={t('navigation.search')}
+              placeholder="Suchen..."
               className="w-full bg-tender-50 dark:bg-tender-800 border-tender-100 dark:border-tender-700 pl-9 rounded-full h-9"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -70,7 +68,7 @@ export function Header({ toggleSidebar, title = "Tender Management" }: HeaderPro
                 className="hidden md:flex items-center gap-1.5 rounded-full bg-bieter-blue hover:bg-bieter-blue/90"
               >
                 <PlusCircle className="h-4 w-4" />
-                <span>{t('general:createNewTender')}</span>
+                <span>Neue Ausschreibung</span>
               </Button>
               
               <Button
@@ -79,7 +77,7 @@ export function Header({ toggleSidebar, title = "Tender Management" }: HeaderPro
                 className="text-tender-500 hover:text-tender-600 dark:text-tender-400 dark:hover:text-tender-300"
               >
                 <Bell className="h-5 w-5" />
-                <span className="sr-only">{t('navigation.notifications')}</span>
+                <span className="sr-only">Benachrichtigungen</span>
               </Button>
 
               <ThemeSwitcher />
@@ -100,12 +98,12 @@ export function Header({ toggleSidebar, title = "Tender Management" }: HeaderPro
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-56" align="end">
-                  <DropdownMenuLabel>{getUserName() || t('navigation.myAccount')}</DropdownMenuLabel>
+                  <DropdownMenuLabel>{getUserName() || "Mein Konto"}</DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem>{t('navigation.profile')}</DropdownMenuItem>
-                  <DropdownMenuItem>{t('navigation.settings')}</DropdownMenuItem>
+                  <DropdownMenuItem>Profil</DropdownMenuItem>
+                  <DropdownMenuItem>Einstellungen</DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={logout}>{t('auth:logOut', 'Abmelden')}</DropdownMenuItem>
+                  <DropdownMenuItem onClick={logout}>Abmelden</DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </>
@@ -118,13 +116,13 @@ export function Header({ toggleSidebar, title = "Tender Management" }: HeaderPro
                 onClick={() => navigate('/login')}
                 className="rounded-full"
               >
-                {t('auth:logIn', 'Anmelden')}
+                Anmelden
               </Button>
               <Button 
                 onClick={() => navigate('/signup')}
                 className="rounded-full bg-bieter-blue hover:bg-bieter-blue/90"
               >
-                {t('auth:signUp', 'Registrieren')}
+                Registrieren
               </Button>
             </>
           )}

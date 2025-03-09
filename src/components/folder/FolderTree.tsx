@@ -78,7 +78,7 @@ export function FolderTree({
     
     try {
       await deleteFolder(folderToDelete);
-      toast.success(t('folders.folderDeleted'));
+      toast.success("Ordner erfolgreich gelöscht");
       setDeleteDialogOpen(false);
       setFolderToDelete(null);
       
@@ -88,9 +88,9 @@ export function FolderTree({
     } catch (error) {
       console.error("Error deleting folder:", error);
       if (error instanceof Error && error.message === 'Folder contains documents') {
-        toast.error(t('folders.cannotDeleteFolderWithDocuments'));
+        toast.error("Ordner mit Dokumenten kann nicht gelöscht werden");
       } else {
-        toast.error(t('errorMessages.couldNotDeleteFolder'));
+        toast.error("Fehler beim Löschen des Ordners");
       }
     }
   };
@@ -110,7 +110,7 @@ export function FolderTree({
 
   const handleCreateFolder = async () => {
     if (!newFolderName.trim()) {
-      toast.error(t('folders.folderNameRequired'));
+      toast.error("Ordnername ist erforderlich");
       return;
     }
     
@@ -123,7 +123,7 @@ export function FolderTree({
         isDefault: false
       });
       
-      toast.success(t('folders.folderCreated'));
+      toast.success("Ordner wurde erstellt");
       setNewFolderDialogOpen(false);
       
       if (onFolderCreate) {
@@ -136,7 +136,7 @@ export function FolderTree({
       }
     } catch (error) {
       console.error("Error creating folder:", error);
-      toast.error(t('errorMessages.couldNotCreateFolder'));
+      toast.error("Fehler beim Erstellen des Ordners");
     }
   };
 
@@ -178,7 +178,7 @@ export function FolderTree({
               <DropdownMenuContent align="end">
                 <DropdownMenuItem onClick={(e) => openNewFolderDialog(folder.id, e)}>
                   <Plus className="mr-2 h-4 w-4" />
-                  {t('folders.newSubfolder')}
+                  Neuer Unterordner
                 </DropdownMenuItem>
                 
                 {!folder.isDefault && (
@@ -189,7 +189,7 @@ export function FolderTree({
                       onClick={(e) => confirmDeleteFolder(folder.id, e)}
                     >
                       <Trash2 className="mr-2 h-4 w-4" />
-                      {t('folders.deleteFolder')}
+                      Ordner löschen
                     </DropdownMenuItem>
                   </>
                 )}
@@ -211,7 +211,7 @@ export function FolderTree({
     <div className="w-full">
       {!readOnly && (
         <div className="flex items-center justify-between mb-2">
-          <h3 className="text-sm font-medium">{t('folders.folders')}</h3>
+          <h3 className="text-sm font-medium">Ordner</h3>
           
           <Button 
             variant="outline" 
@@ -220,7 +220,7 @@ export function FolderTree({
             onClick={(e) => openNewFolderDialog(null, e)}
           >
             <Plus className="h-3.5 w-3.5 mr-1" />
-            {t('folders.newFolder')}
+            Neuer Ordner
           </Button>
         </div>
       )}
@@ -229,7 +229,7 @@ export function FolderTree({
         {folders.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-muted-foreground text-center p-4">
             <FolderIcon className="h-8 w-8 mb-2 opacity-50" />
-            <p className="text-sm">{t('folders.noFolders')}</p>
+            <p className="text-sm">Keine Ordner vorhanden</p>
           </div>
         ) : (
           folders.map(folder => renderFolder(folder))
@@ -239,18 +239,18 @@ export function FolderTree({
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>{t('folders.deleteFolder')}</AlertDialogTitle>
+            <AlertDialogTitle>Ordner löschen</AlertDialogTitle>
             <AlertDialogDescription>
-              {t('folders.deleteFolderConfirmation')}
+              Sind Sie sicher, dass Sie diesen Ordner löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>{t('general.cancel')}</AlertDialogCancel>
+            <AlertDialogCancel>Abbrechen</AlertDialogCancel>
             <AlertDialogAction 
               onClick={handleDeleteFolder}
               className="bg-destructive hover:bg-destructive/90"
             >
-              {t('general.delete')}
+              Löschen
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -259,17 +259,17 @@ export function FolderTree({
       <Dialog open={newFolderDialogOpen} onOpenChange={setNewFolderDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{t('folders.newFolder')}</DialogTitle>
+            <DialogTitle>Neuer Ordner</DialogTitle>
             <DialogDescription>
-              {t('folders.enterFolderName')}
+              Geben Sie einen Namen für den neuen Ordner ein.
             </DialogDescription>
           </DialogHeader>
           
           <div className="py-4">
-            <Label htmlFor="folder-name">{t('folders.name')}</Label>
+            <Label htmlFor="folder-name">Name</Label>
             <Input
               id="folder-name"
-              placeholder={t('folders.namePlaceholder')}
+              placeholder="Ordnername"
               value={newFolderName}
               onChange={(e) => setNewFolderName(e.target.value)}
               autoFocus
@@ -278,10 +278,10 @@ export function FolderTree({
           
           <DialogFooter>
             <Button variant="outline" onClick={() => setNewFolderDialogOpen(false)}>
-              {t('general.cancel')}
+              Abbrechen
             </Button>
             <Button onClick={handleCreateFolder}>
-              {t('general.create')}
+              Erstellen
             </Button>
           </DialogFooter>
         </DialogContent>

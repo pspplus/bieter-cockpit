@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { TenderDocument, Folder } from "@/types/tender";
 import { Button } from "@/components/ui/button";
@@ -72,14 +71,14 @@ export function DocumentList({
   
   const handleUpload = async () => {
     if (selectedFiles.length === 0) {
-      toast.error(t('errorMessages.selectFile', 'Please select at least one file'));
+      toast.error("Bitte wählen Sie mindestens eine Datei aus");
       return;
     }
     
     // Verify all files have names
     const emptyNameIndex = documentNames.findIndex(name => !name.trim());
     if (emptyNameIndex !== -1) {
-      toast.error(t('errorMessages.enterDocumentName', `Please enter a name for document ${emptyNameIndex + 1}`));
+      toast.error(`Bitte geben Sie einen Namen für Dokument ${emptyNameIndex + 1} ein`);
       return;
     }
     
@@ -104,8 +103,8 @@ export function DocumentList({
       setCurrentDocuments(prev => [...uploadedDocuments, ...prev]);
       
       const messageText = uploadedDocuments.length === 1 
-        ? t('documents.singleUploadSuccess', 'Document uploaded successfully')
-        : t('documents.multipleUploadSuccess', `${uploadedDocuments.length} documents uploaded successfully`);
+        ? "Dokument erfolgreich hochgeladen"
+        : `${uploadedDocuments.length} Dokumente erfolgreich hochgeladen`;
       
       toast.success(messageText);
       
@@ -119,7 +118,7 @@ export function DocumentList({
       if (closeButton) closeButton.click();
     } catch (error) {
       console.error("Error uploading documents:", error);
-      toast.error(t('errorMessages.uploadFailed', 'Failed to upload documents'));
+      toast.error("Fehler beim Hochladen der Dokumente");
     } finally {
       setIsUploading(false);
     }
@@ -130,18 +129,18 @@ export function DocumentList({
       await deleteDocument(documentId);
       onDocumentDeleted(documentId);
       setCurrentDocuments(prev => prev.filter(doc => doc.id !== documentId));
-      toast.success(t('documents.deleteSuccess', 'Document deleted successfully'));
+      toast.success("Dokument erfolgreich gelöscht");
     } catch (error) {
       console.error("Error deleting document:", error);
-      toast.error(t('errorMessages.deleteFailed', 'Failed to delete document'));
+      toast.error("Fehler beim Löschen des Dokuments");
     }
   };
   
   // Function to format file size
   const formatFileSize = (bytes?: number) => {
-    if (!bytes) return 'Unknown size';
+    if (!bytes) return 'Unbekannte Größe';
     
-    if (bytes < 1024) return bytes + ' bytes';
+    if (bytes < 1024) return bytes + ' Bytes';
     else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
     else return (bytes / 1048576).toFixed(1) + ' MB';
   };
@@ -163,7 +162,7 @@ export function DocumentList({
       setCurrentDocuments(folderDocuments);
     } catch (error) {
       console.error("Error fetching folder documents:", error);
-      toast.error(t('errorMessages.couldNotLoadDocuments', 'Failed to load folder documents'));
+      toast.error("Fehler beim Laden der Ordnerdokumente");
     }
   };
 
@@ -176,18 +175,18 @@ export function DocumentList({
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-medium">{t('documents.documents')}</h3>
+        <h3 className="text-lg font-medium">Dokumente</h3>
         
         <Dialog>
           <DialogTrigger asChild>
             <Button size="sm">
               <Upload className="w-4 h-4 mr-1" />
-              {t('documents.upload')}
+              Hochladen
             </Button>
           </DialogTrigger>
           <DialogContent className="max-w-lg">
             <DialogHeader>
-              <DialogTitle>{t('documents.uploadDocument')}</DialogTitle>
+              <DialogTitle>Dokument hochladen</DialogTitle>
             </DialogHeader>
             
             <div className="space-y-4 mt-4">
@@ -206,18 +205,18 @@ export function DocumentList({
                   <Upload className="w-8 h-8 text-gray-400 mb-2" />
                   <span className="text-sm font-medium text-gray-700">
                     {selectedFiles.length > 0 
-                      ? `${selectedFiles.length} ${selectedFiles.length === 1 ? t('documents.fileSelected', 'file selected') : t('documents.filesSelected', 'files selected')}`
-                      : t('documents.clickToUpload')}
+                      ? `${selectedFiles.length} ${selectedFiles.length === 1 ? "Datei ausgewählt" : "Dateien ausgewählt"}`
+                      : "Klicken Sie zum Hochladen"}
                   </span>
                   <span className="text-xs text-gray-500 mt-1">
-                    {t('documents.maxFileSize')}
+                    Maximale Dateigröße: 10MB
                   </span>
                 </label>
               </div>
               
               {selectedFiles.length > 0 && (
                 <div className="space-y-3">
-                  <h4 className="text-sm font-medium">{t('documents.selectedFiles', 'Selected Files')}</h4>
+                  <h4 className="text-sm font-medium">Ausgewählte Dateien</h4>
                   
                   <div className="max-h-40 overflow-y-auto space-y-2">
                     {selectedFiles.map((file, index) => (
@@ -230,7 +229,7 @@ export function DocumentList({
                           <Input
                             value={documentNames[index] || ''}
                             onChange={(e) => handleNameChange(index, e.target.value)}
-                            placeholder={t('documents.nameForFile', 'Name for this file')}
+                            placeholder="Name für diese Datei"
                             className="text-sm"
                           />
                         </div>
@@ -247,7 +246,7 @@ export function DocumentList({
               {folders && folders.length > 0 && (
                 <div className="space-y-2">
                   <label className="text-sm font-medium">
-                    {t('documents.selectFolder', 'Select Folder')}
+                    Ordner auswählen
                   </label>
                   <div className="border rounded-md p-4 max-h-48 overflow-y-auto">
                     <FolderTree 
@@ -263,17 +262,17 @@ export function DocumentList({
               
               <div className="space-y-2">
                 <label htmlFor="document-description" className="text-sm font-medium">
-                  {t('documents.description')}
+                  Beschreibung
                 </label>
                 <Textarea
                   id="document-description"
                   value={documentDescription}
                   onChange={(e) => setDocumentDescription(e.target.value)}
-                  placeholder={t('documents.descriptionPlaceholder')}
+                  placeholder="Optionale Beschreibung für die Dokumente"
                   rows={3}
                 />
                 <p className="text-xs text-muted-foreground">
-                  {t('documents.descriptionAppliedToAll', 'This description will be applied to all uploaded files')}
+                  Diese Beschreibung wird auf alle hochgeladenen Dateien angewendet
                 </p>
               </div>
             </div>
@@ -281,14 +280,14 @@ export function DocumentList({
             <DialogFooter>
               <DialogClose asChild>
                 <Button variant="outline" data-dialog-close>
-                  {t('general.cancel')}
+                  Abbrechen
                 </Button>
               </DialogClose>
               <Button 
                 onClick={handleUpload}
                 disabled={isUploading}
               >
-                {isUploading ? t('documents.uploading') : t('documents.upload')}
+                {isUploading ? "Wird hochgeladen..." : "Hochladen"}
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -299,7 +298,7 @@ export function DocumentList({
         <div className="w-1/3 border rounded-md p-4">
           <div className="flex items-center gap-2 mb-3">
             <FolderClosed className="h-5 w-5 text-muted-foreground" />
-            <h4 className="font-medium">{t('documents.folderStructure', 'Folder Structure')}</h4>
+            <h4 className="font-medium">Ordnerstruktur</h4>
           </div>
           {folders && folders.length > 0 ? (
             <>
@@ -309,7 +308,7 @@ export function DocumentList({
                 className="mb-2 text-sm" 
                 onClick={handleResetView}
               >
-                {t('documents.allDocuments', 'All Documents')}
+                Alle Dokumente
               </Button>
               <div className="max-h-[calc(100vh-400px)] overflow-y-auto">
                 <FolderTree 
@@ -324,7 +323,7 @@ export function DocumentList({
           ) : (
             <div className="text-center py-4">
               <p className="text-sm text-muted-foreground">
-                {t('documents.noFolders', 'No folders available')}
+                Keine Ordner verfügbar
               </p>
             </div>
           )}
@@ -336,8 +335,8 @@ export function DocumentList({
               <File className="w-8 h-8 mx-auto text-muted-foreground" />
               <p className="mt-2 text-sm text-muted-foreground">
                 {currentFolderId 
-                  ? t('documents.noDocumentsInFolder', 'No documents in this folder') 
-                  : t('documents.noDocuments', 'No documents available')}
+                  ? "Keine Dokumente in diesem Ordner" 
+                  : "Keine Dokumente verfügbar"}
               </p>
             </div>
           ) : (
@@ -377,7 +376,7 @@ export function DocumentList({
                     >
                       <a href={document.fileUrl} target="_blank" rel="noopener noreferrer" download>
                         <Download className="w-4 h-4" />
-                        <span className="sr-only">{t('documents.download')}</span>
+                        <span className="sr-only">Herunterladen</span>
                       </a>
                     </Button>
                     
@@ -388,7 +387,7 @@ export function DocumentList({
                       onClick={() => handleDelete(document.id)}
                     >
                       <Trash2 className="w-4 h-4" />
-                      <span className="sr-only">{t('documents.delete')}</span>
+                      <span className="sr-only">Löschen</span>
                     </Button>
                   </div>
                 </div>

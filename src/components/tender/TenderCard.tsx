@@ -47,14 +47,14 @@ export function TenderCard({ tender, isActive = false }: TenderCardProps) {
   // Function to format the status text
   const formatStatusText = (status: string): string => {
     const statusMap: Record<string, string> = {
-      "entwurf": t('tenders.drafts', 'Entwurf'),
-      "in-pruefung": t('tenders.review', 'In Prüfung'),
-      "in-bearbeitung": t('tenders.active', 'In Bearbeitung'),
-      "abgegeben": t('tenders.submitted', 'Abgegeben'),
-      "aufklaerung": t('tenders.inClarification', 'Aufklärung'),
-      "gewonnen": t('tenders.won', 'Gewonnen'),
-      "verloren": t('tenders.lost', 'Verloren'),
-      "abgeschlossen": t('tenders.completed', 'Abgeschlossen')
+      "entwurf": "Entwurf",
+      "in-pruefung": "In Prüfung",
+      "in-bearbeitung": "In Bearbeitung",
+      "abgegeben": "Abgegeben",
+      "aufklaerung": "Aufklärung",
+      "gewonnen": "Gewonnen",
+      "verloren": "Verloren",
+      "abgeschlossen": "Abgeschlossen"
     };
     
     return statusMap[status] || status.charAt(0).toUpperCase() + status.slice(1);
@@ -97,7 +97,7 @@ export function TenderCard({ tender, isActive = false }: TenderCardProps) {
         
         <div className="mt-4">
           <div className="flex justify-between text-sm mb-1.5">
-            <span className="text-tender-600">{t('tender.progress')}</span>
+            <span className="text-tender-600">Fortschritt</span>
             <span className="font-medium">{progress}%</span>
           </div>
           <div className="h-1.5 w-full bg-tender-100 rounded-full overflow-hidden">

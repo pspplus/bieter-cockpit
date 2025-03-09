@@ -26,15 +26,15 @@ export default function TendersPage() {
   const navigate = useNavigate();
   
   const filterOptions: { value: FilterOption; label: string }[] = [
-    { value: "all", label: t('tenders.allTenders') },
-    { value: "entwurf", label: t('tenders.drafts', 'Entwurf') },
-    { value: "in-pruefung", label: t('tenders.review', 'In Prüfung') },
-    { value: "in-bearbeitung", label: t('tenders.active', 'In Bearbeitung') },
-    { value: "abgegeben", label: t('tenders.submitted', 'Abgegeben') },
-    { value: "aufklaerung", label: t('tenders.inClarification', 'Aufklärung') },
-    { value: "gewonnen", label: t('tenders.won', 'Gewonnen') },
-    { value: "verloren", label: t('tenders.lost', 'Verloren') },
-    { value: "abgeschlossen", label: t('tenders.completed', 'Abgeschlossen') },
+    { value: "all", label: "Alle Ausschreibungen" },
+    { value: "entwurf", label: "Entwurf" },
+    { value: "in-pruefung", label: "In Prüfung" },
+    { value: "in-bearbeitung", label: "In Bearbeitung" },
+    { value: "abgegeben", label: "Abgegeben" },
+    { value: "aufklaerung", label: "Aufklärung" },
+    { value: "gewonnen", label: "Gewonnen" },
+    { value: "verloren", label: "Verloren" },
+    { value: "abgeschlossen", label: "Abgeschlossen" },
   ];
   
   const filteredTenders = filterBy === "all" 
@@ -47,7 +47,7 @@ export default function TendersPage() {
   );
   
   return (
-    <Layout title={t('tenders.tenders')}>
+    <Layout title="Ausschreibungen">
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <DropdownMenu>
@@ -73,7 +73,7 @@ export default function TendersPage() {
             className="w-full sm:w-auto sm:self-end flex items-center gap-1.5"
           >
             <PlusCircle className="h-4 w-4" />
-            {t('general.createNewTender')}
+            Neue Ausschreibung
           </Button>
         </div>
         
@@ -105,15 +105,15 @@ export default function TendersPage() {
           </div>
         ) : (
           <div className="text-center py-16">
-            <h3 className="text-lg font-medium mb-2">{t('general.noTendersFound')}</h3>
+            <h3 className="text-lg font-medium mb-2">Keine Ausschreibungen gefunden</h3>
             <p className="text-tender-500 mb-6">
               {filterBy === "all"
-                ? t('general.noTendersCreated')
-                : t('general.noTendersWithStatus', { status: filterOptions.find(option => option.value === filterBy)?.label })}
+                ? "Sie haben noch keine Ausschreibungen erstellt"
+                : `Es gibt keine Ausschreibungen mit dem Status "${filterOptions.find(option => option.value === filterBy)?.label}"`}
             </p>
             
             <Button onClick={() => navigate("/tenders/new")}>
-              {t('general.createYourFirstTender')}
+              Erstellen Sie Ihre erste Ausschreibung
             </Button>
           </div>
         )}

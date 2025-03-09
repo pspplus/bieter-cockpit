@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Tender } from "@/types/tender";
 import { Input } from "@/components/ui/input";
@@ -38,7 +39,6 @@ interface TenderEditFormProps {
 }
 
 export function TenderEditForm({ tender, onCancel }: TenderEditFormProps) {
-  const { t } = useTranslation();
   const { updateTender } = useTender();
   const { clients } = useClient();
   
@@ -123,7 +123,7 @@ export function TenderEditForm({ tender, onCancel }: TenderEditFormProps) {
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
               <label htmlFor="title" className="text-sm font-medium">
-                {t('tender.title')}
+                Titel
               </label>
               <Input
                 id="title"
@@ -136,7 +136,7 @@ export function TenderEditForm({ tender, onCancel }: TenderEditFormProps) {
             
             <div className="space-y-2">
               <label htmlFor="externalReference" className="text-sm font-medium">
-                {t('tender.externalReference')}
+                Externe Referenz
               </label>
               <Input
                 id="externalReference"
@@ -151,7 +151,7 @@ export function TenderEditForm({ tender, onCancel }: TenderEditFormProps) {
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
               <label htmlFor="client" className="text-sm font-medium">
-                {t('tender.client')}
+                Kunde
               </label>
               <Select 
                 name="client" 
@@ -159,7 +159,7 @@ export function TenderEditForm({ tender, onCancel }: TenderEditFormProps) {
                 onValueChange={(value) => handleSelectChange("client", value)}
               >
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder={t('tenders.selectClient', 'Vergabestelle auswählen')} />
+                  <SelectValue placeholder="Vergabestelle auswählen" />
                 </SelectTrigger>
                 <SelectContent>
                   {clients.map((client) => (
@@ -173,7 +173,7 @@ export function TenderEditForm({ tender, onCancel }: TenderEditFormProps) {
             
             <div className="space-y-2">
               <label htmlFor="status" className="text-sm font-medium">
-                {t('tender.status')}
+                Status
               </label>
               <Select 
                 name="status" 
@@ -184,14 +184,14 @@ export function TenderEditForm({ tender, onCancel }: TenderEditFormProps) {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="entwurf">{t('tenders.drafts', 'Entwurf')}</SelectItem>
-                  <SelectItem value="in-pruefung">{t('tenders.review', 'In Prüfung')}</SelectItem>
-                  <SelectItem value="in-bearbeitung">{t('tenders.active', 'In Bearbeitung')}</SelectItem>
-                  <SelectItem value="abgegeben">{t('tenders.submitted', 'Abgegeben')}</SelectItem>
-                  <SelectItem value="aufklaerung">{t('tenders.inClarification', 'Aufklärung')}</SelectItem>
-                  <SelectItem value="gewonnen">{t('tenders.won', 'Gewonnen')}</SelectItem>
-                  <SelectItem value="verloren">{t('tenders.lost', 'Verloren')}</SelectItem>
-                  <SelectItem value="abgeschlossen">{t('tenders.completed', 'Abgeschlossen')}</SelectItem>
+                  <SelectItem value="entwurf">Entwurf</SelectItem>
+                  <SelectItem value="in-pruefung">In Prüfung</SelectItem>
+                  <SelectItem value="in-bearbeitung">In Bearbeitung</SelectItem>
+                  <SelectItem value="abgegeben">Abgegeben</SelectItem>
+                  <SelectItem value="aufklaerung">Aufklärung</SelectItem>
+                  <SelectItem value="gewonnen">Gewonnen</SelectItem>
+                  <SelectItem value="verloren">Verloren</SelectItem>
+                  <SelectItem value="abgeschlossen">Abgeschlossen</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -200,7 +200,7 @@ export function TenderEditForm({ tender, onCancel }: TenderEditFormProps) {
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
               <label htmlFor="dueDate" className="text-sm font-medium">
-                {t('tender.dueDate')}
+                Fälligkeitsdatum
               </label>
               <Popover open={dateOpen} onOpenChange={setDateOpen}>
                 <PopoverTrigger asChild>
@@ -212,7 +212,7 @@ export function TenderEditForm({ tender, onCancel }: TenderEditFormProps) {
                     )}
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />
-                    {formData.dueDate ? format(formData.dueDate, "PPP") : <span>Pick a date</span>}
+                    {formData.dueDate ? format(formData.dueDate, "PPP") : <span>Datum auswählen</span>}
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0">
@@ -228,7 +228,7 @@ export function TenderEditForm({ tender, onCancel }: TenderEditFormProps) {
             
             <div className="space-y-2">
               <label htmlFor="bindingPeriodDate" className="text-sm font-medium">
-                {t('tender.bindingPeriodDate', 'Bindefrist')}
+                Bindefrist
               </label>
               <Popover open={bindingPeriodDateOpen} onOpenChange={setBindingPeriodDateOpen}>
                 <PopoverTrigger asChild>
@@ -240,7 +240,7 @@ export function TenderEditForm({ tender, onCancel }: TenderEditFormProps) {
                     )}
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />
-                    {formData.bindingPeriodDate ? format(formData.bindingPeriodDate, "PPP") : <span>{t('tender.selectDate', 'Datum auswählen')}</span>}
+                    {formData.bindingPeriodDate ? format(formData.bindingPeriodDate, "PPP") : <span>Datum auswählen</span>}
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0">
@@ -258,7 +258,7 @@ export function TenderEditForm({ tender, onCancel }: TenderEditFormProps) {
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
               <label htmlFor="location" className="text-sm font-medium">
-                {t('tender.location')}
+                Ort
               </label>
               <Input
                 id="location"
@@ -270,7 +270,7 @@ export function TenderEditForm({ tender, onCancel }: TenderEditFormProps) {
             
             <div className="space-y-2">
               <label htmlFor="budget" className="text-sm font-medium">
-                {t('tender.budget')}
+                Budget
               </label>
               <Input
                 id="budget"
@@ -285,7 +285,7 @@ export function TenderEditForm({ tender, onCancel }: TenderEditFormProps) {
           
           <div className="space-y-2">
             <label htmlFor="description" className="text-sm font-medium">
-              {t('tender.description')}
+              Beschreibung
             </label>
             <Textarea
               id="description"
@@ -298,7 +298,7 @@ export function TenderEditForm({ tender, onCancel }: TenderEditFormProps) {
           
           <div className="space-y-2">
             <label htmlFor="evaluationScheme" className="text-sm font-medium">
-              {t('tender.evaluationScheme', 'Wertungsschema')}
+              Wertungsschema
             </label>
             <Textarea
               id="evaluationScheme"
@@ -306,7 +306,7 @@ export function TenderEditForm({ tender, onCancel }: TenderEditFormProps) {
               value={formData.evaluationScheme}
               onChange={handleChange}
               rows={3}
-              placeholder={t('tender.evaluationSchemePlaceholder', 'Details zum Wertungsschema eintragen')}
+              placeholder="Details zum Wertungsschema eintragen"
             />
           </div>
           
@@ -317,19 +317,19 @@ export function TenderEditForm({ tender, onCancel }: TenderEditFormProps) {
               onCheckedChange={(checked) => handleBooleanChange("conceptRequired", checked)}
             />
             <Label htmlFor="conceptRequired" className="cursor-pointer">
-              {t('tender.conceptRequired', 'Konzept erforderlich')}
+              Konzept erforderlich
             </Label>
           </div>
         </div>
         
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-base">{t('tenderDetails.contactInformation')}</CardTitle>
+            <CardTitle className="text-base">Kontaktinformationen</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <label htmlFor="contactPerson" className="text-sm font-medium">
-                {t('tender.contactPerson')}
+                Ansprechpartner
               </label>
               <Input
                 id="contactPerson"
@@ -342,7 +342,7 @@ export function TenderEditForm({ tender, onCancel }: TenderEditFormProps) {
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
                 <label htmlFor="contactEmail" className="text-sm font-medium">
-                  {t('tenderDetails.email')}
+                  E-Mail
                 </label>
                 <Input
                   id="contactEmail"
@@ -355,7 +355,7 @@ export function TenderEditForm({ tender, onCancel }: TenderEditFormProps) {
               
               <div className="space-y-2">
                 <label htmlFor="contactPhone" className="text-sm font-medium">
-                  {t('tenderDetails.phone')}
+                  Telefon
                 </label>
                 <Input
                   id="contactPhone"
@@ -368,10 +368,10 @@ export function TenderEditForm({ tender, onCancel }: TenderEditFormProps) {
           </CardContent>
           <CardFooter className="flex justify-end gap-2">
             <Button variant="outline" type="button" onClick={onCancel}>
-              {t('tenders.cancel')}
+              Abbrechen
             </Button>
             <Button type="submit">
-              {t('tenders.saveChanges')}
+              Änderungen speichern
             </Button>
           </CardFooter>
         </Card>

@@ -36,7 +36,7 @@ export function NewClientDialog({ open, onOpenChange, onClientCreated }: NewClie
     e.preventDefault();
     
     if (!formData.name.trim()) {
-      toast.error(t('clients.nameRequired', 'Name is required'));
+      toast.error("Name ist erforderlich");
       return;
     }
     
@@ -45,7 +45,7 @@ export function NewClientDialog({ open, onOpenChange, onClientCreated }: NewClie
     try {
       const newClient = await createClient(formData);
       
-      toast.success(t('clients.clientCreated', 'Client created successfully'));
+      toast.success("Kunde erfolgreich erstellt");
       
       // Reset form
       setFormData({
@@ -65,7 +65,7 @@ export function NewClientDialog({ open, onOpenChange, onClientCreated }: NewClie
       }
     } catch (error) {
       console.error("Error creating client:", error);
-      toast.error(t('errorMessages.clientCreateFailed', 'Failed to create client'));
+      toast.error("Kunde konnte nicht erstellt werden");
     } finally {
       setIsSubmitting(false);
     }
@@ -75,12 +75,12 @@ export function NewClientDialog({ open, onOpenChange, onClientCreated }: NewClie
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>{t('clients.createNewClient', 'Create New Client')}</DialogTitle>
+          <DialogTitle>Neuen Kunden erstellen</DialogTitle>
         </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-4 py-4">
           <div className="space-y-2">
-            <Label htmlFor="name">{t('clients.name', 'Name')} *</Label>
+            <Label htmlFor="name">Name *</Label>
             <Input
               id="name"
               name="name"
@@ -91,7 +91,7 @@ export function NewClientDialog({ open, onOpenChange, onClientCreated }: NewClie
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="contactPerson">{t('clients.contactPerson', 'Contact Person')}</Label>
+            <Label htmlFor="contactPerson">Ansprechpartner</Label>
             <Input
               id="contactPerson"
               name="contactPerson"
@@ -102,7 +102,7 @@ export function NewClientDialog({ open, onOpenChange, onClientCreated }: NewClie
           
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="email">{t('clients.email', 'Email')}</Label>
+              <Label htmlFor="email">E-Mail</Label>
               <Input
                 id="email"
                 name="email"
@@ -113,7 +113,7 @@ export function NewClientDialog({ open, onOpenChange, onClientCreated }: NewClie
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="phone">{t('clients.phone', 'Phone')}</Label>
+              <Label htmlFor="phone">Telefon</Label>
               <Input
                 id="phone"
                 name="phone"
@@ -124,7 +124,7 @@ export function NewClientDialog({ open, onOpenChange, onClientCreated }: NewClie
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="address">{t('clients.address', 'Address')}</Label>
+            <Label htmlFor="address">Adresse</Label>
             <Input
               id="address"
               name="address"
@@ -140,7 +140,7 @@ export function NewClientDialog({ open, onOpenChange, onClientCreated }: NewClie
               onClick={() => onOpenChange(false)}
               disabled={isSubmitting}
             >
-              {t('general.cancel', 'Cancel')}
+              Abbrechen
             </Button>
             <Button 
               type="submit"
@@ -149,10 +149,10 @@ export function NewClientDialog({ open, onOpenChange, onClientCreated }: NewClie
               {isSubmitting ? (
                 <>
                   <span className="animate-spin mr-2">⚪</span>
-                  {t('general.creating', 'Creating...')}
+                  Erstelle...
                 </>
               ) : (
-                t('clients.createClient', 'Create Client')
+                "Kunde erstellen"
               )}
             </Button>
           </DialogFooter>
