@@ -2,9 +2,8 @@
 import { useState } from "react";
 import { Sidebar } from "./Sidebar";
 import { Header } from "./Header";
-import { cn } from "@/lib/utils";
 
-interface LayoutProps {
+export interface LayoutProps {
   children: React.ReactNode;
   title?: string;
 }

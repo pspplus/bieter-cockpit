@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { Tender, TenderStatus, Milestone, MilestoneStatus } from "@/types/tender";
 import { format } from "date-fns";
@@ -7,7 +8,8 @@ const mapTenderFromDB = (tender: any, milestones: any[] = []): Tender => {
   return {
     id: tender.id,
     title: tender.title,
-    reference: tender.reference,
+    externalReference: tender.external_reference || "",
+    internalReference: tender.internal_reference || "",
     client: tender.client || "",
     status: tender.status as TenderStatus,
     createdAt: new Date(tender.created_at),
@@ -50,6 +52,43 @@ const mapMilestoneForDB = (milestone: Partial<Milestone>) => {
   };
   
   return dbMilestone;
+};
+
+// Generate the next internal reference number
+const generateInternalReference = async (): Promise<string> => {
+  const currentYear = new Date().getFullYear();
+  
+  // Get the highest reference number for the current year
+  const { data, error } = await supabase
+    .from('tenders')
+    .select('internal_reference')
+    .like('internal_reference', `${currentYear}-%`)
+    .order('internal_reference', { ascending: false })
+    .limit(1);
+  
+  if (error) {
+    console.error('Error fetching reference numbers:', error);
+    // Default to 1 if there's an error
+    return `${currentYear}-1`;
+  }
+  
+  if (!data || data.length === 0) {
+    // No existing references for this year, start with 1
+    return `${currentYear}-1`;
+  }
+  
+  // Extract the number from the reference (e.g., "2023-42" -> 42)
+  const lastReference = data[0].internal_reference;
+  const parts = lastReference.split('-');
+  
+  if (parts.length !== 2 || isNaN(parseInt(parts[1]))) {
+    // Invalid format, default to 1
+    return `${currentYear}-1`;
+  }
+  
+  // Increment the number
+  const nextNumber = parseInt(parts[1]) + 1;
+  return `${currentYear}-${nextNumber}`;
 };
 
 // Fetch all tenders for the current user
@@ -140,6 +179,9 @@ export const createTender = async (tenderData: Partial<Tender>): Promise<Tender>
     throw new Error('User not authenticated');
   }
 
+  // Generate internal reference number
+  const internalReference = await generateInternalReference();
+
   // Format date for Supabase (ISO string)
   const formattedDueDate = tenderData.dueDate 
     ? format(new Date(tenderData.dueDate), "yyyy-MM-dd'T'HH:mm:ss'Z'")
@@ -148,7 +190,8 @@ export const createTender = async (tenderData: Partial<Tender>): Promise<Tender>
   // Prepare the tender data for insertion
   const dbTender = {
     title: tenderData.title || "",
-    reference: tenderData.reference || "",
+    external_reference: tenderData.externalReference || "",
+    internal_reference: internalReference,
     client: tenderData.client || "",
     status: tenderData.status || "draft",
     due_date: formattedDueDate,
@@ -208,7 +251,7 @@ export const updateTender = async (id: string, updates: Partial<Tender>): Promis
   // Convert the updates to the DB format
   const dbUpdates = {
     ...(updates.title !== undefined && { title: updates.title }),
-    ...(updates.reference !== undefined && { reference: updates.reference }),
+    ...(updates.externalReference !== undefined && { external_reference: updates.externalReference }),
     ...(updates.client !== undefined && { client: updates.client }),
     ...(updates.status !== undefined && { status: updates.status }),
     ...(formattedDueDate && { due_date: formattedDueDate }),

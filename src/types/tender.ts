@@ -24,7 +24,7 @@ export interface Milestone {
   completionDate: Date | null;
   notes?: string;
   documents?: TenderDocument[];
-  tenderId?: string; // Add tenderId to match what's used in the code
+  tenderId?: string;
 }
 
 export interface TenderDocument {
@@ -40,7 +40,8 @@ export interface TenderDocument {
 export interface Tender {
   id: string;
   title: string;
-  reference: string;
+  externalReference: string;
+  internalReference: string;
   client: string;
   status: TenderStatus;
   createdAt: Date;

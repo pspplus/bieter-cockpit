@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -28,7 +29,7 @@ export function TenderCreationForm() {
   
   const [formData, setFormData] = useState({
     title: "",
-    reference: "",
+    externalReference: "",
     description: "",
     client: "",
     location: "",
@@ -63,7 +64,7 @@ export function TenderCreationForm() {
     try {
       const newTender = await createTender({
         title: formData.title || t('tenders.newTender'),
-        reference: formData.reference,
+        externalReference: formData.externalReference || "",
         description: formData.description,
         client: formData.client,
         location: formData.location,
@@ -103,14 +104,26 @@ export function TenderCreationForm() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="reference">{t('tender.reference')}</Label>
+              <Label htmlFor="externalReference">{t('tender.externalReference', 'Externe Referenznummer')}</Label>
               <Input 
-                id="reference" 
-                name="reference" 
-                value={formData.reference} 
+                id="externalReference" 
+                name="externalReference" 
+                value={formData.externalReference} 
                 onChange={handleChange} 
                 placeholder="REF-2023-001"
               />
+              <p className="text-sm text-muted-foreground">{t('tender.externalReferenceHelp', 'Die vom Kunden vergebene Referenznummer')}</p>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="internalReference">{t('tender.internalReference', 'Interne Referenznummer')}</Label>
+              <Input 
+                id="internalReference" 
+                value={new Date().getFullYear() + "-???"}
+                disabled
+                className="bg-muted"
+              />
+              <p className="text-sm text-muted-foreground">{t('tender.internalReferenceHelp', 'Wird beim Erstellen automatisch generiert')}</p>
             </div>
 
             <div className="space-y-2">
