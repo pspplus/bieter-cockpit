@@ -14,7 +14,7 @@ export default function LoginPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t } = useTranslation(['auth', 'general']);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,16 +56,16 @@ export default function LoginPage() {
         
         <Card>
           <CardHeader>
-            <CardTitle>{t('auth.login') || 'Anmelden'}</CardTitle>
+            <CardTitle>{t('auth:login', 'Anmelden')}</CardTitle>
             <CardDescription>
-              {t('auth.loginDescription') || 'Melden Sie sich an, um auf Ihr Konto zuzugreifen'}
+              {t('auth:loginDescription', 'Melden Sie sich an, um auf Ihr Konto zuzugreifen')}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <label htmlFor="email" className="text-sm font-medium">
-                  {t('auth.email') || 'E-Mail'}
+                  {t('auth:email', 'E-Mail')}
                 </label>
                 <Input
                   id="email"
@@ -79,13 +79,13 @@ export default function LoginPage() {
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <label htmlFor="password" className="text-sm font-medium">
-                    {t('auth.password') || 'Passwort'}
+                    {t('auth:password', 'Passwort')}
                   </label>
                   <Link
                     to="/forgot-password"
                     className="text-xs text-primary hover:underline"
                   >
-                    {t('auth.forgotPassword') || 'Passwort vergessen?'}
+                    {t('auth:forgotPassword', 'Passwort vergessen?')}
                   </Link>
                 </div>
                 <Input
@@ -98,18 +98,18 @@ export default function LoginPage() {
               </div>
               <Button type="submit" className="w-full" disabled={isSubmitting}>
                 {isSubmitting ? (
-                  t('auth.loggingIn') || 'Anmeldung läuft...'
+                  t('auth:loggingIn', 'Anmeldung läuft...')
                 ) : (
-                  t('auth.login') || 'Anmelden'
+                  t('auth:login', 'Anmelden')
                 )}
               </Button>
             </form>
           </CardContent>
           <CardFooter className="flex justify-center">
             <p className="text-sm text-tender-600">
-              {t('auth.noAccount') || 'Noch kein Konto?'}{' '}
+              {t('auth:noAccount', 'Noch kein Konto?')}{' '}
               <Link to="/signup" className="text-primary font-medium hover:underline">
-                {t('auth.signup') || 'Registrieren'}
+                {t('auth:signup', 'Registrieren')}
               </Link>
             </p>
           </CardFooter>

@@ -26,7 +26,7 @@ interface HeaderProps {
 }
 
 export function Header({ toggleSidebar, title = "Tender Management" }: HeaderProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['general', 'auth']);
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
   const { user, isAuthenticated, logout, getUserName } = useAuth();
@@ -70,7 +70,7 @@ export function Header({ toggleSidebar, title = "Tender Management" }: HeaderPro
                 className="hidden md:flex items-center gap-1.5 rounded-full bg-bieter-blue hover:bg-bieter-blue/90"
               >
                 <PlusCircle className="h-4 w-4" />
-                <span>{t('general.createNewTender')}</span>
+                <span>{t('general:createNewTender')}</span>
               </Button>
               
               <Button
@@ -105,7 +105,7 @@ export function Header({ toggleSidebar, title = "Tender Management" }: HeaderPro
                   <DropdownMenuItem>{t('navigation.profile')}</DropdownMenuItem>
                   <DropdownMenuItem>{t('navigation.settings')}</DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={logout}>{t('navigation.logout')}</DropdownMenuItem>
+                  <DropdownMenuItem onClick={logout}>{t('auth:logOut', 'Abmelden')}</DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </>
@@ -118,13 +118,13 @@ export function Header({ toggleSidebar, title = "Tender Management" }: HeaderPro
                 onClick={() => navigate('/login')}
                 className="rounded-full"
               >
-                {t('auth.login') || 'Anmelden'}
+                {t('auth:logIn', 'Anmelden')}
               </Button>
               <Button 
                 onClick={() => navigate('/signup')}
                 className="rounded-full bg-bieter-blue hover:bg-bieter-blue/90"
               >
-                {t('auth.signup') || 'Registrieren'}
+                {t('auth:signUp', 'Registrieren')}
               </Button>
             </>
           )}

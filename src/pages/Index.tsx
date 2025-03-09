@@ -8,7 +8,7 @@ import { ThemeSwitcher } from "@/components/layout/ThemeSwitcher";
 
 export default function Index() {
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t } = useTranslation(['general', 'auth']);
   const { isAuthenticated } = useAuth();
 
   return (
@@ -26,7 +26,7 @@ export default function Index() {
             <ThemeSwitcher />
             {isAuthenticated ? (
               <Button onClick={() => navigate("/dashboard")} className="rounded-full">
-                {t('general.getStarted')}
+                {t('general:getStarted')}
               </Button>
             ) : (
               <>
@@ -35,13 +35,13 @@ export default function Index() {
                   onClick={() => navigate('/login')}
                   className="rounded-full"
                 >
-                  {t('auth.login') || 'Anmelden'}
+                  {t('auth:logIn', 'Anmelden')}
                 </Button>
                 <Button 
                   onClick={() => navigate('/signup')}
                   className="rounded-full"
                 >
-                  {t('auth.signup') || 'Registrieren'}
+                  {t('auth:signUp', 'Registrieren')}
                 </Button>
               </>
             )}

@@ -17,15 +17,15 @@ export default function SignUpPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { signup } = useAuth();
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t } = useTranslation(['auth', 'general']);
 
   const validatePassword = () => {
     if (password !== confirmPassword) {
-      setPasswordError(t('auth.passwordMismatch') || "Passwörter stimmen nicht überein");
+      setPasswordError(t('auth:passwordMismatch', "Passwörter stimmen nicht überein"));
       return false;
     }
     if (password.length < 6) {
-      setPasswordError(t('auth.passwordTooShort') || "Passwort muss mindestens 6 Zeichen lang sein");
+      setPasswordError(t('auth:passwordTooShort', "Passwort muss mindestens 6 Zeichen lang sein"));
       return false;
     }
     setPasswordError("");
@@ -74,16 +74,16 @@ export default function SignUpPage() {
         
         <Card>
           <CardHeader>
-            <CardTitle>{t('auth.signup') || 'Registrieren'}</CardTitle>
+            <CardTitle>{t('auth:signup', 'Registrieren')}</CardTitle>
             <CardDescription>
-              {t('auth.signupDescription') || 'Erstellen Sie ein Konto, um loszulegen'}
+              {t('auth:signupDescription', 'Erstellen Sie ein Konto, um loszulegen')}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <label htmlFor="name" className="text-sm font-medium">
-                  {t('auth.name') || 'Name'}
+                  {t('auth:name', 'Name')}
                 </label>
                 <Input
                   id="name"
@@ -96,7 +96,7 @@ export default function SignUpPage() {
               </div>
               <div className="space-y-2">
                 <label htmlFor="email" className="text-sm font-medium">
-                  {t('auth.email') || 'E-Mail'}
+                  {t('auth:email', 'E-Mail')}
                 </label>
                 <Input
                   id="email"
@@ -109,7 +109,7 @@ export default function SignUpPage() {
               </div>
               <div className="space-y-2">
                 <label htmlFor="password" className="text-sm font-medium">
-                  {t('auth.password') || 'Passwort'}
+                  {t('auth:password', 'Passwort')}
                 </label>
                 <Input
                   id="password"
@@ -121,7 +121,7 @@ export default function SignUpPage() {
               </div>
               <div className="space-y-2">
                 <label htmlFor="confirmPassword" className="text-sm font-medium">
-                  {t('auth.confirmPassword') || 'Passwort bestätigen'}
+                  {t('auth:confirmPassword', 'Passwort bestätigen')}
                 </label>
                 <Input
                   id="confirmPassword"
@@ -136,18 +136,18 @@ export default function SignUpPage() {
               </div>
               <Button type="submit" className="w-full" disabled={isSubmitting}>
                 {isSubmitting ? (
-                  t('auth.creatingAccount') || 'Konto wird erstellt...'
+                  t('auth:creatingAccount', 'Konto wird erstellt...')
                 ) : (
-                  t('auth.createAccount') || 'Konto erstellen'
+                  t('auth:createAccount', 'Konto erstellen')
                 )}
               </Button>
             </form>
           </CardContent>
           <CardFooter className="flex justify-center">
             <p className="text-sm text-tender-600">
-              {t('auth.haveAccount') || 'Bereits ein Konto?'}{' '}
+              {t('auth:haveAccount', 'Bereits ein Konto?')}{' '}
               <Link to="/login" className="text-primary font-medium hover:underline">
-                {t('auth.login') || 'Anmelden'}
+                {t('auth:login', 'Anmelden')}
               </Link>
             </p>
           </CardFooter>
