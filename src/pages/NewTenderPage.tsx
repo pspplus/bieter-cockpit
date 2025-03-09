@@ -11,7 +11,7 @@ export default function NewTenderPage() {
   const navigate = useNavigate();
 
   return (
-    <Layout title={t('general.createNewTender')}>
+    <Layout title={t('tenders.createNewTender')}>
       <div className="space-y-6">
         <Button
           variant="ghost"

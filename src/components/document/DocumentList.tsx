@@ -3,7 +3,6 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { Download, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { formatFileSize } from "@/lib/utils";
 import { TenderDocument } from "@/types/tender";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../ui/alert-dialog";
 
@@ -29,6 +28,15 @@ export function DocumentList({ documents, readOnly = false, onDelete }: Document
     );
   }
   
+  // Helper function to format file size
+  const formatFileSize = (bytes: number): string => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
+  
   return (
     <div className="overflow-x-auto">
       <table className="w-full border-collapse">
@@ -47,12 +55,12 @@ export function DocumentList({ documents, readOnly = false, onDelete }: Document
           {documents.map((doc) => (
             <tr key={doc.id} className="border-b hover:bg-muted/50">
               <td className="py-2 px-4">{doc.name}</td>
-              <td className="py-2 px-4">{doc.type}</td>
-              <td className="py-2 px-4">{formatFileSize(doc.size)}</td>
+              <td className="py-2 px-4">{doc.file_type}</td>
+              <td className="py-2 px-4">{doc.file_size ? formatFileSize(doc.file_size) : '-'}</td>
               <td className="py-2 px-4">
-                {doc.uploadedAt instanceof Date
-                  ? doc.uploadedAt.toLocaleDateString()
-                  : new Date(doc.uploadedAt).toLocaleDateString()}
+                {doc.upload_date instanceof Date
+                  ? doc.upload_date.toLocaleDateString()
+                  : new Date(doc.upload_date).toLocaleDateString()}
               </td>
               {!readOnly && (
                 <td className="py-2 px-4 text-right">
