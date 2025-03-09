@@ -1,12 +1,58 @@
-
 import { supabase } from "@/integrations/supabase/client";
-import { Tender } from "@/types/tender";
-import { mapTenderFromDB, formatDateForDB } from "./utils/mapperUtils";
-import { createMilestone } from "./milestoneService";
+import { Tender, TenderStatus, Milestone, MilestoneStatus } from "@/types/tender";
+import { format } from "date-fns";
 
-/**
- * Fetch all tenders for the current user
- */
+// Convert a Supabase tender row to our application Tender type
+const mapTenderFromDB = (tender: any, milestones: any[] = []): Tender => {
+  return {
+    id: tender.id,
+    title: tender.title,
+    reference: tender.reference,
+    client: tender.client || "",
+    status: tender.status as TenderStatus,
+    createdAt: new Date(tender.created_at),
+    updatedAt: new Date(tender.updated_at),
+    dueDate: new Date(tender.due_date),
+    budget: tender.budget || 0,
+    description: tender.description || "",
+    location: tender.location || "",
+    contactPerson: tender.contact_person || "",
+    contactEmail: tender.contact_email || "",
+    contactPhone: tender.contact_phone || "",
+    notes: tender.notes || "",
+    milestones: milestones.map(mapMilestoneFromDB),
+  };
+};
+
+// Convert a Supabase milestone row to our application Milestone type
+const mapMilestoneFromDB = (milestone: any): Milestone => {
+  return {
+    id: milestone.id,
+    title: milestone.title,
+    description: milestone.description || "",
+    status: milestone.status,
+    dueDate: milestone.due_date ? new Date(milestone.due_date) : null,
+    completionDate: milestone.completion_date ? new Date(milestone.completion_date) : null,
+    notes: milestone.notes || "",
+  };
+};
+
+// Convert application Milestone type to Supabase format
+const mapMilestoneForDB = (milestone: Partial<Milestone>) => {
+  const dbMilestone: any = {
+    ...(milestone.id && { id: milestone.id }),
+    ...(milestone.title && { title: milestone.title }),
+    ...(milestone.description !== undefined && { description: milestone.description }),
+    ...(milestone.status && { status: milestone.status }),
+    ...(milestone.dueDate && { due_date: milestone.dueDate.toISOString() }),
+    ...(milestone.completionDate && { completion_date: milestone.completionDate.toISOString() }),
+    ...(milestone.notes !== undefined && { notes: milestone.notes }),
+  };
+  
+  return dbMilestone;
+};
+
+// Fetch all tenders for the current user
 export const fetchTenders = async (): Promise<Tender[]> => {
   const { data: tenderData, error: tenderError } = await supabase
     .from('tenders')
@@ -53,9 +99,7 @@ export const fetchTenders = async (): Promise<Tender[]> => {
   );
 };
 
-/**
- * Fetch a single tender by ID
- */
+// Fetch a single tender by ID
 export const fetchTenderById = async (id: string): Promise<Tender | null> => {
   // Fetch the tender
   const { data: tenderData, error: tenderError } = await supabase
@@ -87,9 +131,7 @@ export const fetchTenderById = async (id: string): Promise<Tender | null> => {
   return mapTenderFromDB(tenderData, milestoneData || []);
 };
 
-/**
- * Create a new tender
- */
+// Create a new tender
 export const createTender = async (tenderData: Partial<Tender>): Promise<Tender> => {
   // Get current user
   const { data: { user } } = await supabase.auth.getUser();
@@ -100,8 +142,8 @@ export const createTender = async (tenderData: Partial<Tender>): Promise<Tender>
 
   // Format date for Supabase (ISO string)
   const formattedDueDate = tenderData.dueDate 
-    ? formatDateForDB(tenderData.dueDate)
-    : formatDateForDB(new Date());
+    ? format(new Date(tenderData.dueDate), "yyyy-MM-dd'T'HH:mm:ss'Z'")
+    : format(new Date(), "yyyy-MM-dd'T'HH:mm:ss'Z'");
 
   // Prepare the tender data for insertion
   const dbTender = {
@@ -156,13 +198,11 @@ export const createTender = async (tenderData: Partial<Tender>): Promise<Tender>
   return newTender;
 };
 
-/**
- * Update a tender
- */
+// Update a tender
 export const updateTender = async (id: string, updates: Partial<Tender>): Promise<void> => {
   // Format date for Supabase if it exists in updates
   const formattedDueDate = updates.dueDate 
-    ? formatDateForDB(updates.dueDate)
+    ? format(new Date(updates.dueDate), "yyyy-MM-dd'T'HH:mm:ss'Z'")
     : undefined;
 
   // Convert the updates to the DB format
@@ -194,9 +234,7 @@ export const updateTender = async (id: string, updates: Partial<Tender>): Promis
   }
 };
 
-/**
- * Delete a tender
- */
+// Delete a tender
 export const deleteTender = async (id: string): Promise<void> => {
   // Note: We don't need to delete milestones separately due to cascading delete
   const { error } = await supabase
@@ -210,9 +248,89 @@ export const deleteTender = async (id: string): Promise<void> => {
   }
 };
 
-// Re-export milestone functions from the milestone service
-export { 
-  createMilestone, 
-  updateMilestone, 
-  deleteMilestone 
-} from './milestoneService';
+// Create a milestone
+export const createMilestone = async (milestone: Partial<Milestone>): Promise<Milestone> => {
+  // Format dates for Supabase
+  const formattedDueDate = milestone.dueDate 
+    ? format(new Date(milestone.dueDate), "yyyy-MM-dd'T'HH:mm:ss'Z'")
+    : null;
+  
+  const formattedCompletionDate = milestone.completionDate
+    ? format(new Date(milestone.completionDate), "yyyy-MM-dd'T'HH:mm:ss'Z'")
+    : null;
+
+  // Prepare the milestone data
+  const dbMilestone = {
+    tender_id: milestone.tenderId, // This is the tender ID, not the milestone ID
+    title: milestone.title || "",
+    description: milestone.description || "",
+    status: milestone.status || "pending",
+    due_date: formattedDueDate,
+    completion_date: formattedCompletionDate,
+    notes: milestone.notes || ""
+  };
+
+  // Insert the milestone
+  const { data, error } = await supabase
+    .from('milestones')
+    .insert(dbMilestone)
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error creating milestone:', error);
+    throw error;
+  }
+
+  if (!data) {
+    throw new Error('No data returned after creating milestone');
+  }
+
+  return mapMilestoneFromDB(data);
+};
+
+// Update a milestone
+export const updateMilestone = async (id: string, updates: Partial<Milestone>): Promise<void> => {
+  // Format dates for Supabase if they exist
+  const formattedDueDate = updates.dueDate 
+    ? format(new Date(updates.dueDate), "yyyy-MM-dd'T'HH:mm:ss'Z'")
+    : undefined;
+  
+  const formattedCompletionDate = updates.completionDate
+    ? format(new Date(updates.completionDate), "yyyy-MM-dd'T'HH:mm:ss'Z'")
+    : undefined;
+
+  // Convert the updates to the DB format
+  const dbUpdates = mapMilestoneForDB({
+    ...updates,
+    dueDate: formattedDueDate ? new Date(formattedDueDate) : undefined,
+    completionDate: formattedCompletionDate ? new Date(formattedCompletionDate) : undefined,
+  });
+
+  // Add updated_at timestamp separately
+  dbUpdates.updated_at = new Date().toISOString();
+
+  // Update the milestone
+  const { error } = await supabase
+    .from('milestones')
+    .update(dbUpdates)
+    .eq('id', id);
+
+  if (error) {
+    console.error('Error updating milestone:', error);
+    throw error;
+  }
+};
+
+// Delete a milestone
+export const deleteMilestone = async (id: string): Promise<void> => {
+  const { error } = await supabase
+    .from('milestones')
+    .delete()
+    .eq('id', id);
+
+  if (error) {
+    console.error('Error deleting milestone:', error);
+    throw error;
+  }
+};

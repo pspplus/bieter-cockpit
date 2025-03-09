@@ -1,12 +1,14 @@
-
-import React, { createContext, useState, useEffect, useContext } from "react";
+import React, { createContext, useState, useEffect } from "react";
 import { Tender, Milestone } from "@/types/tender";
 import { useAuth } from "@/context/AuthContext";
 import { 
   fetchTenders, 
   createTender as createTenderService, 
   updateTender as updateTenderService,
-  deleteTender as deleteTenderService
+  deleteTender as deleteTenderService,
+  createMilestone as createMilestoneService,
+  updateMilestone as updateMilestoneService,
+  deleteMilestone as deleteMilestoneService
 } from "@/services/tenderService";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
@@ -17,10 +19,9 @@ type TenderContextType = {
   createTender: (tenderData: Partial<Tender>) => Promise<Tender>;
   updateTender: (id: string, updates: Partial<Tender>) => Promise<void>;
   deleteTender: (id: string) => Promise<void>;
-  updateTenderMilestones: (
-    tenderId: string, 
-    updateFn: (currentMilestones: Milestone[]) => Milestone[]
-  ) => void;
+  createMilestone: (tenderId: string, milestone: Partial<Milestone>) => Promise<void>;
+  updateMilestone: (milestone: Milestone) => Promise<void>;
+  deleteMilestone: (tenderId: string, milestoneId: string) => Promise<void>;
 };
 
 type TenderProviderProps = {
@@ -90,22 +91,71 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
     }
   };
 
-  const updateTenderMilestones = (
-    tenderId: string, 
-    updateFn: (currentMilestones: Milestone[]) => Milestone[]
-  ) => {
-    setTenders(currentTenders => 
-      currentTenders.map(tender => {
+  const createMilestone = async (tenderId: string, milestone: Partial<Milestone>): Promise<void> => {
+    try {
+      const newMilestone = await createMilestoneService({ ...milestone, tenderId });
+      
+      setTenders(tenders.map(tender => {
         if (tender.id === tenderId) {
-          const updatedMilestones = updateFn(tender.milestones);
           return {
             ...tender,
-            milestones: updatedMilestones
+            milestones: [...tender.milestones, newMilestone as Milestone]
           };
         }
         return tender;
-      })
-    );
+      }));
+      
+      toast.success(t('notifications.milestoneCreated', 'Milestone created'));
+    } catch (error) {
+      console.error("Error creating milestone:", error);
+      toast.error(t('errorMessages.couldNotCreateMilestone', 'Could not create milestone'));
+      throw error;
+    }
+  };
+
+  const updateMilestone = async (milestone: Milestone): Promise<void> => {
+    try {
+      await updateMilestoneService(milestone.id, milestone);
+      
+      setTenders(tenders.map(tender => {
+        const updatedMilestones = tender.milestones.map(m => 
+          m.id === milestone.id ? milestone : m
+        );
+        
+        return {
+          ...tender,
+          milestones: updatedMilestones
+        };
+      }));
+      
+      toast.success(t('notifications.milestoneUpdated', 'Milestone updated'));
+    } catch (error) {
+      console.error("Error updating milestone:", error);
+      toast.error(t('errorMessages.couldNotUpdateMilestone', 'Could not update milestone'));
+      throw error;
+    }
+  };
+
+  const deleteMilestone = async (tenderId: string, milestoneId: string): Promise<void> => {
+    try {
+      await deleteMilestoneService(milestoneId);
+      
+      setTenders(tenders.map(tender => {
+        if (tender.id === tenderId) {
+          return {
+            ...tender,
+            milestones: tender.milestones.filter(m => m.id !== milestoneId)
+          };
+        }
+        return tender;
+      }));
+      
+      toast.success(t('notifications.milestoneDeleted', 'Milestone deleted'));
+    } catch (error) {
+      console.error("Error deleting milestone:", error);
+      toast.error(t('errorMessages.couldNotDeleteMilestone', 'Could not delete milestone'));
+      throw error;
+    }
   };
 
   return (
@@ -114,18 +164,12 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
       isLoading, 
       createTender, 
       updateTender, 
-      deleteTender,
-      updateTenderMilestones
+      deleteTender, 
+      createMilestone, 
+      updateMilestone, 
+      deleteMilestone 
     }}>
       {children}
     </TenderContext.Provider>
   );
-};
-
-export const useTender = () => {
-  const context = useContext(TenderContext);
-  if (context === undefined) {
-    throw new Error("useTender must be used within a TenderProvider");
-  }
-  return context;
 };
