@@ -52,6 +52,11 @@ export default function SubmissionsPage() {
     }
   };
 
+  // Get display reference - use internal reference as primary, fallback to external reference
+  const getDisplayReference = (tender) => {
+    return tender.internalReference || tender.externalReference || "-";
+  };
+
   return (
     <Layout title={t('submissions.submissions')}>
       <div className="space-y-6">
@@ -106,7 +111,7 @@ export default function SubmissionsPage() {
                     <div>
                       <CardTitle className="mb-1">{tender.title}</CardTitle>
                       <CardDescription>
-                        {t('tender.reference')}: {tender.reference}
+                        {t('tender.reference')}: {getDisplayReference(tender)}
                       </CardDescription>
                     </div>
                     <div className={cn(
