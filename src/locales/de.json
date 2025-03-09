@@ -1,4 +1,3 @@
-
 {
   "tender": {
     "title": "Titel",
@@ -38,6 +37,14 @@
     "title": "Ausschreibung löschen",
     "description": "Sind Sie sicher, dass Sie diese Ausschreibung löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
     "confirm": "Ausschreibung löschen"
+  },
+  "navigation": {
+    "search": "Suchen",
+    "notifications": "Benachrichtigungen",
+    "profile": "Profil",
+    "settings": "Einstellungen",
+    "logout": "Abmelden",
+    "messages": "Nachrichten"
   },
   "cancel": "Abbrechen"
 }

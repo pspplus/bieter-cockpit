@@ -14,6 +14,7 @@ import {
   Inbox,
   FileText
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -21,6 +22,7 @@ interface SidebarProps {
 }
 
 export function Sidebar({ isOpen, onClose }: SidebarProps) {
+  const { t } = useTranslation();
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const location = useLocation();
   
@@ -68,7 +70,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
             )}
           >
             <Home className="h-5 w-5" />
-            <span>Startseite</span>
+            <span>{t('navigation.home', 'Startseite')}</span>
           </Link>
           <Link
             to="/dashboard"
@@ -78,7 +80,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
             )}
           >
             <LayoutDashboard className="h-5 w-5" />
-            <span>Dashboard</span>
+            <span>{t('navigation.dashboard', 'Dashboard')}</span>
           </Link>
           <Link
             to="/tenders"
@@ -89,7 +91,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
             )}
           >
             <FileText className="h-5 w-5" />
-            <span>Ausschreibungen</span>
+            <span>{t('sidebar.tenders', 'Ausschreibungen')}</span>
           </Link>
           <Link
             to="/submissions"
@@ -99,7 +101,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
             )}
           >
             <FileCheck className="h-5 w-5" />
-            <span>Einreichungen</span>
+            <span>{t('sidebar.submissions', 'Einreichungen')}</span>
           </Link>
           <Link
             to="/messages"
@@ -109,7 +111,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
             )}
           >
             <Inbox className="h-5 w-5" />
-            <span>Nachrichten</span>
+            <span>{t('navigation.messages', 'Nachrichten')}</span>
           </Link>
           <Link
             to="/clients"
@@ -120,7 +122,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
             )}
           >
             <Users className="h-5 w-5" />
-            <span>Vergabestellen</span>
+            <span>{t('sidebar.clients', 'Vergabestellen')}</span>
           </Link>
         </nav>
       </ScrollArea>
@@ -133,7 +135,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
           )}
         >
           <Settings className="h-5 w-5" />
-          <span>Einstellungen</span>
+          <span>{t('navigation.settings', 'Einstellungen')}</span>
         </Link>
       </div>
     </div>
