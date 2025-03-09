@@ -41,9 +41,9 @@ export default function TendersPage() {
     ? tenders 
     : tenders.filter(tender => tender.status === filterBy);
   
-  // Sort tenders by updated date (most recent first)
+  // Sort tenders by due date (ascending)
   const sortedTenders = [...filteredTenders].sort(
-    (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+    (a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()
   );
   
   return (
