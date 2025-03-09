@@ -10,8 +10,8 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import { useTender } from "@/context/TenderContext";
-import { ChevronDown, PlusCircle, Loader2 } from "lucide-react";
+import { useTender } from "@/hooks/useTender";
+import { ChevronDown, PlusCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Tender } from "@/types/tender";
 import { useTranslation } from "react-i18next";

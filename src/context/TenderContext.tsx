@@ -1,9 +1,9 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+
+import React, { createContext, useState, useEffect } from "react";
 import { Tender, Milestone } from "@/types/tender";
 import { useAuth } from "@/context/AuthContext";
 import { 
   fetchTenders, 
-  fetchTenderById, 
   createTender as createTenderService, 
   updateTender as updateTenderService,
   deleteTender as deleteTenderService,
@@ -11,7 +11,7 @@ import {
   updateMilestone as updateMilestoneService,
   deleteMilestone as deleteMilestoneService
 } from "@/services/tenderService";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 
 type TenderContextType = {
@@ -35,7 +35,6 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
   const [tenders, setTenders] = useState<Tender[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const { isAuthenticated } = useAuth();
-  const { toast } = useToast();
   const { t } = useTranslation();
 
   // Load tenders when authenticated
@@ -48,17 +47,13 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
         })
         .catch((error) => {
           console.error("Error loading tenders:", error);
-          toast({
-            title: t('errorMessages.loadFailed'),
-            description: t('errorMessages.couldNotLoadTenders'),
-            variant: "destructive",
-          });
+          toast.error(t('errorMessages.couldNotLoadTenders', 'Could not load tenders'));
         })
         .finally(() => {
           setIsLoading(false);
         });
     }
-  }, [isAuthenticated, toast, t]);
+  }, [isAuthenticated, t]);
 
   // Create a new tender
   const createTender = async (tenderData: Partial<Tender>): Promise<Tender> => {
@@ -68,11 +63,7 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
       return newTender;
     } catch (error) {
       console.error("Error creating tender:", error);
-      toast({
-        title: t('errorMessages.createFailed'),
-        description: t('errorMessages.couldNotCreateTender'),
-        variant: "destructive",
-      });
+      toast.error(t('errorMessages.couldNotCreateTender', 'Could not create tender'));
       throw error;
     }
   };
@@ -84,17 +75,10 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
       setTenders(tenders.map(tender => 
         tender.id === id ? { ...tender, ...updates } : tender
       ));
-      toast({
-        title: t('notifications.updated'),
-        description: t('notifications.tenderUpdated'),
-      });
+      toast.success(t('notifications.tenderUpdated', 'Tender updated'));
     } catch (error) {
       console.error("Error updating tender:", error);
-      toast({
-        title: t('errorMessages.updateFailed'),
-        description: t('errorMessages.couldNotUpdateTender'),
-        variant: "destructive",
-      });
+      toast.error(t('errorMessages.couldNotUpdateTender', 'Could not update tender'));
       throw error;
     }
   };
@@ -104,17 +88,10 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
     try {
       await deleteTenderService(id);
       setTenders(tenders.filter(tender => tender.id !== id));
-      toast({
-        title: t('notifications.deleted'),
-        description: t('notifications.tenderDeleted'),
-      });
+      toast.success(t('notifications.tenderDeleted', 'Tender deleted'));
     } catch (error) {
       console.error("Error deleting tender:", error);
-      toast({
-        title: t('errorMessages.deleteFailed'),
-        description: t('errorMessages.couldNotDeleteTender'),
-        variant: "destructive",
-      });
+      toast.error(t('errorMessages.couldNotDeleteTender', 'Could not delete tender'));
       throw error;
     }
   };
@@ -134,17 +111,10 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
         return tender;
       }));
       
-      toast({
-        title: t('notifications.created'),
-        description: t('notifications.milestoneCreated'),
-      });
+      toast.success(t('notifications.milestoneCreated', 'Milestone created'));
     } catch (error) {
       console.error("Error creating milestone:", error);
-      toast({
-        title: t('errorMessages.createFailed'),
-        description: t('errorMessages.couldNotCreateMilestone'),
-        variant: "destructive",
-      });
+      toast.error(t('errorMessages.couldNotCreateMilestone', 'Could not create milestone'));
       throw error;
     }
   };
@@ -165,17 +135,10 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
         };
       }));
       
-      toast({
-        title: t('notifications.updated'),
-        description: t('notifications.milestoneUpdated'),
-      });
+      toast.success(t('notifications.milestoneUpdated', 'Milestone updated'));
     } catch (error) {
       console.error("Error updating milestone:", error);
-      toast({
-        title: t('errorMessages.updateFailed'),
-        description: t('errorMessages.couldNotUpdateMilestone'),
-        variant: "destructive",
-      });
+      toast.error(t('errorMessages.couldNotUpdateMilestone', 'Could not update milestone'));
       throw error;
     }
   };
@@ -195,17 +158,10 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
         return tender;
       }));
       
-      toast({
-        title: t('notifications.deleted'),
-        description: t('notifications.milestoneDeleted'),
-      });
+      toast.success(t('notifications.milestoneDeleted', 'Milestone deleted'));
     } catch (error) {
       console.error("Error deleting milestone:", error);
-      toast({
-        title: t('errorMessages.deleteFailed'),
-        description: t('errorMessages.couldNotDeleteMilestone'),
-        variant: "destructive",
-      });
+      toast.error(t('errorMessages.couldNotDeleteMilestone', 'Could not delete milestone'));
       throw error;
     }
   };
@@ -224,12 +180,4 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
       {children}
     </TenderContext.Provider>
   );
-};
-
-export const useTender = () => {
-  const context = useContext(TenderContext);
-  if (context === undefined) {
-    throw new Error("useTender must be used within a TenderProvider");
-  }
-  return context;
 };

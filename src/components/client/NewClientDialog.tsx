@@ -1,35 +1,25 @@
 
 import { useState } from "react";
-import { useTranslation } from "react-i18next";
-import { Client } from "@/types/client";
 import { useClient } from "@/context/ClientContext";
-import { useToast } from "@/components/ui/use-toast";
-import { Input } from "@/components/ui/input";
+import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Client } from "@/types/client";
 
 interface NewClientDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onClientCreated: (client: Client) => void;
+  onClientCreated?: (client: Client) => void;
 }
 
-export function NewClientDialog({ 
-  open, 
-  onOpenChange, 
-  onClientCreated 
-}: NewClientDialogProps) {
+export function NewClientDialog({ open, onOpenChange, onClientCreated }: NewClientDialogProps) {
   const { t } = useTranslation();
   const { createClient } = useClient();
-  const { toast } = useToast();
-  
-  const [newClient, setNewClient] = useState<Partial<Client>>({
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formData, setFormData] = useState({
     name: "",
     contactPerson: "",
     email: "",
@@ -37,19 +27,28 @@ export function NewClientDialog({
     address: "",
   });
 
-  const handleNewClientInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setNewClient(prev => ({ ...prev, [name]: value }));
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleCreateClient = async () => {
-    if (!newClient.name) return;
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!formData.name.trim()) {
+      toast.error(t('clients.nameRequired', 'Name is required'));
+      return;
+    }
+    
+    setIsSubmitting(true);
     
     try {
-      const client = await createClient(newClient);
+      const newClient = await createClient(formData);
       
-      // Reset the new client form
-      setNewClient({
+      toast.success(t('clients.clientCreated', 'Client created successfully'));
+      
+      // Reset form
+      setFormData({
         name: "",
         contactPerson: "",
         email: "",
@@ -57,23 +56,18 @@ export function NewClientDialog({
         address: "",
       });
       
-      // Close the dialog
+      // Close dialog
       onOpenChange(false);
       
       // Notify parent component
-      onClientCreated(client);
-      
-      toast({
-        title: t('toasts.clientCreated', 'Vergabestelle erfolgreich erstellt'),
-        description: client.name,
-      });
+      if (onClientCreated) {
+        onClientCreated(newClient);
+      }
     } catch (error) {
       console.error("Error creating client:", error);
-      toast({
-        title: t('errorMessages.createFailed', 'Erstellung fehlgeschlagen'),
-        description: t('errorMessages.couldNotCreateClient', 'Vergabestelle konnte nicht erstellt werden'),
-        variant: "destructive",
-      });
+      toast.error(t('errorMessages.clientCreateFailed', 'Failed to create client'));
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -81,65 +75,88 @@ export function NewClientDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>{t('clients.createNewClient', 'Neue Vergabestelle erstellen')}</DialogTitle>
+          <DialogTitle>{t('clients.createNewClient', 'Create New Client')}</DialogTitle>
         </DialogHeader>
-        <div className="grid gap-4 py-4">
-          <div className="grid gap-2">
-            <label htmlFor="name">{t('clients.name', 'Name')} *</label>
+        
+        <form onSubmit={handleSubmit} className="space-y-4 py-4">
+          <div className="space-y-2">
+            <Label htmlFor="name">{t('clients.name', 'Name')} *</Label>
             <Input
               id="name"
               name="name"
-              value={newClient.name}
-              onChange={handleNewClientInputChange}
+              value={formData.name}
+              onChange={handleChange}
               required
             />
           </div>
-          <div className="grid gap-2">
-            <label htmlFor="contactPerson">{t('clients.contactPerson', 'Contact Person')}</label>
+          
+          <div className="space-y-2">
+            <Label htmlFor="contactPerson">{t('clients.contactPerson', 'Contact Person')}</Label>
             <Input
               id="contactPerson"
               name="contactPerson"
-              value={newClient.contactPerson}
-              onChange={handleNewClientInputChange}
+              value={formData.contactPerson}
+              onChange={handleChange}
             />
           </div>
-          <div className="grid gap-2">
-            <label htmlFor="email">{t('clients.email', 'Email')}</label>
-            <Input
-              id="email"
-              name="email"
-              type="email"
-              value={newClient.email}
-              onChange={handleNewClientInputChange}
-            />
+          
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="email">{t('clients.email', 'Email')}</Label>
+              <Input
+                id="email"
+                name="email"
+                type="email"
+                value={formData.email}
+                onChange={handleChange}
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="phone">{t('clients.phone', 'Phone')}</Label>
+              <Input
+                id="phone"
+                name="phone"
+                value={formData.phone}
+                onChange={handleChange}
+              />
+            </div>
           </div>
-          <div className="grid gap-2">
-            <label htmlFor="phone">{t('clients.phone', 'Phone')}</label>
-            <Input
-              id="phone"
-              name="phone"
-              value={newClient.phone}
-              onChange={handleNewClientInputChange}
-            />
-          </div>
-          <div className="grid gap-2">
-            <label htmlFor="address">{t('clients.address', 'Address')}</label>
+          
+          <div className="space-y-2">
+            <Label htmlFor="address">{t('clients.address', 'Address')}</Label>
             <Input
               id="address"
               name="address"
-              value={newClient.address}
-              onChange={handleNewClientInputChange}
+              value={formData.address}
+              onChange={handleChange}
             />
           </div>
-        </div>
-        <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
-            {t('general.cancel', 'Cancel')}
-          </Button>
-          <Button onClick={handleCreateClient} disabled={!newClient.name}>
-            {t('general.create', 'Create')}
-          </Button>
-        </DialogFooter>
+          
+          <DialogFooter className="pt-4">
+            <Button 
+              type="button" 
+              variant="outline" 
+              onClick={() => onOpenChange(false)}
+              disabled={isSubmitting}
+            >
+              {t('general.cancel', 'Cancel')}
+            </Button>
+            <Button 
+              type="submit"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                <>
+                  <span className="animate-spin mr-2">⚪</span>
+                  {t('general.creating', 'Creating...')}
+                </>
+              ) : (
+                t('clients.createClient', 'Create Client')
+              )}
+            </Button>
+          </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   );
