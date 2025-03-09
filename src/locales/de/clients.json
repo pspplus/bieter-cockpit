@@ -1,0 +1,16 @@
+
+{
+  "clientDetails": "Vergabestellendetails",
+  "clientsList": "Vergabestellenliste",
+  "searchClients": "Vergabestellen suchen...",
+  "createNew": "Neue Vergabestelle erstellen",
+  "createNewClient": "Neue Vergabestelle erstellen",
+  "editClientInfo": "Vergabestelleninformation bearbeiten",
+  "name": "Name",
+  "contactPerson": "Kontaktperson",
+  "email": "E-Mail",
+  "phone": "Telefon",
+  "address": "Adresse",
+  "createdAt": "Erstellt am",
+  "noClientsFound": "Keine Vergabestellen gefunden"
+}

@@ -1,0 +1,12 @@
+
+{
+  "submissions": "Einreichungen",
+  "allSubmissions": "Alle Einreichungen",
+  "submittedDate": "Einreichungsdatum",
+  "viewSubmission": "Einreichung anzeigen",
+  "createSubmission": "Einreichung erstellen",
+  "noSubmissionsFound": "Keine Einreichungen gefunden",
+  "noSubmissionsCreated": "Du hast noch keine Ausschreibungen eingereicht",
+  "noSubmissionsWithStatus": "Keine Einreichungen mit Status: {{status}}",
+  "createYourFirstSubmission": "Erstelle deine erste Einreichung"
+}

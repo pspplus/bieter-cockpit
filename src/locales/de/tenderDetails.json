@@ -1,0 +1,11 @@
+
+{
+  "due": "Fällig",
+  "progress": "Fortschritt",
+  "tenderInformation": "Ausschreibungsinformationen",
+  "created": "Erstellt",
+  "contactInformation": "Kontaktinformationen",
+  "email": "E-Mail",
+  "phone": "Telefon",
+  "noContactInfo": "Keine Kontaktinformationen angegeben"
+}

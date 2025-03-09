@@ -1,0 +1,18 @@
+
+{
+  "milestones": "Meilensteine",
+  "title": "Titel",
+  "description": "Beschreibung",
+  "status": "Status",
+  "dueDate": "Fälligkeitsdatum",
+  "completionDate": "Abschlussdatum",
+  "notes": "Notizen",
+  "pending": "Ausstehend",
+  "inProgress": "In Bearbeitung",
+  "completed": "Abgeschlossen",
+  "skipped": "Übersprungen",
+  "markAsInProgress": "Als in Bearbeitung markieren",
+  "markAsCompleted": "Als abgeschlossen markieren",
+  "markAsPending": "Als ausstehend markieren",
+  "markAsSkipped": "Als übersprungen markieren"
+}
