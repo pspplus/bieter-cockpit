@@ -33,6 +33,7 @@ const mapMilestoneFromDB = (milestone: any): Milestone => {
     title: milestone.title,
     description: milestone.description || "",
     status: milestone.status,
+    sequenceNumber: milestone.sequence_number,
     dueDate: milestone.due_date ? new Date(milestone.due_date) : null,
     completionDate: milestone.completion_date ? new Date(milestone.completion_date) : null,
     notes: milestone.notes || "",
@@ -46,6 +47,7 @@ const mapMilestoneForDB = (milestone: Partial<Milestone>) => {
     ...(milestone.title && { title: milestone.title }),
     ...(milestone.description !== undefined && { description: milestone.description }),
     ...(milestone.status && { status: milestone.status }),
+    ...(milestone.sequenceNumber !== undefined && { sequence_number: milestone.sequenceNumber }),
     ...(milestone.dueDate && { due_date: milestone.dueDate.toISOString() }),
     ...(milestone.completionDate && { completion_date: milestone.completionDate.toISOString() }),
     ...(milestone.notes !== undefined && { notes: milestone.notes }),
@@ -114,7 +116,8 @@ export const fetchTenders = async (): Promise<Tender[]> => {
   const { data: milestoneData, error: milestoneError } = await supabase
     .from('milestones')
     .select('*')
-    .in('tender_id', tenderIds);
+    .in('tender_id', tenderIds)
+    .order('sequence_number', { ascending: true });
 
   if (milestoneError) {
     console.error('Error fetching milestones:', milestoneError);
@@ -160,7 +163,8 @@ export const fetchTenderById = async (id: string): Promise<Tender | null> => {
   const { data: milestoneData, error: milestoneError } = await supabase
     .from('milestones')
     .select('*')
-    .eq('tender_id', id);
+    .eq('tender_id', id)
+    .order('sequence_number', { ascending: true });
 
   if (milestoneError) {
     console.error('Error fetching milestones:', milestoneError);
@@ -293,6 +297,22 @@ export const deleteTender = async (id: string): Promise<void> => {
 
 // Create a milestone
 export const createMilestone = async (milestone: Partial<Milestone>): Promise<Milestone> => {
+  // Get max sequence number for this tender and add 1
+  let sequenceNumber = 1;
+  
+  if (milestone.tenderId) {
+    const { data, error } = await supabase
+      .from('milestones')
+      .select('sequence_number')
+      .eq('tender_id', milestone.tenderId)
+      .order('sequence_number', { ascending: false })
+      .limit(1);
+      
+    if (!error && data && data.length > 0) {
+      sequenceNumber = (data[0].sequence_number || 0) + 1;
+    }
+  }
+
   // Format dates for Supabase
   const formattedDueDate = milestone.dueDate 
     ? format(new Date(milestone.dueDate), "yyyy-MM-dd'T'HH:mm:ss'Z'")
@@ -308,6 +328,7 @@ export const createMilestone = async (milestone: Partial<Milestone>): Promise<Mi
     title: milestone.title || "",
     description: milestone.description || "",
     status: milestone.status || "pending",
+    sequence_number: milestone.sequenceNumber || sequenceNumber,
     due_date: formattedDueDate,
     completion_date: formattedCompletionDate,
     notes: milestone.notes || ""

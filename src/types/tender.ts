@@ -20,6 +20,7 @@ export interface Milestone {
   title: string;
   description: string;
   status: MilestoneStatus;
+  sequenceNumber: number;
   dueDate: Date | null;
   completionDate: Date | null;
   notes?: string;

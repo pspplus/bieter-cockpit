@@ -107,6 +107,7 @@ export type Database = {
           due_date: string | null
           id: string
           notes: string | null
+          sequence_number: number
           status: string
           tender_id: string
           title: string
@@ -119,6 +120,7 @@ export type Database = {
           due_date?: string | null
           id?: string
           notes?: string | null
+          sequence_number: number
           status: string
           tender_id: string
           title: string
@@ -131,6 +133,7 @@ export type Database = {
           due_date?: string | null
           id?: string
           notes?: string | null
+          sequence_number?: number
           status?: string
           tender_id?: string
           title?: string

@@ -1,7 +1,7 @@
 
 import { Tender, Milestone, MilestoneStatus } from "@/types/tender";
 import { cn } from "@/lib/utils";
-import { CheckCircle, Circle, Clock, XCircle } from "lucide-react";
+import { CheckCircle, Circle, Clock, XCircle, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTender } from "@/hooks/useTender";
 import {
@@ -35,36 +35,19 @@ function StatusIcon({ status }: StatusIconProps) {
 }
 
 export function MilestonesList({ tender }: MilestonesListProps) {
-  const { updateMilestone } = useTender();
+  const { updateMilestone, canUpdateMilestoneStatus } = useTender();
   const { t } = useTranslation();
 
-  const sortedMilestones = [...tender.milestones].sort((a, b) => {
-    const statusOrder: Record<MilestoneStatus, number> = {
-      "in-progress": 0,
-      "pending": 1,
-      "completed": 2,
-      "skipped": 3,
-    };
-    return statusOrder[a.status] - statusOrder[b.status];
-  });
-
-  const isActiveMilestone = (milestone: Milestone, index: number): boolean => {
-    if (milestone.status === "in-progress") return true;
-    
-    if (
-      milestone.status === "pending" &&
-      !sortedMilestones.some((m) => m.status === "in-progress")
-    ) {
-      const pendingMilestones = sortedMilestones.filter(
-        (m) => m.status === "pending"
-      );
-      return pendingMilestones.indexOf(milestone) === 0;
-    }
-    
-    return false;
-  };
+  // Sort milestones by sequence number
+  const sortedMilestones = [...tender.milestones].sort((a, b) => 
+    a.sequenceNumber - b.sequenceNumber
+  );
 
   const handleStatusChange = (milestone: Milestone, newStatus: MilestoneStatus) => {
+    if (!canUpdateMilestoneStatus(milestone, newStatus)) {
+      return;
+    }
+
     const updatedMilestone = {
       ...milestone,
       status: newStatus,
@@ -72,6 +55,25 @@ export function MilestonesList({ tender }: MilestonesListProps) {
     };
     updateMilestone(updatedMilestone);
   };
+
+  // Find the first milestone that can be worked on
+  const getNextActiveMilestoneId = (): string | null => {
+    // Look for in-progress milestone first
+    const inProgressMilestone = sortedMilestones.find(m => m.status === "in-progress");
+    if (inProgressMilestone) return inProgressMilestone.id;
+    
+    // Find first pending milestone that can be started
+    for (let i = 0; i < sortedMilestones.length; i++) {
+      const milestone = sortedMilestones[i];
+      if (milestone.status === "pending" && canUpdateMilestoneStatus(milestone, "in-progress")) {
+        return milestone.id;
+      }
+    }
+    
+    return null;
+  };
+
+  const nextActiveMilestoneId = getNextActiveMilestoneId();
 
   return (
     <div className="space-y-4">
@@ -84,7 +86,11 @@ export function MilestonesList({ tender }: MilestonesListProps) {
       ) : (
         <div className="space-y-1">
           {sortedMilestones.map((milestone, index) => {
-            const isActive = isActiveMilestone(milestone, index);
+            const isActive = milestone.id === nextActiveMilestoneId;
+            const isPrevious = sortedMilestones[index - 1];
+            const canStart = canUpdateMilestoneStatus(milestone, "in-progress");
+            const canComplete = milestone.status === "in-progress";
+            const canSkip = canUpdateMilestoneStatus(milestone, "skipped");
             
             return (
               <div
@@ -99,12 +105,25 @@ export function MilestonesList({ tender }: MilestonesListProps) {
                 )}
               >
                 <div className="flex items-start gap-3">
-                  <div className="mt-0.5">
+                  <div className="mt-0.5 flex flex-col items-center">
                     <StatusIcon status={milestone.status} />
+                    {index < sortedMilestones.length - 1 && (
+                      <div className="h-6 w-px my-1 bg-tender-200" />
+                    )}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex justify-between items-start">
-                      <h4 className="font-medium text-base">{milestone.title}</h4>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs rounded-full bg-tender-100 text-tender-600 px-2 py-0.5">
+                          {index + 1}
+                        </span>
+                        <h4 className="font-medium text-base">{milestone.title}</h4>
+                        {isActive && (
+                          <span className="text-xs bg-blue-100 text-blue-600 px-2 py-0.5 rounded-full">
+                            {t('milestones.current', 'Aktuell')}
+                          </span>
+                        )}
+                      </div>
                       {milestone.dueDate && (
                         <span className="text-xs text-tender-500">
                           {t('milestones.dueDate')}: {format(new Date(milestone.dueDate), "MMM d")}
@@ -129,14 +148,20 @@ export function MilestonesList({ tender }: MilestonesListProps) {
                               <Button
                                 size="sm"
                                 variant="outline"
-                                className="h-8 border-green-200 text-green-600 hover:bg-green-50 hover:text-green-700"
+                                className={cn(
+                                  "h-8 border-green-200 text-green-600 hover:bg-green-50 hover:text-green-700",
+                                  !canComplete && "opacity-50 cursor-not-allowed"
+                                )}
                                 onClick={() => handleStatusChange(milestone, "completed")}
+                                disabled={!canComplete}
                               >
                                 {t('milestoneActions.complete')}
                               </Button>
                             </TooltipTrigger>
                             <TooltipContent>
-                              <p>{t('milestones.markAsCompleted')}</p>
+                              {canComplete 
+                                ? t('milestones.markAsCompleted')
+                                : t('milestones.cannotComplete', 'Dieser Meilenstein kann jetzt nicht abgeschlossen werden')}
                             </TooltipContent>
                           </Tooltip>
                         )}
@@ -147,14 +172,20 @@ export function MilestonesList({ tender }: MilestonesListProps) {
                               <Button
                                 size="sm"
                                 variant="outline"
-                                className="h-8 border-blue-200 text-blue-600 hover:bg-blue-50 hover:text-blue-700"
+                                className={cn(
+                                  "h-8 border-blue-200 text-blue-600 hover:bg-blue-50 hover:text-blue-700",
+                                  !canStart && "opacity-50 cursor-not-allowed"
+                                )}
                                 onClick={() => handleStatusChange(milestone, "in-progress")}
+                                disabled={!canStart}
                               >
                                 {t('milestoneActions.start')}
                               </Button>
                             </TooltipTrigger>
                             <TooltipContent>
-                              <p>{t('milestones.markAsInProgress')}</p>
+                              {canStart 
+                                ? t('milestones.markAsInProgress')
+                                : t('milestones.cannotStart', 'Vorherige Meilensteine müssen zuerst abgeschlossen werden')}
                             </TooltipContent>
                           </Tooltip>
                         )}
@@ -165,14 +196,20 @@ export function MilestonesList({ tender }: MilestonesListProps) {
                               <Button
                                 size="sm"
                                 variant="outline"
-                                className="h-8 border-tender-200 text-tender-600 hover:bg-tender-50 hover:text-tender-700"
+                                className={cn(
+                                  "h-8 border-tender-200 text-tender-600 hover:bg-tender-50 hover:text-tender-700",
+                                  !canSkip && "opacity-50 cursor-not-allowed"
+                                )}
                                 onClick={() => handleStatusChange(milestone, "skipped")}
+                                disabled={!canSkip}
                               >
                                 {t('milestoneActions.skip')}
                               </Button>
                             </TooltipTrigger>
                             <TooltipContent>
-                              <p>{t('milestones.markAsSkipped')}</p>
+                              {canSkip 
+                                ? t('milestones.markAsSkipped')
+                                : t('milestones.cannotSkip', 'Vorherige Meilensteine müssen zuerst abgeschlossen oder übersprungen werden')}
                             </TooltipContent>
                           </Tooltip>
                         )}

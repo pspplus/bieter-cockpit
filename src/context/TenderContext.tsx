@@ -1,6 +1,6 @@
 
 import React, { createContext, useState, useEffect } from "react";
-import { Tender, Milestone } from "@/types/tender";
+import { Tender, Milestone, MilestoneStatus } from "@/types/tender";
 import { useAuth } from "@/context/AuthContext";
 import { 
   fetchTenders, 
@@ -23,6 +23,7 @@ type TenderContextType = {
   createMilestone: (tenderId: string, milestone: Partial<Milestone>) => Promise<void>;
   updateMilestone: (milestone: Milestone) => Promise<void>;
   deleteMilestone: (tenderId: string, milestoneId: string) => Promise<void>;
+  canUpdateMilestoneStatus: (milestone: Milestone, newStatus: MilestoneStatus) => boolean;
 };
 
 type TenderProviderProps = {
@@ -114,15 +115,64 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
     }
   };
 
+  // Helper function to check if a milestone can be updated to a new status
+  const canUpdateMilestoneStatus = (milestone: Milestone, newStatus: MilestoneStatus): boolean => {
+    // Always allow resetting to pending
+    if (newStatus === "pending") {
+      return true;
+    }
+    
+    // Find the tender this milestone belongs to
+    const tender = tenders.find(t => 
+      t.milestones.some(m => m.id === milestone.id)
+    );
+    
+    if (!tender) {
+      return false;
+    }
+    
+    // Sort milestones by sequence number
+    const sortedMilestones = [...tender.milestones].sort(
+      (a, b) => a.sequenceNumber - b.sequenceNumber
+    );
+    
+    // Find the index of this milestone
+    const currentIndex = sortedMilestones.findIndex(m => m.id === milestone.id);
+    
+    if (currentIndex === -1) {
+      return false;
+    }
+    
+    // For the first milestone, allow any status change
+    if (currentIndex === 0) {
+      return true;
+    }
+    
+    // For subsequent milestones, check if the previous milestone is completed
+    const previousMilestone = sortedMilestones[currentIndex - 1];
+    
+    // If we're trying to skip, only allow it if the previous milestone is completed or skipped
+    if (newStatus === "skipped") {
+      return ["completed", "skipped"].includes(previousMilestone.status);
+    }
+    
+    // For other status changes (in-progress, completed), require the previous milestone to be completed
+    return previousMilestone.status === "completed";
+  };
+
   const createMilestone = async (tenderId: string, milestone: Partial<Milestone>): Promise<void> => {
     try {
       const newMilestone = await createMilestoneService({ ...milestone, tenderId });
       
       setTenders(tenders.map(tender => {
         if (tender.id === tenderId) {
+          // Add the new milestone and sort by sequence number
+          const updatedMilestones = [...tender.milestones, newMilestone];
+          updatedMilestones.sort((a, b) => a.sequenceNumber - b.sequenceNumber);
+          
           return {
             ...tender,
-            milestones: [...tender.milestones, newMilestone as Milestone]
+            milestones: updatedMilestones
           };
         }
         return tender;
@@ -138,12 +188,29 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
 
   const updateMilestone = async (milestone: Milestone): Promise<void> => {
     try {
-      await updateMilestoneService(milestone.id, milestone);
+      // If we're trying to change the status, validate the transition is allowed
+      const existingMilestone = tenders
+        .flatMap(t => t.milestones)
+        .find(m => m.id === milestone.id);
+      
+      if (existingMilestone && existingMilestone.status !== milestone.status) {
+        const isAllowed = canUpdateMilestoneStatus(existingMilestone, milestone.status);
+        
+        if (!isAllowed) {
+          toast.error(t('errorMessages.invalidMilestoneTransition', 'Diese Statusänderung ist nicht erlaubt. Bitte vorherige Meilensteine abschließen.'));
+          throw new Error("Invalid milestone status transition");
+        }
+      }
+      
+      await updateMilestoneService(milestone);
       
       setTenders(tenders.map(tender => {
         const updatedMilestones = tender.milestones.map(m => 
           m.id === milestone.id ? milestone : m
         );
+        
+        // Sort by sequence number
+        updatedMilestones.sort((a, b) => a.sequenceNumber - b.sequenceNumber);
         
         return {
           ...tender,
@@ -154,7 +221,9 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
       toast.success(t('notifications.milestoneUpdated', 'Milestone updated'));
     } catch (error) {
       console.error("Error updating milestone:", error);
-      toast.error(t('errorMessages.couldNotUpdateMilestone', 'Could not update milestone'));
+      if (!(error instanceof Error && error.message === "Invalid milestone status transition")) {
+        toast.error(t('errorMessages.couldNotUpdateMilestone', 'Could not update milestone'));
+      }
       throw error;
     }
   };
@@ -190,7 +259,8 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
       deleteTender, 
       createMilestone, 
       updateMilestone, 
-      deleteMilestone 
+      deleteMilestone,
+      canUpdateMilestoneStatus
     }}>
       {children}
     </TenderContext.Provider>
