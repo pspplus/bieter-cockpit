@@ -20,7 +20,7 @@ type FilterOption = "all" | Tender["status"];
 
 export default function TendersPage() {
   const { t } = useTranslation();
-  const { tenders, createTender } = useTender();
+  const { tenders } = useTender();
   const [filterBy, setFilterBy] = useState<FilterOption>("all");
   const navigate = useNavigate();
   
@@ -44,13 +44,6 @@ export default function TendersPage() {
     (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
   );
   
-  const handleCreateTender = () => {
-    const newTender = createTender({
-      title: t('tenders.newTender')
-    });
-    navigate(`/tenders/${newTender.id}`);
-  };
-
   return (
     <Layout title={t('tenders.tenders')}>
       <div className="space-y-6">
@@ -73,7 +66,10 @@ export default function TendersPage() {
             </DropdownMenuContent>
           </DropdownMenu>
           
-          <Button onClick={handleCreateTender} className="w-full sm:w-auto sm:self-end flex items-center gap-1.5">
+          <Button 
+            onClick={() => navigate("/tenders/new")} 
+            className="w-full sm:w-auto sm:self-end flex items-center gap-1.5"
+          >
             <PlusCircle className="h-4 w-4" />
             {t('general.createNewTender')}
           </Button>
@@ -93,7 +89,9 @@ export default function TendersPage() {
                 ? t('general.noTendersCreated')
                 : t('general.noTendersWithStatus', { status: filterOptions.find(option => option.value === filterBy)?.label })}
             </p>
-            <Button onClick={handleCreateTender}>{t('general.createYourFirstTender')}</Button>
+            <Button onClick={() => navigate("/tenders/new")}>
+              {t('general.createYourFirstTender')}
+            </Button>
           </div>
         )}
       </div>

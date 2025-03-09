@@ -1,3 +1,4 @@
+
 {
   "general": {
     "appName": "TenderFlow",
@@ -51,7 +52,11 @@
     "backToTenders": "Back to Tenders",
     "editTender": "Edit Tender",
     "saveChanges": "Save Changes",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "createNewTender": "Create New Tender",
+    "fillTenderDetails": "Fill in the details for your new tender",
+    "createTender": "Create Tender",
+    "descriptionPlaceholder": "Enter a detailed description of the tender..."
   },
   "tender": {
     "title": "Title",

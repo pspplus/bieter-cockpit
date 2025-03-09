@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -19,6 +18,7 @@ import SubmissionsPage from "./pages/SubmissionsPage";
 import NotFound from "./pages/NotFound";
 import LoginPage from "./pages/LoginPage";
 import SignUpPage from "./pages/SignUpPage";
+import NewTenderPage from "./pages/NewTenderPage";
 import './i18n'; // Import i18n configuration
 
 const queryClient = new QueryClient();
@@ -40,6 +40,7 @@ const App = () => (
                     <Route path="/signup" element={<SignUpPage />} />
                     <Route path="/dashboard" element={<Dashboard />} />
                     <Route path="/tenders" element={<TendersPage />} />
+                    <Route path="/tenders/new" element={<NewTenderPage />} />
                     <Route path="/tenders/:id" element={<TenderDetailPage />} />
                     <Route path="/submissions" element={<SubmissionsPage />} />
                     <Route path="/clients" element={<ClientsPage />} />

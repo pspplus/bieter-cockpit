@@ -1,4 +1,3 @@
-
 import { cn } from "@/lib/utils";
 import { Bell, ChevronDown, Menu, PlusCircle, Search, Smile } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -28,16 +27,8 @@ interface HeaderProps {
 export function Header({ toggleSidebar, title = "Tender Management" }: HeaderProps) {
   const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState("");
-  const { createTender } = useTender();
   const navigate = useNavigate();
   const { user, isAuthenticated, logout } = useAuth();
-
-  const handleCreateTender = () => {
-    const newTender = createTender({
-      title: t('tenders.newTender')
-    });
-    navigate(`/tenders/${newTender.id}`);
-  };
 
   return (
     <header className="sticky top-0 z-30 w-full border-b border-tender-100 dark:border-tender-800 bg-white/80 dark:bg-tender-950/80 backdrop-blur-md">
@@ -74,7 +65,7 @@ export function Header({ toggleSidebar, title = "Tender Management" }: HeaderPro
           {isAuthenticated ? (
             <>
               <Button 
-                onClick={handleCreateTender}
+                onClick={() => navigate("/tenders/new")}
                 className="hidden md:flex items-center gap-1.5 rounded-full"
               >
                 <PlusCircle className="h-4 w-4" />
