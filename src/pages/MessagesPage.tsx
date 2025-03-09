@@ -33,40 +33,31 @@ const MessagesPage = () => {
   return (
     <Layout>
       <div className="container mx-auto py-6">
-        <div className="space-y-6">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">{t("navigation.activityLog")}</h1>
-            <p className="text-muted-foreground">
-              Alle Änderungen und Aktivitäten zu Ihren Ausschreibungen
-            </p>
-          </div>
-
-          <Card className="overflow-hidden">
-            <CardHeader className="bg-muted/50">
-              <CardTitle>Aktivitätsprotokoll</CardTitle>
-              <CardDescription>
-                Chronologische Aufzeichnung aller Änderungen an Ausschreibungen
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="p-0">
-              <ScrollArea className="h-[calc(100vh-300px)]">
-                {loading ? (
-                  <div className="p-4 space-y-4">
-                    {Array(5).fill(0).map((_, index) => (
-                      <div key={index} className="space-y-2">
-                        <Skeleton className="h-4 w-1/3" />
-                        <Skeleton className="h-4 w-1/2" />
-                        <Skeleton className="h-4 w-2/3" />
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <ActivityLogList logs={activityLogs} />
-                )}
-              </ScrollArea>
-            </CardContent>
-          </Card>
-        </div>
+        <Card className="overflow-hidden">
+          <CardHeader className="bg-muted/50">
+            <CardTitle>Aktivitätsprotokoll</CardTitle>
+            <CardDescription>
+              Chronologische Aufzeichnung aller Änderungen an Ausschreibungen
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="p-0">
+            <ScrollArea className="h-[calc(100vh-300px)]">
+              {loading ? (
+                <div className="p-4 space-y-4">
+                  {Array(5).fill(0).map((_, index) => (
+                    <div key={index} className="space-y-2">
+                      <Skeleton className="h-4 w-1/3" />
+                      <Skeleton className="h-4 w-1/2" />
+                      <Skeleton className="h-4 w-2/3" />
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <ActivityLogList logs={activityLogs} />
+              )}
+            </ScrollArea>
+          </CardContent>
+        </Card>
       </div>
     </Layout>
   );
