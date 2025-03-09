@@ -14,11 +14,13 @@ import { useTender } from "@/hooks/useTender";
 import { ChevronDown, PlusCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Tender } from "@/types/tender";
+import { useTranslation } from "react-i18next";
 import { Skeleton } from "@/components/ui/skeleton";
 
 type FilterOption = "all" | Tender["status"];
 
 export default function TendersPage() {
+  const { t } = useTranslation();
   const { tenders, isLoading } = useTender();
   const [filterBy, setFilterBy] = useState<FilterOption>("all");
   const navigate = useNavigate();
@@ -39,7 +41,7 @@ export default function TendersPage() {
     ? tenders 
     : tenders.filter(tender => tender.status === filterBy);
   
-  // Nach Aktualisierungsdatum sortieren (neueste zuerst)
+  // Sort tenders by updated date (most recent first)
   const sortedTenders = [...filteredTenders].sort(
     (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
   );

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { FolderTree } from './FolderTree';
 import { Folder, TenderDocument } from '@/types/tender';
@@ -5,7 +6,7 @@ import { fetchFolders } from '@/services/folderService';
 import { fetchFolderDocuments, fetchTenderDocuments } from '@/services/documentService';
 import { Separator } from '@/components/ui/separator';
 import { useTranslation } from 'react-i18next';
-import { DocumentListAdapter } from '@/components/document/DocumentListAdapter';
+import { DocumentList } from '@/components/document/DocumentList';
 import { Upload, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -29,12 +30,15 @@ export function FolderExplorer({ tenderId, onUploadClick, readOnly = false }: Fo
         const folderData = await fetchFolders(tenderId);
         setFolders(folderData);
         
+        // Set the first root folder as selected by default if available
         if (folderData.length > 0 && !selectedFolder) {
           setSelectedFolder(folderData[0]);
         }
         
+        // Load documents for each folder
         const allDocs = await fetchTenderDocuments(tenderId);
         
+        // Group documents by folder
         const docsByFolder: Record<string, TenderDocument[]> = {};
         allDocs.forEach(doc => {
           if (doc.folderId) {
@@ -64,13 +68,16 @@ export function FolderExplorer({ tenderId, onUploadClick, readOnly = false }: Fo
   };
 
   const handleFolderCreate = (newFolder: Folder) => {
+    // Update folders after creation
     setFolders(prevFolders => {
       const updatedFolders = [...prevFolders];
       
+      // If it's a root folder
       if (!newFolder.parentId) {
         return [...updatedFolders, newFolder];
       }
       
+      // If it's a child folder, find its parent and add it to children
       const updateFolderRecursive = (folders: Folder[]): Folder[] => {
         return folders.map(folder => {
           if (folder.id === newFolder.parentId) {
@@ -93,13 +100,16 @@ export function FolderExplorer({ tenderId, onUploadClick, readOnly = false }: Fo
   };
 
   const handleFolderDelete = (folderId: string) => {
+    // Remove the folder from the list
     setFolders(prevFolders => {
+      // For root folders
       const filteredRootFolders = prevFolders.filter(f => f.id !== folderId);
       
       if (filteredRootFolders.length !== prevFolders.length) {
         return filteredRootFolders;
       }
       
+      // For nested folders
       const removeFolderRecursive = (folders: Folder[]): Folder[] => {
         return folders.map(folder => {
           if (folder.children && folder.children.length > 0) {
@@ -123,6 +133,7 @@ export function FolderExplorer({ tenderId, onUploadClick, readOnly = false }: Fo
       return removeFolderRecursive(prevFolders);
     });
     
+    // If selected folder was deleted, select the first available folder
     if (selectedFolder && selectedFolder.id === folderId) {
       if (folders.length > 0) {
         setSelectedFolder(folders[0]);
@@ -133,9 +144,11 @@ export function FolderExplorer({ tenderId, onUploadClick, readOnly = false }: Fo
   };
 
   const handleDocumentDelete = (documentId: string) => {
+    // Remove the document from the list
     setDocuments(prevDocuments => {
       const updatedDocuments = { ...prevDocuments };
       
+      // Find which folder contains the document
       Object.keys(updatedDocuments).forEach(folderId => {
         updatedDocuments[folderId] = updatedDocuments[folderId].filter(
           doc => doc.id !== documentId
@@ -196,7 +209,7 @@ export function FolderExplorer({ tenderId, onUploadClick, readOnly = false }: Fo
         
         {selectedFolder ? (
           documents[selectedFolder.id] && documents[selectedFolder.id].length > 0 ? (
-            <DocumentListAdapter 
+            <DocumentList 
               documents={documents[selectedFolder.id] || []} 
               onDelete={handleDocumentDelete}
               readOnly={readOnly}

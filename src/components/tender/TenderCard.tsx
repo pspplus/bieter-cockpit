@@ -5,6 +5,7 @@ import { Calendar, Clock, User, MapPin, FileText } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
+import { useTranslation } from "react-i18next";
 
 interface TenderCardProps {
   tender: Tender;
@@ -20,17 +21,18 @@ const statusColors: Record<string, { bg: string; text: string }> = {
   "gewonnen": { bg: "bg-green-100", text: "text-green-600" },
   "verloren": { bg: "bg-red-100", text: "text-red-600" },
   "abgeschlossen": { bg: "bg-teal-100", text: "text-teal-600" },
-  // Fallback für unbekannte Status
+  // Fallback for any potential unknown statuses
   "default": { bg: "bg-gray-100", text: "text-gray-600" }
 };
 
 export function TenderCard({ tender, isActive = false }: TenderCardProps) {
+  const { t } = useTranslation();
   const { id, title, internalReference, externalReference, client, status, dueDate, location } = tender;
   
   const statusColor = statusColors[status] || statusColors.default;
-  const dueDateFormatted = format(new Date(dueDate), "dd.MM.yyyy");
+  const dueDateFormatted = format(new Date(dueDate), "MMM d, yyyy");
   
-  // Fortschritt berechnen
+  // Calculate progress
   const completedMilestones = tender.milestones.filter(
     (m) => m.status === "completed"
   ).length;
@@ -39,10 +41,10 @@ export function TenderCard({ tender, isActive = false }: TenderCardProps) {
     ? Math.round((completedMilestones / totalMilestones) * 100) 
     : 0;
 
-  // Interne Referenz für Anzeige verwenden, Fallback auf externe wenn nötig
+  // Use internal reference for display, fallback to external if needed
   const displayReference = internalReference || externalReference;
 
-  // Funktion zur Formatierung des Status-Textes
+  // Function to format the status text
   const formatStatusText = (status: string): string => {
     const statusMap: Record<string, string> = {
       "entwurf": "Entwurf",

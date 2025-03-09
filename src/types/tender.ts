@@ -1,75 +1,79 @@
 
 export type TenderStatus = 
-  | "entwurf" 
-  | "in-pruefung" 
-  | "in-bearbeitung" 
-  | "abgegeben" 
-  | "aufklaerung" 
-  | "gewonnen" 
-  | "verloren" 
-  | "abgeschlossen"
-  | "active"      // Kompatibilitätsalias für "in-bearbeitung"
-  | "draft"       // Kompatibilitätsalias für "entwurf"
-  | "submitted"   // Kompatibilitätsalias für "abgegeben"
-  | "clarification" // Kompatibilitätsalias für "aufklaerung"
-  | "won"         // Kompatibilitätsalias für "gewonnen"
-  | "lost";       // Kompatibilitätsalias für "verloren"
+  | 'entwurf'
+  | 'in-pruefung'
+  | 'in-bearbeitung'
+  | 'abgegeben'
+  | 'aufklaerung'
+  | 'gewonnen'
+  | 'verloren'
+  | 'abgeschlossen';
 
-export type MilestoneStatus = "completed" | "pending" | "in-progress";
+export type MilestoneStatus = 
+  | 'pending'
+  | 'in-progress'
+  | 'completed'
+  | 'skipped';
+
+export interface Folder {
+  id: string;
+  name: string;
+  parentId: string | null;
+  tenderId: string;
+  folderOrder: number;
+  folderPath?: string;
+  isDefault: boolean;
+  children?: Folder[];
+}
 
 export interface Milestone {
   id: string;
-  sequenceNumber: number;
   title: string;
   description: string;
   status: MilestoneStatus;
-  dueDate: Date | null;
-  completionDate: Date | null;
+  sequenceNumber: number;
+  dueDate?: Date | null;
+  completionDate?: Date | null;
   notes?: string;
+  documents?: TenderDocument[];
+  tenderId?: string;
 }
 
 export interface TenderDocument {
   id: string;
-  tenderId: string;
-  folderId: string;
-  fileName: string;
-  fileSize: number;
-  mimeType: string;
-  url: string;
-  uploadDate: Date;
-  tags?: string[];
-  description?: string;
-}
-
-export interface Folder {
-  id: string;
-  tenderId: string;
   name: string;
-  parentId: string | null;
-  folderOrder: number;
-  isDefault: boolean;
-  children?: Folder[];
+  description?: string;
+  uploadDate: Date;
+  fileUrl: string;
+  fileType: string;
+  fileSize?: number;
+  folderId?: string | null;
+  folderPath?: string;
+  tenderId?: string | null;
+  milestoneId?: string | null;
 }
 
 export interface Tender {
   id: string;
   title: string;
-  description: string;
-  internalReference: string;
   externalReference: string;
+  internalReference: string;
   client: string;
   status: TenderStatus;
   createdAt: Date;
   updatedAt: Date;
   dueDate: Date;
-  submissionMethod: string;
-  estimatedValue: number | null;
-  contactPerson: string;
-  contactEmail: string;
-  contactPhone: string;
-  location: string;
-  notes: string;
+  budget?: number;
+  description?: string;
+  location?: string;
+  contactPerson?: string;
+  contactEmail?: string;
+  contactPhone?: string;
   milestones: Milestone[];
   documents?: TenderDocument[];
   folders?: Folder[];
+  notes?: string;
+  bindingPeriodDate?: Date | null;
+  evaluationScheme?: string;
+  conceptRequired?: boolean;
 }
