@@ -14,14 +14,14 @@ interface TenderDetailsProps {
 }
 
 const statusColors: Record<Tender["status"], { bg: string; text: string }> = {
-  draft: { bg: "bg-tender-100", text: "text-tender-600" },
-  active: { bg: "bg-blue-100", text: "text-blue-600" },
-  review: { bg: "bg-amber-100", text: "text-amber-600" },
-  submitted: { bg: "bg-indigo-100", text: "text-indigo-600" },
-  clarification: { bg: "bg-purple-100", text: "text-purple-600" },
-  won: { bg: "bg-green-100", text: "text-green-600" },
-  lost: { bg: "bg-red-100", text: "text-red-600" },
-  completed: { bg: "bg-teal-100", text: "text-teal-600" },
+  "entwurf": { bg: "bg-tender-100", text: "text-tender-600" },
+  "in-pruefung": { bg: "bg-amber-100", text: "text-amber-600" },
+  "in-bearbeitung": { bg: "bg-blue-100", text: "text-blue-600" },
+  "abgegeben": { bg: "bg-indigo-100", text: "text-indigo-600" },
+  "aufklaerung": { bg: "bg-purple-100", text: "text-purple-600" },
+  "gewonnen": { bg: "bg-green-100", text: "text-green-600" },
+  "verloren": { bg: "bg-red-100", text: "text-red-600" },
+  "abgeschlossen": { bg: "bg-teal-100", text: "text-teal-600" },
 };
 
 export function TenderDetails({ tender }: TenderDetailsProps) {
@@ -65,6 +65,22 @@ export function TenderDetails({ tender }: TenderDetailsProps) {
   const displayReference = tender.internalReference;
   const externalReferenceDisplay = tender.externalReference ? `${t('tender.externalReference')}: ${tender.externalReference}` : '';
 
+  // Funktion zum Formatieren des Status-Texts
+  const formatStatusText = (status: TenderStatus): string => {
+    const statusMap: Record<TenderStatus, string> = {
+      "entwurf": t('tenders.drafts', 'Entwurf'),
+      "in-pruefung": t('tenders.review', 'In Prüfung'),
+      "in-bearbeitung": t('tenders.active', 'In Bearbeitung'),
+      "abgegeben": t('tenders.submitted', 'Abgegeben'),
+      "aufklaerung": t('tenders.inClarification', 'Aufklärung'),
+      "gewonnen": t('tenders.won', 'Gewonnen'),
+      "verloren": t('tenders.lost', 'Verloren'),
+      "abgeschlossen": t('tenders.completed', 'Abgeschlossen')
+    };
+    
+    return statusMap[status] || status.charAt(0).toUpperCase() + status.slice(1);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
@@ -72,7 +88,7 @@ export function TenderDetails({ tender }: TenderDetailsProps) {
           <div className="flex items-center gap-3">
             <h1 className="text-2xl font-semibold tracking-tight">{tender.title}</h1>
             <Badge className={cn(statusColor.bg, statusColor.text)}>
-              {tender.status.charAt(0).toUpperCase() + tender.status.slice(1)}
+              {formatStatusText(tender.status)}
             </Badge>
           </div>
           <p className="text-tender-500 mt-1">{displayReference}</p>

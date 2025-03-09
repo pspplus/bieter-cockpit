@@ -215,7 +215,7 @@ export const createTender = async (tenderData: Partial<Tender>): Promise<Tender>
     external_reference: tenderData.externalReference || "",
     internal_reference: internalReference,
     client: tenderData.client || "",
-    status: tenderData.status || "draft",
+    status: tenderData.status || "entwurf",
     due_date: formattedDueDate,
     binding_period_date: formattedBindingPeriodDate,
     budget: tenderData.budget || null,
@@ -432,3 +432,4 @@ export const deleteMilestone = async (id: string): Promise<void> => {
     throw error;
   }
 };
+

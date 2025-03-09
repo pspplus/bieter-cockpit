@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Tender } from "@/types/tender";
 import { Input } from "@/components/ui/input";
@@ -185,14 +184,14 @@ export function TenderEditForm({ tender, onCancel }: TenderEditFormProps) {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="draft">{t('tenders.drafts')}</SelectItem>
-                  <SelectItem value="active">{t('tenders.active')}</SelectItem>
-                  <SelectItem value="review">{t('tenders.review')}</SelectItem>
-                  <SelectItem value="submitted">{t('tenders.submitted')}</SelectItem>
-                  <SelectItem value="clarification">{t('tenders.inClarification')}</SelectItem>
-                  <SelectItem value="won">{t('tenders.won')}</SelectItem>
-                  <SelectItem value="lost">{t('tenders.lost')}</SelectItem>
-                  <SelectItem value="completed">{t('tenders.completed')}</SelectItem>
+                  <SelectItem value="entwurf">{t('tenders.drafts', 'Entwurf')}</SelectItem>
+                  <SelectItem value="in-pruefung">{t('tenders.review', 'In Prüfung')}</SelectItem>
+                  <SelectItem value="in-bearbeitung">{t('tenders.active', 'In Bearbeitung')}</SelectItem>
+                  <SelectItem value="abgegeben">{t('tenders.submitted', 'Abgegeben')}</SelectItem>
+                  <SelectItem value="aufklaerung">{t('tenders.inClarification', 'Aufklärung')}</SelectItem>
+                  <SelectItem value="gewonnen">{t('tenders.won', 'Gewonnen')}</SelectItem>
+                  <SelectItem value="verloren">{t('tenders.lost', 'Verloren')}</SelectItem>
+                  <SelectItem value="abgeschlossen">{t('tenders.completed', 'Abgeschlossen')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>

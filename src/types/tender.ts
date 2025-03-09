@@ -1,13 +1,13 @@
 
 export type TenderStatus = 
-  | 'draft'
-  | 'active'
-  | 'review'
-  | 'submitted'
-  | 'clarification'
-  | 'won'
-  | 'lost'
-  | 'completed';
+  | 'entwurf'
+  | 'in-pruefung'
+  | 'in-bearbeitung'
+  | 'abgegeben'
+  | 'aufklaerung'
+  | 'gewonnen'
+  | 'verloren'
+  | 'abgeschlossen';
 
 export type MilestoneStatus = 
   | 'pending'

@@ -27,13 +27,14 @@ export default function TendersPage() {
   
   const filterOptions: { value: FilterOption; label: string }[] = [
     { value: "all", label: t('tenders.allTenders') },
-    { value: "draft", label: t('tenders.drafts') },
-    { value: "active", label: t('tenders.active') },
-    { value: "submitted", label: t('tenders.submitted') },
-    { value: "clarification", label: t('tenders.inClarification') },
-    { value: "won", label: t('tenders.won') },
-    { value: "lost", label: t('tenders.lost') },
-    { value: "completed", label: t('tenders.completed') },
+    { value: "entwurf", label: t('tenders.drafts', 'Entwurf') },
+    { value: "in-pruefung", label: t('tenders.review', 'In Prüfung') },
+    { value: "in-bearbeitung", label: t('tenders.active', 'In Bearbeitung') },
+    { value: "abgegeben", label: t('tenders.submitted', 'Abgegeben') },
+    { value: "aufklaerung", label: t('tenders.inClarification', 'Aufklärung') },
+    { value: "gewonnen", label: t('tenders.won', 'Gewonnen') },
+    { value: "verloren", label: t('tenders.lost', 'Verloren') },
+    { value: "abgeschlossen", label: t('tenders.completed', 'Abgeschlossen') },
   ];
   
   const filteredTenders = filterBy === "all" 
