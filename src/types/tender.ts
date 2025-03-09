@@ -73,4 +73,7 @@ export interface Tender {
   documents?: TenderDocument[];
   folders?: Folder[];
   notes?: string;
+  bindingPeriodDate?: Date | null;
+  evaluationScheme?: string;
+  conceptRequired?: boolean;
 }

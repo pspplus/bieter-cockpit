@@ -22,6 +22,9 @@ const mapTenderFromDB = (tender: any, milestones: any[] = []): Tender => {
     contactEmail: tender.contact_email || "",
     contactPhone: tender.contact_phone || "",
     notes: tender.notes || "",
+    bindingPeriodDate: tender.binding_period_date ? new Date(tender.binding_period_date) : null,
+    evaluationScheme: tender.evaluation_scheme || "",
+    conceptRequired: tender.concept_required || false,
     milestones: milestones.map(mapMilestoneFromDB),
   };
 };
@@ -201,6 +204,10 @@ export const createTender = async (tenderData: Partial<Tender>): Promise<Tender>
   const formattedDueDate = tenderData.dueDate 
     ? format(new Date(tenderData.dueDate), "yyyy-MM-dd'T'HH:mm:ss'Z'")
     : format(new Date(), "yyyy-MM-dd'T'HH:mm:ss'Z'");
+    
+  const formattedBindingPeriodDate = tenderData.bindingPeriodDate 
+    ? format(new Date(tenderData.bindingPeriodDate), "yyyy-MM-dd'T'HH:mm:ss'Z'")
+    : null;
 
   // Prepare the tender data for insertion
   const dbTender = {
@@ -210,6 +217,7 @@ export const createTender = async (tenderData: Partial<Tender>): Promise<Tender>
     client: tenderData.client || "",
     status: tenderData.status || "draft",
     due_date: formattedDueDate,
+    binding_period_date: formattedBindingPeriodDate,
     budget: tenderData.budget || null,
     description: tenderData.description || "",
     location: tenderData.location || "",
@@ -217,6 +225,8 @@ export const createTender = async (tenderData: Partial<Tender>): Promise<Tender>
     contact_email: tenderData.contactEmail || "",
     contact_phone: tenderData.contactPhone || "",
     notes: tenderData.notes || "",
+    evaluation_scheme: tenderData.evaluationScheme || "",
+    concept_required: tenderData.conceptRequired || false,
     user_id: user.id
   };
 
@@ -262,6 +272,10 @@ export const updateTender = async (id: string, updates: Partial<Tender>): Promis
   const formattedDueDate = updates.dueDate 
     ? format(new Date(updates.dueDate), "yyyy-MM-dd'T'HH:mm:ss'Z'")
     : undefined;
+    
+  const formattedBindingPeriodDate = updates.bindingPeriodDate 
+    ? format(new Date(updates.bindingPeriodDate), "yyyy-MM-dd'T'HH:mm:ss'Z'")
+    : undefined;
 
   // Convert the updates to the DB format
   const dbUpdates = {
@@ -270,6 +284,7 @@ export const updateTender = async (id: string, updates: Partial<Tender>): Promis
     ...(updates.client !== undefined && { client: updates.client }),
     ...(updates.status !== undefined && { status: updates.status }),
     ...(formattedDueDate && { due_date: formattedDueDate }),
+    ...(formattedBindingPeriodDate !== undefined && { binding_period_date: formattedBindingPeriodDate }),
     ...(updates.budget !== undefined && { budget: updates.budget }),
     ...(updates.description !== undefined && { description: updates.description }),
     ...(updates.location !== undefined && { location: updates.location }),
@@ -277,6 +292,8 @@ export const updateTender = async (id: string, updates: Partial<Tender>): Promis
     ...(updates.contactEmail !== undefined && { contact_email: updates.contactEmail }),
     ...(updates.contactPhone !== undefined && { contact_phone: updates.contactPhone }),
     ...(updates.notes !== undefined && { notes: updates.notes }),
+    ...(updates.evaluationScheme !== undefined && { evaluation_scheme: updates.evaluationScheme }),
+    ...(updates.conceptRequired !== undefined && { concept_required: updates.conceptRequired }),
     updated_at: new Date().toISOString()
   };
 

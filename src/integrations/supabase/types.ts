@@ -215,14 +215,17 @@ export type Database = {
       }
       tenders: {
         Row: {
+          binding_period_date: string | null
           budget: number | null
           client: string | null
+          concept_required: boolean | null
           contact_email: string | null
           contact_person: string | null
           contact_phone: string | null
           created_at: string
           description: string | null
           due_date: string
+          evaluation_scheme: string | null
           external_reference: string | null
           id: string
           internal_reference: string
@@ -234,14 +237,17 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          binding_period_date?: string | null
           budget?: number | null
           client?: string | null
+          concept_required?: boolean | null
           contact_email?: string | null
           contact_person?: string | null
           contact_phone?: string | null
           created_at?: string
           description?: string | null
           due_date: string
+          evaluation_scheme?: string | null
           external_reference?: string | null
           id?: string
           internal_reference: string
@@ -253,14 +259,17 @@ export type Database = {
           user_id: string
         }
         Update: {
+          binding_period_date?: string | null
           budget?: number | null
           client?: string | null
+          concept_required?: boolean | null
           contact_email?: string | null
           contact_person?: string | null
           contact_phone?: string | null
           created_at?: string
           description?: string | null
           due_date?: string
+          evaluation_scheme?: string | null
           external_reference?: string | null
           id?: string
           internal_reference?: string

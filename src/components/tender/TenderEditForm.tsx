@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Tender } from "@/types/tender";
 import { Input } from "@/components/ui/input";
@@ -29,6 +30,8 @@ import {
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 
 interface TenderEditFormProps {
   tender: Tender;
@@ -46,15 +49,19 @@ export function TenderEditForm({ tender, onCancel }: TenderEditFormProps) {
     client: tender.client || "",
     status: tender.status,
     dueDate: new Date(tender.dueDate),
+    bindingPeriodDate: tender.bindingPeriodDate ? new Date(tender.bindingPeriodDate) : null,
     description: tender.description || "",
     location: tender.location || "",
     budget: tender.budget ? tender.budget.toString() : "",
     contactPerson: tender.contactPerson || "",
     contactEmail: tender.contactEmail || "",
     contactPhone: tender.contactPhone || "",
+    evaluationScheme: tender.evaluationScheme || "",
+    conceptRequired: tender.conceptRequired || false,
   });
   
   const [dateOpen, setDateOpen] = useState(false);
+  const [bindingPeriodDateOpen, setBindingPeriodDateOpen] = useState(false);
   
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -65,10 +72,24 @@ export function TenderEditForm({ tender, onCancel }: TenderEditFormProps) {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
   
+  const handleBooleanChange = (name: string, value: boolean) => {
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+  
   const handleDateChange = (date: Date | undefined) => {
     if (date) {
       setFormData(prev => ({ ...prev, dueDate: date }));
       setDateOpen(false);
+    }
+  };
+  
+  const handleBindingPeriodDateChange = (date: Date | undefined) => {
+    if (date) {
+      setFormData(prev => ({ ...prev, bindingPeriodDate: date }));
+      setBindingPeriodDateOpen(false);
+    } else {
+      setFormData(prev => ({ ...prev, bindingPeriodDate: null }));
+      setBindingPeriodDateOpen(false);
     }
   };
   
@@ -81,12 +102,15 @@ export function TenderEditForm({ tender, onCancel }: TenderEditFormProps) {
       client: formData.client,
       status: formData.status as Tender["status"],
       dueDate: formData.dueDate,
+      bindingPeriodDate: formData.bindingPeriodDate,
       description: formData.description,
       location: formData.location,
       budget: formData.budget ? parseFloat(formData.budget) : undefined,
       contactPerson: formData.contactPerson,
       contactEmail: formData.contactEmail,
       contactPhone: formData.contactPhone,
+      evaluationScheme: formData.evaluationScheme,
+      conceptRequired: formData.conceptRequired,
     };
     
     updateTender(tender.id, updates);
@@ -204,6 +228,36 @@ export function TenderEditForm({ tender, onCancel }: TenderEditFormProps) {
             </div>
             
             <div className="space-y-2">
+              <label htmlFor="bindingPeriodDate" className="text-sm font-medium">
+                {t('tender.bindingPeriodDate', 'Bindefrist')}
+              </label>
+              <Popover open={bindingPeriodDateOpen} onOpenChange={setBindingPeriodDateOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "w-full justify-start text-left font-normal",
+                      !formData.bindingPeriodDate && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {formData.bindingPeriodDate ? format(formData.bindingPeriodDate, "PPP") : <span>{t('tender.selectDate', 'Datum auswählen')}</span>}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0">
+                  <Calendar
+                    mode="single"
+                    selected={formData.bindingPeriodDate || undefined}
+                    onSelect={handleBindingPeriodDateChange}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+          </div>
+          
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-2">
               <label htmlFor="location" className="text-sm font-medium">
                 {t('tender.location')}
               </label>
@@ -214,20 +268,20 @@ export function TenderEditForm({ tender, onCancel }: TenderEditFormProps) {
                 onChange={handleChange}
               />
             </div>
-          </div>
-          
-          <div className="space-y-2">
-            <label htmlFor="budget" className="text-sm font-medium">
-              {t('tender.budget')}
-            </label>
-            <Input
-              id="budget"
-              name="budget"
-              type="number"
-              value={formData.budget}
-              onChange={handleChange}
-              placeholder="0"
-            />
+            
+            <div className="space-y-2">
+              <label htmlFor="budget" className="text-sm font-medium">
+                {t('tender.budget')}
+              </label>
+              <Input
+                id="budget"
+                name="budget"
+                type="number"
+                value={formData.budget}
+                onChange={handleChange}
+                placeholder="0"
+              />
+            </div>
           </div>
           
           <div className="space-y-2">
@@ -241,6 +295,31 @@ export function TenderEditForm({ tender, onCancel }: TenderEditFormProps) {
               onChange={handleChange}
               rows={4}
             />
+          </div>
+          
+          <div className="space-y-2">
+            <label htmlFor="evaluationScheme" className="text-sm font-medium">
+              {t('tender.evaluationScheme', 'Wertungsschema')}
+            </label>
+            <Textarea
+              id="evaluationScheme"
+              name="evaluationScheme"
+              value={formData.evaluationScheme}
+              onChange={handleChange}
+              rows={3}
+              placeholder={t('tender.evaluationSchemePlaceholder', 'Details zum Wertungsschema eintragen')}
+            />
+          </div>
+          
+          <div className="flex items-center space-x-2">
+            <Switch
+              id="conceptRequired"
+              checked={formData.conceptRequired}
+              onCheckedChange={(checked) => handleBooleanChange("conceptRequired", checked)}
+            />
+            <Label htmlFor="conceptRequired" className="cursor-pointer">
+              {t('tender.conceptRequired', 'Konzept erforderlich')}
+            </Label>
           </div>
         </div>
         

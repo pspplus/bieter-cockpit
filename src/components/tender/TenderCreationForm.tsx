@@ -17,7 +17,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { PlusCircle } from "lucide-react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { format } from "date-fns";
+import { CalendarIcon, PlusCircle } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Switch } from "@/components/ui/switch";
 import { Client } from "@/types/client";
 import { NewClientDialog } from "@/components/client/NewClientDialog";
 import { getDefaultMilestones } from "@/data/defaultMilestones";
@@ -38,9 +47,13 @@ export function TenderCreationForm() {
     contactPerson: "",
     contactEmail: "",
     contactPhone: "",
+    bindingPeriodDate: null as Date | null,
+    evaluationScheme: "",
+    conceptRequired: false
   });
 
   const [isNewClientDialogOpen, setIsNewClientDialogOpen] = useState(false);
+  const [bindingPeriodDateOpen, setBindingPeriodDateOpen] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -49,6 +62,15 @@ export function TenderCreationForm() {
 
   const handleSelectChange = (name: string, value: string) => {
     setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleBooleanChange = (name: string, value: boolean) => {
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleBindingPeriodDateChange = (date: Date | undefined) => {
+    setFormData(prev => ({ ...prev, bindingPeriodDate: date || null }));
+    setBindingPeriodDateOpen(false);
   };
 
   const handleClientCreated = (client: Client) => {
@@ -77,6 +99,9 @@ export function TenderCreationForm() {
         contactPerson: formData.contactPerson,
         contactEmail: formData.contactEmail,
         contactPhone: formData.contactPhone,
+        bindingPeriodDate: formData.bindingPeriodDate,
+        evaluationScheme: formData.evaluationScheme,
+        conceptRequired: formData.conceptRequired,
         milestones: defaultMilestones
       } as Partial<Tender>);
 
@@ -187,6 +212,57 @@ export function TenderCreationForm() {
                   onChange={handleChange} 
                 />
               </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="bindingPeriodDate">{t('tender.bindingPeriodDate', 'Bindefrist')}</Label>
+              <Popover open={bindingPeriodDateOpen} onOpenChange={setBindingPeriodDateOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    id="bindingPeriodDate"
+                    variant="outline"
+                    className={cn(
+                      "w-full justify-start text-left font-normal",
+                      !formData.bindingPeriodDate && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {formData.bindingPeriodDate ? format(formData.bindingPeriodDate, "PPP") : <span>{t('tender.selectDate', 'Datum auswählen')}</span>}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0">
+                  <Calendar
+                    mode="single"
+                    selected={formData.bindingPeriodDate || undefined}
+                    onSelect={handleBindingPeriodDateChange}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
+              <p className="text-sm text-muted-foreground">{t('tender.bindingPeriodDateHelp', 'Die Bindefrist gibt an, wie lange wir an unser Angebot gebunden sind')}</p>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="evaluationScheme">{t('tender.evaluationScheme', 'Wertungsschema')}</Label>
+              <Textarea 
+                id="evaluationScheme" 
+                name="evaluationScheme" 
+                value={formData.evaluationScheme} 
+                onChange={handleChange} 
+                placeholder={t('tender.evaluationSchemePlaceholder', 'Details zum Wertungsschema eintragen')}
+                rows={3}
+              />
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <Switch
+                id="conceptRequired"
+                checked={formData.conceptRequired}
+                onCheckedChange={(checked) => handleBooleanChange("conceptRequired", checked)}
+              />
+              <Label htmlFor="conceptRequired" className="cursor-pointer">
+                {t('tender.conceptRequired', 'Konzept erforderlich')}
+              </Label>
             </div>
 
             <div className="space-y-2">
