@@ -1,3 +1,4 @@
+
 import { Tender, Milestone, MilestoneStatus } from "@/types/tender";
 import { cn } from "@/lib/utils";
 import { CheckCircle, Circle, Clock, XCircle } from "lucide-react";
@@ -63,6 +64,7 @@ export function MilestonesList({ tender }: MilestonesListProps) {
     const updatedMilestone = {
       ...milestone,
       status: newStatus,
+      // Only set completionDate when completing a milestone
       completionDate: newStatus === "completed" ? new Date() : milestone.completionDate
     };
     updateMilestone(updatedMilestone);
@@ -107,7 +109,7 @@ export function MilestonesList({ tender }: MilestonesListProps) {
                     <div className="flex justify-between items-start">
                       <div className="flex items-center gap-2">
                         <span className="text-xs rounded-full bg-tender-100 text-tender-600 px-2 py-0.5">
-                          {(milestone.sequenceNumber || 0)}
+                          {milestone.sequenceNumber || 0}
                         </span>
                         <h4 className="font-medium text-base">{milestone.title}</h4>
                         {isActive && (

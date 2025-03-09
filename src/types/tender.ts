@@ -21,8 +21,8 @@ export interface Milestone {
   description: string;
   status: MilestoneStatus;
   sequenceNumber: number;
-  dueDate: Date | null;
-  completionDate: Date | null;
+  dueDate?: Date | null;
+  completionDate?: Date | null;
   notes?: string;
   documents?: TenderDocument[];
   tenderId?: string;

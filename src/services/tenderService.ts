@@ -32,7 +32,7 @@ const mapMilestoneFromDB = (milestone: any): Milestone => {
     title: milestone.title,
     description: milestone.description || "",
     status: milestone.status,
-    sequenceNumber: milestone.sequence_number,
+    sequenceNumber: milestone.sequence_number || 0,
     dueDate: milestone.due_date ? new Date(milestone.due_date) : null,
     completionDate: milestone.completion_date ? new Date(milestone.completion_date) : null,
     notes: milestone.notes || "",
