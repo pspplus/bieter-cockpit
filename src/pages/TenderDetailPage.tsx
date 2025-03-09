@@ -7,15 +7,18 @@ import { Layout } from "@/components/layout/Layout";
 import { TenderDetails } from "@/components/tender/TenderDetails";
 import { MilestonesList } from "@/components/tender/MilestonesList";
 import { TenderEditForm } from "@/components/tender/TenderEditForm";
+import { DocumentList } from "@/components/document/DocumentList";
 import { fetchTenderById, deleteTender } from "@/services/tenderService";
-import { Tender } from "@/types/tender";
+import { fetchTenderDocuments } from "@/services/documentService";
+import { Tender, TenderDocument } from "@/types/tender";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
-import { Trash2 } from "lucide-react";
+import { Trash2, File } from "lucide-react";
 
 export default function TenderDetailPage() {
   const { id } = useParams<{ id: string }>();
   const [tender, setTender] = useState<Tender | null>(null);
+  const [documents, setDocuments] = useState<TenderDocument[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("details");
   const navigate = useNavigate();
@@ -27,6 +30,10 @@ export default function TenderDetailPage() {
         if (!id) return;
         const tenderData = await fetchTenderById(id);
         setTender(tenderData);
+
+        // Load documents
+        const docsData = await fetchTenderDocuments(id);
+        setDocuments(docsData);
       } catch (error) {
         console.error("Error loading tender:", error);
         toast.error(t('errorMessages.couldNotLoadTender', 'Could not load tender'));
@@ -49,6 +56,14 @@ export default function TenderDetailPage() {
       console.error("Error deleting tender:", error);
       toast.error(t('errorMessages.couldNotDeleteTender', 'Could not delete tender'));
     }
+  };
+
+  const handleDocumentAdded = (document: TenderDocument) => {
+    setDocuments(prev => [document, ...prev]);
+  };
+
+  const handleDocumentDeleted = (documentId: string) => {
+    setDocuments(prev => prev.filter(doc => doc.id !== documentId));
   };
 
   if (isLoading) {
@@ -87,12 +102,22 @@ export default function TenderDetailPage() {
             <Tabs defaultValue={activeTab} onValueChange={setActiveTab} className="w-full">
               <TabsList>
                 <TabsTrigger value="details">{t('tenderDetails.details', 'Details')}</TabsTrigger>
+                <TabsTrigger value="documents">{t('tenderDetails.documents', 'Documents')}</TabsTrigger>
                 <TabsTrigger value="milestones">{t('tenderDetails.milestones', 'Milestones')}</TabsTrigger>
                 <TabsTrigger value="edit">{t('tenderDetails.edit', 'Edit')}</TabsTrigger>
               </TabsList>
             
               <TabsContent value="details" className="mt-4">
                 <TenderDetails tender={tender} />
+              </TabsContent>
+              
+              <TabsContent value="documents" className="mt-4">
+                <DocumentList 
+                  documents={documents}
+                  tenderId={tender.id}
+                  onDocumentAdded={handleDocumentAdded}
+                  onDocumentDeleted={handleDocumentDeleted}
+                />
               </TabsContent>
               
               <TabsContent value="milestones" className="mt-4">

@@ -2,10 +2,12 @@
 import { Tender } from "@/types/tender";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calendar, Clock, MapPin, User, Building, Phone, Mail, CreditCard, FileText } from "lucide-react";
+import { Calendar, Clock, MapPin, User, Building, Phone, Mail, CreditCard, FileText, File } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { useTranslation } from "react-i18next";
+import { useState, useEffect } from "react";
+import { fetchTenderDocuments } from "@/services/documentService";
 
 interface TenderDetailsProps {
   tender: Tender;
@@ -25,6 +27,20 @@ const statusColors: Record<Tender["status"], { bg: string; text: string }> = {
 export function TenderDetails({ tender }: TenderDetailsProps) {
   const { t } = useTranslation();
   const statusColor = statusColors[tender.status];
+  const [documentCount, setDocumentCount] = useState(0);
+  
+  useEffect(() => {
+    const loadDocuments = async () => {
+      try {
+        const docs = await fetchTenderDocuments(tender.id);
+        setDocumentCount(docs.length);
+      } catch (error) {
+        console.error("Error loading documents:", error);
+      }
+    };
+    
+    loadDocuments();
+  }, [tender.id]);
   
   // Calculate progress
   const completedMilestones = tender.milestones.filter(
@@ -72,6 +88,11 @@ export function TenderDetails({ tender }: TenderDetailsProps) {
           <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-tender-50 text-tender-600 text-sm">
             <FileText className="h-4 w-4" />
             <span>{t('tenderDetails.progress')}: {progress}%</span>
+          </div>
+          
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-50 text-blue-600 text-sm">
+            <File className="h-4 w-4" />
+            <span>{t('tenderDetails.documents')}: {documentCount}</span>
           </div>
         </div>
       </div>
