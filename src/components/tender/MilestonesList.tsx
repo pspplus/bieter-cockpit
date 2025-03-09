@@ -1,3 +1,4 @@
+
 import { Tender, Milestone, MilestoneStatus } from "@/types/tender";
 import { cn } from "@/lib/utils";
 import { CheckCircle, Circle, Clock, XCircle } from "lucide-react";
@@ -75,126 +76,133 @@ export function MilestonesList({ tender }: MilestonesListProps) {
   return (
     <div className="space-y-4">
       <h3 className="text-lg font-medium">{t('milestones.milestones')}</h3>
-      <div className="space-y-1">
-        {sortedMilestones.map((milestone, index) => {
-          const isActive = isActiveMilestone(milestone, index);
-          
-          return (
-            <div
-              key={milestone.id}
-              className={cn(
-                "p-3 rounded-lg border transition-all duration-200 hover:border-tender-200",
-                isActive
-                  ? "border-primary/30 bg-primary/5"
-                  : "border-tender-100",
-                milestone.status === "completed" && "bg-green-50/50",
-                milestone.status === "skipped" && "bg-tender-50/50 opacity-75"
-              )}
-            >
-              <div className="flex items-start gap-3">
-                <div className="mt-0.5">
-                  <StatusIcon status={milestone.status} />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex justify-between items-start">
-                    <h4 className="font-medium text-base">{milestone.title}</h4>
-                    {milestone.dueDate && (
-                      <span className="text-xs text-tender-500">
-                        {t('milestones.dueDate')}: {format(new Date(milestone.dueDate), "MMM d")}
-                      </span>
-                    )}
+      
+      {sortedMilestones.length === 0 ? (
+        <div className="p-6 text-center border border-dashed rounded-lg text-tender-500">
+          <p>{t('milestones.noMilestonesYet', 'Noch keine Meilensteine für dieses Angebot vorhanden.')}</p>
+        </div>
+      ) : (
+        <div className="space-y-1">
+          {sortedMilestones.map((milestone, index) => {
+            const isActive = isActiveMilestone(milestone, index);
+            
+            return (
+              <div
+                key={milestone.id}
+                className={cn(
+                  "p-3 rounded-lg border transition-all duration-200 hover:border-tender-200",
+                  isActive
+                    ? "border-primary/30 bg-primary/5"
+                    : "border-tender-100",
+                  milestone.status === "completed" && "bg-green-50/50",
+                  milestone.status === "skipped" && "bg-tender-50/50 opacity-75"
+                )}
+              >
+                <div className="flex items-start gap-3">
+                  <div className="mt-0.5">
+                    <StatusIcon status={milestone.status} />
                   </div>
-                  <p className="text-sm text-tender-600 mt-1">
-                    {milestone.description}
-                  </p>
-                  
-                  {milestone.completionDate && (
-                    <p className="text-xs text-tender-500 mt-2">
-                      {t('milestones.completionDate')}: {format(new Date(milestone.completionDate), "MMM d, yyyy")}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex justify-between items-start">
+                      <h4 className="font-medium text-base">{milestone.title}</h4>
+                      {milestone.dueDate && (
+                        <span className="text-xs text-tender-500">
+                          {t('milestones.dueDate')}: {format(new Date(milestone.dueDate), "MMM d")}
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-sm text-tender-600 mt-1">
+                      {milestone.description}
                     </p>
-                  )}
-                  
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    <TooltipProvider>
-                      {milestone.status !== "completed" && (
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="h-8 border-green-200 text-green-600 hover:bg-green-50 hover:text-green-700"
-                              onClick={() => handleStatusChange(milestone, "completed")}
-                            >
-                              {t('milestoneActions.complete')}
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>{t('milestones.markAsCompleted')}</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      )}
-                      
-                      {milestone.status !== "in-progress" && milestone.status !== "completed" && (
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="h-8 border-blue-200 text-blue-600 hover:bg-blue-50 hover:text-blue-700"
-                              onClick={() => handleStatusChange(milestone, "in-progress")}
-                            >
-                              {t('milestoneActions.start')}
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>{t('milestones.markAsInProgress')}</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      )}
-                      
-                      {milestone.status !== "skipped" && milestone.status !== "completed" && (
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="h-8 border-tender-200 text-tender-600 hover:bg-tender-50 hover:text-tender-700"
-                              onClick={() => handleStatusChange(milestone, "skipped")}
-                            >
-                              {t('milestoneActions.skip')}
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>{t('milestones.markAsSkipped')}</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      )}
-                      
-                      {(milestone.status === "completed" || milestone.status === "skipped") && (
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="h-8 border-tender-200 text-tender-600 hover:bg-tender-50 hover:text-tender-700"
-                              onClick={() => handleStatusChange(milestone, "pending")}
-                            >
-                              {t('milestoneActions.reset')}
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>{t('milestones.markAsPending')}</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      )}
-                    </TooltipProvider>
+                    
+                    {milestone.completionDate && (
+                      <p className="text-xs text-tender-500 mt-2">
+                        {t('milestones.completionDate')}: {format(new Date(milestone.completionDate), "MMM d, yyyy")}
+                      </p>
+                    )}
+                    
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      <TooltipProvider>
+                        {milestone.status !== "completed" && (
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                className="h-8 border-green-200 text-green-600 hover:bg-green-50 hover:text-green-700"
+                                onClick={() => handleStatusChange(milestone, "completed")}
+                              >
+                                {t('milestoneActions.complete')}
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>{t('milestones.markAsCompleted')}</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        )}
+                        
+                        {milestone.status !== "in-progress" && milestone.status !== "completed" && (
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                className="h-8 border-blue-200 text-blue-600 hover:bg-blue-50 hover:text-blue-700"
+                                onClick={() => handleStatusChange(milestone, "in-progress")}
+                              >
+                                {t('milestoneActions.start')}
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>{t('milestones.markAsInProgress')}</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        )}
+                        
+                        {milestone.status !== "skipped" && milestone.status !== "completed" && (
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                className="h-8 border-tender-200 text-tender-600 hover:bg-tender-50 hover:text-tender-700"
+                                onClick={() => handleStatusChange(milestone, "skipped")}
+                              >
+                                {t('milestoneActions.skip')}
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>{t('milestones.markAsSkipped')}</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        )}
+                        
+                        {(milestone.status === "completed" || milestone.status === "skipped") && (
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                className="h-8 border-tender-200 text-tender-600 hover:bg-tender-50 hover:text-tender-700"
+                                onClick={() => handleStatusChange(milestone, "pending")}
+                              >
+                                {t('milestoneActions.reset')}
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>{t('milestones.markAsPending')}</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        )}
+                      </TooltipProvider>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

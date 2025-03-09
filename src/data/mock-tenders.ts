@@ -1,138 +1,255 @@
 
-import { Tender } from "@/types/tender";
-import { v4 as uuidv4 } from 'uuid';
-import { generateMilestones } from "./milestones";
+import { Tender, TenderStatus, MilestoneStatus } from "@/types/tender";
+import { v4 as uuid } from "uuid";
 
-// Helper to generate dates (past or future from now)
-const generateDate = (daysOffset: number): Date => {
+// Helper to create a date object with custom days offset
+const createDate = (daysOffset: number) => {
   const date = new Date();
   date.setDate(date.getDate() + daysOffset);
   return date;
 };
 
-export const mockTenders: Tender[] = [
+// Generate mock tenders data
+export const MOCK_TENDERS: Tender[] = [
   {
-    id: uuidv4(),
-    title: "City Center Renovation Project",
-    reference: "CCR-2023-042",
-    client: "Metropolitan Council",
+    id: "5b8573f5-8a5e-4fdc-92b1-25d587b2592d",
+    title: "IT-Dienstleistungen für die Stadt München",
+    internalReference: "2023-001",
+    externalReference: "2023-01-MUEN",
+    client: "Stadt München",
     status: "active",
-    createdAt: generateDate(-15),
-    updatedAt: generateDate(-2),
-    dueDate: generateDate(14),
-    budget: 2500000,
-    description: "Comprehensive renovation of the central plaza and surrounding infrastructure",
-    location: "Downtown, Metro City",
-    contactPerson: "Sarah Johnson",
-    contactEmail: "sjohnson@metrocouncil.gov",
-    contactPhone: "555-123-4567",
-    milestones: generateMilestones().map((milestone, index) => {
-      if (index < 3) {
-        return { ...milestone, status: "completed", completionDate: generateDate(-5 + index) };
-      } else if (index === 3) {
-        return { ...milestone, status: "in-progress", dueDate: generateDate(2) };
+    createdAt: createDate(-20),
+    updatedAt: createDate(-3),
+    dueDate: createDate(15),
+    budget: 250000,
+    description: "Bereitstellung von IT-Support, Netzwerkmanagement und Softwareentwicklungsdienstleistungen für das Rathaus München.",
+    location: "München, Bayern",
+    contactPerson: "Thomas Müller",
+    contactEmail: "t.mueller@muenchen.de",
+    contactPhone: "+49 89 123456",
+    notes: "Die Stadt München legt besonderen Wert auf den Einsatz von Open-Source-Software.",
+    milestones: [
+      {
+        id: uuid(),
+        title: "Anforderungsanalyse",
+        description: "Durchführung einer Anforderungsanalyse mit den verschiedenen Abteilungen",
+        status: "completed",
+        dueDate: createDate(-10),
+        completionDate: createDate(-12),
+        notes: "Alle Abteilungen wurden erfolgreich befragt"
+      },
+      {
+        id: uuid(),
+        title: "Angebotserstellung",
+        description: "Erstellung eines detaillierten Angebots mit Kostenaufstellung",
+        status: "completed",
+        dueDate: createDate(-5),
+        completionDate: createDate(-6),
+        notes: "Angebot wurde intern geprüft und freigegeben"
+      },
+      {
+        id: uuid(),
+        title: "Präsentation vor dem Stadtrat",
+        description: "Präsentation des Angebots vor dem Stadtrat",
+        status: "pending",
+        dueDate: createDate(5),
+        completionDate: null,
+        notes: ""
       }
-      return { ...milestone, dueDate: generateDate(5 + index * 2) };
-    }),
+    ]
   },
   {
-    id: uuidv4(),
-    title: "School District Energy Efficiency Upgrade",
-    reference: "EDU-2023-187",
-    client: "State Education Department",
+    id: uuid(),
+    title: "Schulungsmanagementsystem für Bildungsträger",
+    internalReference: "2023-002",
+    externalReference: "BT-SCH-2023",
+    client: "Bildungswerk Bayern",
     status: "submitted",
-    createdAt: generateDate(-45),
-    updatedAt: generateDate(-5),
-    dueDate: generateDate(-7),
-    budget: 1200000,
-    description: "Implementation of energy efficiency measures across 12 public schools",
-    location: "Northern School District",
-    contactPerson: "Michael Chen",
-    contactEmail: "mchen@edu.gov",
-    contactPhone: "555-987-6543",
-    milestones: generateMilestones().map((milestone, index) => {
-      if (index < 7) {
-        return { ...milestone, status: "completed", completionDate: generateDate(-30 + index * 3) };
+    createdAt: createDate(-45),
+    updatedAt: createDate(-10),
+    dueDate: createDate(-5),
+    budget: 95000,
+    description: "Entwicklung eines Systems zur Verwaltung von Schulungen, Teilnehmern und Dozenten für einen großen Bildungsträger.",
+    location: "Nürnberg, Bayern",
+    contactPerson: "Sandra Berger",
+    contactEmail: "s.berger@bildungswerk-bayern.de",
+    contactPhone: "+49 911 654321",
+    notes: "Kunde wünscht modulares System mit Möglichkeit zur späteren Erweiterung.",
+    milestones: [
+      {
+        id: uuid(),
+        title: "Systemanalyse",
+        description: "Analyse der bestehenden Systeme und Prozesse",
+        status: "completed",
+        dueDate: createDate(-30),
+        completionDate: createDate(-32),
+        notes: ""
+      },
+      {
+        id: uuid(),
+        title: "Konzepterstellung",
+        description: "Erstellung eines detaillierten Konzepts für das neue System",
+        status: "completed",
+        dueDate: createDate(-20),
+        completionDate: createDate(-21),
+        notes: ""
+      },
+      {
+        id: uuid(),
+        title: "Angebotserstellung",
+        description: "Erstellung eines Angebots mit Kostenaufstellung",
+        status: "completed",
+        dueDate: createDate(-15),
+        completionDate: createDate(-14),
+        notes: ""
+      },
+      {
+        id: uuid(),
+        title: "Präsentation",
+        description: "Präsentation des Konzepts vor der Geschäftsführung",
+        status: "completed",
+        dueDate: createDate(-10),
+        completionDate: createDate(-10),
+        notes: "Präsentation wurde sehr positiv aufgenommen"
       }
-      return { ...milestone };
-    }),
+    ]
   },
   {
-    id: uuidv4(),
-    title: "Highway Bridge Inspection and Maintenance",
-    reference: "TRANS-2023-098",
-    client: "Department of Transportation",
-    status: "clarification",
-    createdAt: generateDate(-30),
-    updatedAt: generateDate(-1),
-    dueDate: generateDate(-10),
-    budget: 850000,
-    description: "Structural inspection and maintenance services for 5 major highway bridges",
-    location: "Interstate 95 Corridor",
-    contactPerson: "Robert Miller",
-    contactEmail: "rmiller@transport.gov",
-    contactPhone: "555-456-7890",
-    milestones: generateMilestones().map((milestone, index) => {
-      if (index < 7) {
-        return { ...milestone, status: "completed", completionDate: generateDate(-25 + index * 2) };
-      } else if (index === 7) {
-        return { ...milestone, status: "in-progress" };
-      }
-      return { ...milestone };
-    }),
-  },
-  {
-    id: uuidv4(),
-    title: "Public Housing Modernization",
-    reference: "HOUSING-2023-076",
-    client: "Housing Authority",
-    status: "draft",
-    createdAt: generateDate(-5),
-    updatedAt: generateDate(-1),
-    dueDate: generateDate(25),
-    budget: 3800000,
-    description: "Comprehensive modernization of 150 public housing units",
-    location: "Eastside District",
-    contactPerson: "Jennifer Lopez",
-    contactEmail: "jlopez@housing.gov",
-    contactPhone: "555-222-3333",
-    milestones: generateMilestones().map((milestone, index) => {
-      if (index < 1) {
-        return { ...milestone, status: "in-progress" };
-      }
-      return { ...milestone };
-    }),
-  },
-  {
-    id: uuidv4(),
-    title: "Water Treatment Facility Upgrade",
-    reference: "WATER-2023-032",
-    client: "Environmental Protection Agency",
+    id: uuid(),
+    title: "Digitalisierung der Lagerlogistik",
+    internalReference: "2023-003",
+    externalReference: "LOG-DIG-2023",
+    client: "LogistikPro GmbH",
     status: "won",
-    createdAt: generateDate(-90),
-    updatedAt: generateDate(-15),
-    dueDate: generateDate(-60),
-    budget: 5200000,
-    description: "Modernization of city water treatment facility to meet new regulations",
-    location: "Riverside Plant",
-    contactPerson: "David Washington",
-    contactEmail: "dwashington@epa.gov",
-    contactPhone: "555-777-8888",
-    milestones: generateMilestones().map((milestone, index) => {
-      if (index < 9) {
-        return { ...milestone, status: "completed", completionDate: generateDate(-85 + index * 5) };
-      } else if (index === 9) {
-        return { ...milestone, status: "in-progress" };
+    createdAt: createDate(-90),
+    updatedAt: createDate(-30),
+    dueDate: createDate(-40),
+    budget: 180000,
+    description: "Implementierung eines digitalisierten Lagerlogistiksystems inklusive Barcode-Scanner und Echtzeit-Bestandsmanagement.",
+    location: "Frankfurt, Hessen",
+    contactPerson: "Frank Schmitt",
+    contactEmail: "f.schmitt@logistikpro.de",
+    contactPhone: "+49 69 987654",
+    notes: "Kunde hat bereits positive Erfahrungen mit unseren früheren Projekten gemacht.",
+    milestones: [
+      {
+        id: uuid(),
+        title: "Anforderungsanalyse",
+        description: "Analyse der bestehenden Logistikprozesse",
+        status: "completed",
+        dueDate: createDate(-80),
+        completionDate: createDate(-81),
+        notes: ""
+      },
+      {
+        id: uuid(),
+        title: "Konzepterstellung",
+        description: "Erstellung eines Konzepts für die Digitalisierung",
+        status: "completed",
+        dueDate: createDate(-70),
+        completionDate: createDate(-72),
+        notes: ""
+      },
+      {
+        id: uuid(),
+        title: "Angebotserstellung",
+        description: "Erstellung eines detaillierten Angebots",
+        status: "completed",
+        dueDate: createDate(-60),
+        completionDate: createDate(-62),
+        notes: ""
+      },
+      {
+        id: uuid(),
+        title: "Vertragsverhandlung",
+        description: "Verhandlung der Vertragsbedingungen",
+        status: "completed",
+        dueDate: createDate(-50),
+        completionDate: createDate(-45),
+        notes: "Vertrag wurde erfolgreich abgeschlossen"
       }
-      return { ...milestone };
-    }),
+    ]
   },
+  {
+    id: uuid(),
+    title: "Webseiten-Relaunch Handwerkskammer",
+    internalReference: "2023-004",
+    externalReference: "HWK-WEB-23",
+    client: "Handwerkskammer Oberbayern",
+    status: "draft",
+    createdAt: createDate(-10),
+    updatedAt: createDate(-10),
+    dueDate: createDate(30),
+    budget: 45000,
+    description: "Kompletter Relaunch der Webseite der Handwerkskammer mit modernem Design und verbesserter Benutzerführung.",
+    location: "Rosenheim, Bayern",
+    contactPerson: "Maria Weber",
+    contactEmail: "m.weber@hwk-oberbayern.de",
+    contactPhone: "+49 8031 123789",
+    milestones: [
+      {
+        id: uuid(),
+        title: "Anforderungsworkshop",
+        description: "Workshop zur Ermittlung der Anforderungen an die neue Webseite",
+        status: "pending",
+        dueDate: createDate(5),
+        completionDate: null,
+        notes: ""
+      },
+      {
+        id: uuid(),
+        title: "Designkonzept",
+        description: "Erstellung eines Designkonzepts mit mehreren Varianten",
+        status: "pending",
+        dueDate: createDate(15),
+        completionDate: null,
+        notes: ""
+      }
+    ]
+  },
+  {
+    id: uuid(),
+    title: "KI-basierte Qualitätskontrolle für Automobilzulieferer",
+    internalReference: "2023-005",
+    externalReference: "AUTO-QS-2023",
+    client: "AutoTeile GmbH",
+    status: "lost",
+    createdAt: createDate(-60),
+    updatedAt: createDate(-30),
+    dueDate: createDate(-40),
+    description: "Entwicklung eines KI-Systems zur automatisierten Qualitätskontrolle in der Produktion von Automobilteilen.",
+    location: "Stuttgart, Baden-Württemberg",
+    contactPerson: "Dr. Klaus Schmidt",
+    contactEmail: "k.schmidt@autoteile.de",
+    contactPhone: "+49 711 456789",
+    milestones: [
+      {
+        id: uuid(),
+        title: "Erstgespräch",
+        description: "Erstes Gespräch zur Anforderungsermittlung",
+        status: "completed",
+        dueDate: createDate(-55),
+        completionDate: createDate(-55),
+        notes: ""
+      },
+      {
+        id: uuid(),
+        title: "Angebotserstellung",
+        description: "Erstellung eines Angebots für das KI-System",
+        status: "completed",
+        dueDate: createDate(-45),
+        completionDate: createDate(-46),
+        notes: ""
+      },
+      {
+        id: uuid(),
+        title: "Präsentation",
+        description: "Präsentation des Angebots beim Kunden",
+        status: "completed",
+        dueDate: createDate(-40),
+        completionDate: createDate(-40),
+        notes: "Angebot wurde abgelehnt, da ein Mitbewerber ein günstigeres Angebot vorgelegt hat."
+      }
+    ]
+  }
 ];
-
-export const getTender = (id: string): Tender | undefined => {
-  return mockTenders.find(tender => tender.id === id);
-};
-
-export const getTendersByStatus = (status: Tender['status']): Tender[] => {
-  return mockTenders.filter(tender => tender.status === status);
-};
