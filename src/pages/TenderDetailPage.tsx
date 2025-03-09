@@ -42,25 +42,25 @@ export default function TenderDetailPage() {
         setFolders(foldersData);
       } catch (error) {
         console.error("Error loading tender:", error);
-        toast.error("Ausschreibung konnte nicht geladen werden");
+        toast.error(t("errorMessages.couldNotLoadTenders"));
       } finally {
         setIsLoading(false);
       }
     };
 
     loadTender();
-  }, [id]);
+  }, [id, t]);
 
   const handleDelete = async () => {
     if (!tender) return;
     
     try {
       await deleteTender(tender.id);
-      toast.success("Ausschreibung erfolgreich gelöscht");
+      toast.success(t("notifications.tenderDeleted"));
       navigate("/tenders");
     } catch (error) {
       console.error("Error deleting tender:", error);
-      toast.error("Ausschreibung konnte nicht gelöscht werden");
+      toast.error(t("errorMessages.couldNotDeleteTender"));
     }
   };
 
@@ -74,7 +74,7 @@ export default function TenderDetailPage() {
 
   if (isLoading) {
     return (
-      <Layout title="Wird geladen...">
+      <Layout title={t("general.loading")}>
         <div className="flex items-center justify-center h-64">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
         </div>
@@ -84,16 +84,16 @@ export default function TenderDetailPage() {
 
   if (!tender) {
     return (
-      <Layout title="Nicht gefunden">
+      <Layout title={t("tenderDetails.notFound")}>
         <div className="text-center py-12">
-          <h2 className="text-2xl font-semibold">Ausschreibung nicht gefunden</h2>
-          <p className="text-muted-foreground mt-2">Diese Ausschreibung existiert möglicherweise nicht</p>
+          <h2 className="text-2xl font-semibold">{t("tenderDetails.tenderNotFound")}</h2>
+          <p className="text-muted-foreground mt-2">{t("tenderDetails.tenderMayNotExist")}</p>
           <Button 
             onClick={() => navigate("/tenders")} 
             className="mt-4"
             variant="outline"
           >
-            Zurück zu Ausschreibungen
+            {t("general.backToTenders")}
           </Button>
         </div>
       </Layout>
@@ -107,10 +107,10 @@ export default function TenderDetailPage() {
           <div className="w-full">
             <Tabs defaultValue={activeTab} onValueChange={setActiveTab} className="w-full">
               <TabsList>
-                <TabsTrigger value="details">Details</TabsTrigger>
-                <TabsTrigger value="documents">Dokumente</TabsTrigger>
-                <TabsTrigger value="milestones">Meilensteine</TabsTrigger>
-                <TabsTrigger value="edit">Bearbeiten</TabsTrigger>
+                <TabsTrigger value="details">{t("tenderDetails.details")}</TabsTrigger>
+                <TabsTrigger value="documents">{t("tenderDetails.documents")}</TabsTrigger>
+                <TabsTrigger value="milestones">{t("tenderDetails.milestones")}</TabsTrigger>
+                <TabsTrigger value="edit">{t("tenderDetails.edit")}</TabsTrigger>
               </TabsList>
             
               <TabsContent value="details" className="mt-4">
@@ -142,9 +142,10 @@ export default function TenderDetailPage() {
             size="icon"
             onClick={handleDelete}
             className="ml-2 flex-shrink-0"
+            aria-label={t("general.delete")}
           >
             <Trash2 className="h-4 w-4" />
-            <span className="sr-only">Löschen</span>
+            <span className="sr-only">{t("general.delete")}</span>
           </Button>
         </div>
       </div>

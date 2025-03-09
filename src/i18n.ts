@@ -2,7 +2,7 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
-// Import nur deutsche Übersetzungsdateien
+// Import deutsche Übersetzungsdateien
 import deGeneral from './locales/de/general.json';
 import deAuth from './locales/de/auth.json';
 import deLanding from './locales/de/landing.json';

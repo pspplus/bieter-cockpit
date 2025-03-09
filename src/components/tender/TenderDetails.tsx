@@ -70,14 +70,14 @@ export function TenderDetails({ tender }: TenderDetailsProps) {
   // Function to format the status text
   const formatStatusText = (status: string): string => {
     const statusMap: Record<string, string> = {
-      "entwurf": t('tenders.drafts', 'Entwurf'),
-      "in-pruefung": t('tenders.review', 'In Prüfung'),
-      "in-bearbeitung": t('tenders.active', 'In Bearbeitung'),
-      "abgegeben": t('tenders.submitted', 'Abgegeben'),
-      "aufklaerung": t('tenders.inClarification', 'Aufklärung'),
-      "gewonnen": t('tenders.won', 'Gewonnen'),
-      "verloren": t('tenders.lost', 'Verloren'),
-      "abgeschlossen": t('tenders.completed', 'Abgeschlossen')
+      "entwurf": t('tenders.entwurf', 'Entwurf'),
+      "in-pruefung": t('tenders.in-pruefung', 'In Prüfung'),
+      "in-bearbeitung": t('tenders.in-bearbeitung', 'In Bearbeitung'),
+      "abgegeben": t('tenders.abgegeben', 'Abgegeben'),
+      "aufklaerung": t('tenders.aufklaerung', 'In Aufklärung'),
+      "gewonnen": t('tenders.gewonnen', 'Gewonnen'),
+      "verloren": t('tenders.verloren', 'Verloren'),
+      "abgeschlossen": t('tenders.abgeschlossen', 'Abgeschlossen')
     };
     
     return statusMap[status] || status.charAt(0).toUpperCase() + status.slice(1);
@@ -159,7 +159,10 @@ export function TenderDetails({ tender }: TenderDetailsProps) {
                   <dt className="text-tender-500">{t('tender.budget')}</dt>
                   <dd className="flex items-center gap-1.5">
                     <CreditCard className="h-4 w-4 text-tender-400" />
-                    ${tender.budget.toLocaleString()}
+                    {new Intl.NumberFormat('de-DE', { 
+                      style: 'currency', 
+                      currency: 'EUR' 
+                    }).format(tender.budget)}
                   </dd>
                 </>
               )}
@@ -170,8 +173,8 @@ export function TenderDetails({ tender }: TenderDetailsProps) {
                   <dd className="flex items-center gap-1.5">
                     <ClipboardCheck className="h-4 w-4 text-tender-400" />
                     {tender.conceptRequired 
-                      ? t('general.yes', 'Ja') 
-                      : t('general.no', 'Nein')}
+                      ? t('general.yes') 
+                      : t('general.no')}
                   </dd>
                 </>
               )}
@@ -242,7 +245,7 @@ export function TenderDetails({ tender }: TenderDetailsProps) {
                 )}
               </dl>
             ) : (
-              <p className="text-tender-500 italic">{t('tenderDetails.noContactInfo')}</p>
+              <p className="text-tender-500 italic">{t('tenderDetails.noContactInfo', 'Keine Kontaktinformationen verfügbar')}</p>
             )}
           </CardContent>
         </Card>
