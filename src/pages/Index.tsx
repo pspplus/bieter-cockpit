@@ -1,4 +1,3 @@
-
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ChevronRight, FileText, CheckCircle } from "lucide-react";
@@ -81,14 +80,6 @@ export default function Index() {
                   <ChevronRight className="h-4 w-4 ml-1" />
                 </Button>
               )}
-              <Button 
-                size="lg" 
-                variant="outline"
-                onClick={() => navigate("/tenders")}
-                className="rounded-full"
-              >
-                {t('general.viewTenders')}
-              </Button>
             </div>
           </div>
         </section>
