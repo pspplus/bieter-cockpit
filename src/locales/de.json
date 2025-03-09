@@ -112,7 +112,13 @@
     "milestones": "Meilensteine",
     "edit": "Bearbeiten",
     "delete": "Löschen",
-    "contactInformation": "Kontaktinformationen"
+    "contactInformation": "Kontaktinformationen",
+    "due": "Fällig am",
+    "progress": "Fortschritt",
+    "tenderInformation": "Ausschreibungsinformationen",
+    "created": "Erstellt am",
+    "email": "E-Mail",
+    "phone": "Telefon"
   },
   "tender": {
     "title": "Titel",
@@ -127,7 +133,10 @@
     "contactPerson": "Ansprechpartner",
     "contactEmail": "E-Mail",
     "contactPhone": "Telefon",
-    "budget": "Budget"
+    "budget": "Budget",
+    "bindingPeriodDate": "Bindefrist",
+    "conceptRequired": "Konzept erforderlich",
+    "evaluationScheme": "Wertungsschema"
   },
   "errorMessages": {
     "couldNotLoadTenders": "Ausschreibungen konnten nicht geladen werden",
@@ -217,5 +226,9 @@
     "start": "Starten",
     "skip": "Überspringen",
     "reset": "Zurücksetzen"
+  },
+  "auth": {
+    "login": "Anmelden",
+    "signup": "Registrieren"
   }
 }

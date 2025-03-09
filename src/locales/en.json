@@ -112,7 +112,13 @@
     "milestones": "Milestones",
     "edit": "Edit",
     "delete": "Delete",
-    "contactInformation": "Contact Information"
+    "contactInformation": "Contact Information",
+    "due": "Due",
+    "progress": "Progress",
+    "tenderInformation": "Tender Information",
+    "created": "Created",
+    "email": "Email",
+    "phone": "Phone"
   },
   "tender": {
     "title": "Title",
@@ -127,7 +133,10 @@
     "contactPerson": "Contact Person",
     "contactEmail": "Email",
     "contactPhone": "Phone",
-    "budget": "Budget"
+    "budget": "Budget",
+    "bindingPeriodDate": "Binding Period",
+    "conceptRequired": "Concept Required",
+    "evaluationScheme": "Evaluation Scheme"
   },
   "errorMessages": {
     "couldNotLoadTenders": "Could not load tenders",
@@ -217,5 +226,9 @@
     "start": "Start",
     "skip": "Skip",
     "reset": "Reset"
+  },
+  "auth": {
+    "login": "Log In",
+    "signup": "Sign Up"
   }
 }
