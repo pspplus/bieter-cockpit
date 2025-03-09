@@ -1,15 +1,15 @@
 
 import { useState } from "react";
+import { Outlet } from "react-router-dom";
 import { Sidebar } from "./Sidebar";
 import { Header } from "./Header";
 import { cn } from "@/lib/utils";
 
 interface LayoutProps {
-  children: React.ReactNode;
   title?: string;
 }
 
-export function Layout({ children, title }: LayoutProps) {
+export function Layout({ title }: LayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
@@ -18,7 +18,7 @@ export function Layout({ children, title }: LayoutProps) {
       <div className="flex flex-1 flex-col">
         <Header toggleSidebar={() => setSidebarOpen(true)} title={title} />
         <main className="flex-1 overflow-auto p-4 sm:p-6 animate-slide-up">
-          {children}
+          <Outlet />
         </main>
       </div>
     </div>
