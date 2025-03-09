@@ -16,6 +16,7 @@ import TenderDetailPage from "./pages/TenderDetailPage";
 import ClientsPage from "./pages/ClientsPage";
 import ClientDetailPage from "./pages/ClientDetailPage";
 import SubmissionsPage from "./pages/SubmissionsPage";
+import MessagesPage from "./pages/MessagesPage";
 import NotFound from "./pages/NotFound";
 import LoginPage from "./pages/LoginPage";
 import SignUpPage from "./pages/SignUpPage";
@@ -44,6 +45,7 @@ const App = () => (
                     <Route path="/tenders/new" element={<NewTenderPage />} />
                     <Route path="/tenders/:id" element={<TenderDetailPage />} />
                     <Route path="/submissions" element={<SubmissionsPage />} />
+                    <Route path="/messages" element={<MessagesPage />} />
                     <Route path="/clients" element={<ClientsPage />} />
                     <Route path="/clients/:id" element={<ClientDetailPage />} />
                     <Route path="*" element={<NotFound />} />
