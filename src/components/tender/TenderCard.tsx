@@ -51,10 +51,19 @@ export function TenderCard({ tender, isActive = false }: TenderCardProps) {
         </div>
         
         <div className="mt-4 grid grid-cols-2 gap-y-2 text-sm text-tender-600">
+          {/* First row: Client (Vergabestelle) and Location (Ort) */}
           <div className="flex items-center gap-1.5">
             <User className="h-4 w-4 text-tender-400" />
             <span className="truncate">{client}</span>
           </div>
+          {location && (
+            <div className="flex items-center gap-1.5">
+              <MapPin className="h-4 w-4 text-tender-400" />
+              <span className="truncate">{location}</span>
+            </div>
+          )}
+          
+          {/* Second row: Due Date (Fällig am) and Binding Period (Bindefrist) */}
           <div className="flex items-center gap-1.5">
             <Calendar className="h-4 w-4 text-tender-400" />
             <span>{t('tenderDetails.due')}: {dueDateFormatted}</span>
@@ -65,16 +74,12 @@ export function TenderCard({ tender, isActive = false }: TenderCardProps) {
               <span>{t('tender.bindingPeriodDate')}: {format(new Date(bindingPeriodDate), "MMM d, yyyy")}</span>
             </div>
           )}
+          
+          {/* Third row: Budget */}
           {budget && (
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-1.5 col-span-2">
               <DollarSign className="h-4 w-4 text-tender-400" />
               <span>{t('tender.budget')}: {budget.toLocaleString()} €</span>
-            </div>
-          )}
-          {location && (
-            <div className="flex items-center gap-1.5 col-span-2">
-              <MapPin className="h-4 w-4 text-tender-400" />
-              <span className="truncate">{location}</span>
             </div>
           )}
         </div>
