@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -66,6 +65,7 @@ export function TenderCreationForm() {
       // Get default milestones
       const defaultMilestones = getDefaultMilestones();
       
+      // Create tender with default milestones
       const newTender = await createTender({
         title: formData.title || t('tenders.newTender'),
         externalReference: formData.externalReference || "",
