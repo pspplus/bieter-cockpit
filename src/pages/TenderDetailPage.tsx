@@ -10,7 +10,8 @@ import { TenderEditForm } from "@/components/tender/TenderEditForm";
 import { DocumentList } from "@/components/document/DocumentList";
 import { fetchTenderById, deleteTender } from "@/services/tenderService";
 import { fetchTenderDocuments } from "@/services/documentService";
-import { Tender, TenderDocument } from "@/types/tender";
+import { fetchFolders } from "@/services/folderService";
+import { Tender, TenderDocument, Folder } from "@/types/tender";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { Trash2 } from "lucide-react";
@@ -19,6 +20,7 @@ export default function TenderDetailPage() {
   const { id } = useParams<{ id: string }>();
   const [tender, setTender] = useState<Tender | null>(null);
   const [documents, setDocuments] = useState<TenderDocument[]>([]);
+  const [folders, setFolders] = useState<Folder[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("details");
   const navigate = useNavigate();
@@ -34,6 +36,10 @@ export default function TenderDetailPage() {
         // Load documents
         const docsData = await fetchTenderDocuments(id);
         setDocuments(docsData);
+
+        // Load folders separately to ensure they're available
+        const foldersData = await fetchFolders(id);
+        setFolders(foldersData);
       } catch (error) {
         console.error("Error loading tender:", error);
         toast.error(t('errorMessages.couldNotLoadTender'));
@@ -115,6 +121,7 @@ export default function TenderDetailPage() {
                 <DocumentList 
                   documents={documents}
                   tenderId={tender.id}
+                  folders={folders}
                   onDocumentAdded={handleDocumentAdded}
                   onDocumentDeleted={handleDocumentDeleted}
                 />
