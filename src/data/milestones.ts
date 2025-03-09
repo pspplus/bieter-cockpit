@@ -1,5 +1,5 @@
 
-import { Omit } from "@/types/tender";
+import { Milestone } from "@/types/tender";
 
 // Diese Datei wird nicht mehr verwendet, aber wir behalten sie bei 
 // und aktualisieren sie, um Build-Fehler zu vermeiden
