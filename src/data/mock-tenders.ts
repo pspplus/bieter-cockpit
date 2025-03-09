@@ -1,255 +1,290 @@
 
-import { Tender, TenderStatus, MilestoneStatus } from "@/types/tender";
-import { v4 as uuid } from "uuid";
+import { Tender } from "@/types/tender";
+import { v4 as uuidv4 } from "uuid";
+import { addDays, subDays } from "date-fns";
 
-// Helper to create a date object with custom days offset
-const createDate = (daysOffset: number) => {
-  const date = new Date();
-  date.setDate(date.getDate() + daysOffset);
-  return date;
-};
+// Hilfsfunktion für das Datum
+const today = new Date();
 
-// Generate mock tenders data
-export const MOCK_TENDERS: Tender[] = [
+export const mockTenders: Tender[] = [
   {
-    id: "5b8573f5-8a5e-4fdc-92b1-25d587b2592d",
-    title: "IT-Dienstleistungen für die Stadt München",
+    id: "1",
+    title: "Webentwicklung für Stadtverwaltung",
+    externalReference: "STAD-2023-01",
     internalReference: "2023-001",
-    externalReference: "2023-01-MUEN",
-    client: "Stadt München",
+    description: "Entwicklung einer neuen Website für die Stadtverwaltung.",
+    client: "Stadt Frankfurt",
     status: "active",
-    createdAt: createDate(-20),
-    updatedAt: createDate(-3),
-    dueDate: createDate(15),
-    budget: 250000,
-    description: "Bereitstellung von IT-Support, Netzwerkmanagement und Softwareentwicklungsdienstleistungen für das Rathaus München.",
-    location: "München, Bayern",
-    contactPerson: "Thomas Müller",
-    contactEmail: "t.mueller@muenchen.de",
-    contactPhone: "+49 89 123456",
-    notes: "Die Stadt München legt besonderen Wert auf den Einsatz von Open-Source-Software.",
+    createdAt: subDays(today, 30),
+    updatedAt: subDays(today, 5),
+    dueDate: addDays(today, 20),
+    budget: 75000,
+    location: "Frankfurt am Main",
+    contactPerson: "Martina Schmidt",
+    contactEmail: "m.schmidt@frankfurt.de",
+    contactPhone: "+49 69 12345 6789",
+    progress: 35,
     milestones: [
       {
-        id: uuid(),
-        title: "Anforderungsanalyse",
-        description: "Durchführung einer Anforderungsanalyse mit den verschiedenen Abteilungen",
+        id: "ms-1-1",
+        title: "Ausschreibung veröffentlicht",
+        description: "Ausschreibung wurde im Amtsblatt veröffentlicht",
         status: "completed",
-        dueDate: createDate(-10),
-        completionDate: createDate(-12),
-        notes: "Alle Abteilungen wurden erfolgreich befragt"
+        dueDate: subDays(today, 25),
+        completionDate: subDays(today, 27),
+        notes: "Veröffentlicht im Amtsblatt der Stadt Frankfurt",
+        sequenceNumber: 10
       },
       {
-        id: uuid(),
+        id: "ms-1-2",
         title: "Angebotserstellung",
-        description: "Erstellung eines detaillierten Angebots mit Kostenaufstellung",
+        description: "Erstellung und interne Prüfung des Angebots",
         status: "completed",
-        dueDate: createDate(-5),
-        completionDate: createDate(-6),
-        notes: "Angebot wurde intern geprüft und freigegeben"
+        dueDate: subDays(today, 10),
+        completionDate: subDays(today, 12),
+        notes: "Rechtzeitig fertiggestellt, alle Anforderungen erfüllt",
+        sequenceNumber: 20
       },
       {
-        id: uuid(),
-        title: "Präsentation vor dem Stadtrat",
-        description: "Präsentation des Angebots vor dem Stadtrat",
+        id: "ms-1-3",
+        title: "Präsentation",
+        description: "Vorstellung des Konzepts beim Kunden",
         status: "pending",
-        dueDate: createDate(5),
+        dueDate: addDays(today, 5),
         completionDate: null,
-        notes: ""
+        notes: "Präsentation vorbereiten, Muster-Designs ausarbeiten",
+        sequenceNumber: 30
       }
-    ]
+    ],
+    tags: ["Öffentlicher Sektor", "Webentwicklung", "CMS"]
   },
   {
-    id: uuid(),
-    title: "Schulungsmanagementsystem für Bildungsträger",
+    id: "2",
+    title: "ERP-System-Migration",
+    externalReference: "MED-2023-42",
     internalReference: "2023-002",
-    externalReference: "BT-SCH-2023",
-    client: "Bildungswerk Bayern",
-    status: "submitted",
-    createdAt: createDate(-45),
-    updatedAt: createDate(-10),
-    dueDate: createDate(-5),
-    budget: 95000,
-    description: "Entwicklung eines Systems zur Verwaltung von Schulungen, Teilnehmern und Dozenten für einen großen Bildungsträger.",
-    location: "Nürnberg, Bayern",
-    contactPerson: "Sandra Berger",
-    contactEmail: "s.berger@bildungswerk-bayern.de",
-    contactPhone: "+49 911 654321",
-    notes: "Kunde wünscht modulares System mit Möglichkeit zur späteren Erweiterung.",
-    milestones: [
-      {
-        id: uuid(),
-        title: "Systemanalyse",
-        description: "Analyse der bestehenden Systeme und Prozesse",
-        status: "completed",
-        dueDate: createDate(-30),
-        completionDate: createDate(-32),
-        notes: ""
-      },
-      {
-        id: uuid(),
-        title: "Konzepterstellung",
-        description: "Erstellung eines detaillierten Konzepts für das neue System",
-        status: "completed",
-        dueDate: createDate(-20),
-        completionDate: createDate(-21),
-        notes: ""
-      },
-      {
-        id: uuid(),
-        title: "Angebotserstellung",
-        description: "Erstellung eines Angebots mit Kostenaufstellung",
-        status: "completed",
-        dueDate: createDate(-15),
-        completionDate: createDate(-14),
-        notes: ""
-      },
-      {
-        id: uuid(),
-        title: "Präsentation",
-        description: "Präsentation des Konzepts vor der Geschäftsführung",
-        status: "completed",
-        dueDate: createDate(-10),
-        completionDate: createDate(-10),
-        notes: "Präsentation wurde sehr positiv aufgenommen"
-      }
-    ]
-  },
-  {
-    id: uuid(),
-    title: "Digitalisierung der Lagerlogistik",
-    internalReference: "2023-003",
-    externalReference: "LOG-DIG-2023",
-    client: "LogistikPro GmbH",
+    description: "Migration des bestehenden ERP-Systems auf eine Cloud-Lösung.",
+    client: "Medi-Konzern GmbH",
     status: "won",
-    createdAt: createDate(-90),
-    updatedAt: createDate(-30),
-    dueDate: createDate(-40),
-    budget: 180000,
-    description: "Implementierung eines digitalisierten Lagerlogistiksystems inklusive Barcode-Scanner und Echtzeit-Bestandsmanagement.",
-    location: "Frankfurt, Hessen",
-    contactPerson: "Frank Schmitt",
-    contactEmail: "f.schmitt@logistikpro.de",
-    contactPhone: "+49 69 987654",
-    notes: "Kunde hat bereits positive Erfahrungen mit unseren früheren Projekten gemacht.",
+    createdAt: subDays(today, 90),
+    updatedAt: subDays(today, 15),
+    dueDate: subDays(today, 10),
+    budget: 250000,
+    location: "München",
+    contactPerson: "Dr. Thomas Weber",
+    contactEmail: "t.weber@medikonzern.de",
+    contactPhone: "+49 89 9876 5432",
+    progress: 100,
     milestones: [
       {
-        id: uuid(),
-        title: "Anforderungsanalyse",
-        description: "Analyse der bestehenden Logistikprozesse",
+        id: "ms-2-1",
+        title: "Ausschreibung veröffentlicht",
+        description: "RFP wurde an ausgewählte Dienstleister gesendet",
         status: "completed",
-        dueDate: createDate(-80),
-        completionDate: createDate(-81),
-        notes: ""
+        dueDate: subDays(today, 85),
+        completionDate: subDays(today, 85),
+        notes: "RFP direkt vom Kunden erhalten",
+        sequenceNumber: 10
       },
       {
-        id: uuid(),
-        title: "Konzepterstellung",
-        description: "Erstellung eines Konzepts für die Digitalisierung",
-        status: "completed",
-        dueDate: createDate(-70),
-        completionDate: createDate(-72),
-        notes: ""
-      },
-      {
-        id: uuid(),
+        id: "ms-2-2",
         title: "Angebotserstellung",
-        description: "Erstellung eines detaillierten Angebots",
+        description: "Erstellung des detaillierten Angebots",
         status: "completed",
-        dueDate: createDate(-60),
-        completionDate: createDate(-62),
-        notes: ""
+        dueDate: subDays(today, 70),
+        completionDate: subDays(today, 72),
+        notes: "Detailliertes Angebot mit Migrationsstrategie",
+        sequenceNumber: 20
       },
       {
-        id: uuid(),
-        title: "Vertragsverhandlung",
-        description: "Verhandlung der Vertragsbedingungen",
-        status: "completed",
-        dueDate: createDate(-50),
-        completionDate: createDate(-45),
-        notes: "Vertrag wurde erfolgreich abgeschlossen"
-      }
-    ]
-  },
-  {
-    id: uuid(),
-    title: "Webseiten-Relaunch Handwerkskammer",
-    internalReference: "2023-004",
-    externalReference: "HWK-WEB-23",
-    client: "Handwerkskammer Oberbayern",
-    status: "draft",
-    createdAt: createDate(-10),
-    updatedAt: createDate(-10),
-    dueDate: createDate(30),
-    budget: 45000,
-    description: "Kompletter Relaunch der Webseite der Handwerkskammer mit modernem Design und verbesserter Benutzerführung.",
-    location: "Rosenheim, Bayern",
-    contactPerson: "Maria Weber",
-    contactEmail: "m.weber@hwk-oberbayern.de",
-    contactPhone: "+49 8031 123789",
-    milestones: [
-      {
-        id: uuid(),
-        title: "Anforderungsworkshop",
-        description: "Workshop zur Ermittlung der Anforderungen an die neue Webseite",
-        status: "pending",
-        dueDate: createDate(5),
-        completionDate: null,
-        notes: ""
-      },
-      {
-        id: uuid(),
-        title: "Designkonzept",
-        description: "Erstellung eines Designkonzepts mit mehreren Varianten",
-        status: "pending",
-        dueDate: createDate(15),
-        completionDate: null,
-        notes: ""
-      }
-    ]
-  },
-  {
-    id: uuid(),
-    title: "KI-basierte Qualitätskontrolle für Automobilzulieferer",
-    internalReference: "2023-005",
-    externalReference: "AUTO-QS-2023",
-    client: "AutoTeile GmbH",
-    status: "lost",
-    createdAt: createDate(-60),
-    updatedAt: createDate(-30),
-    dueDate: createDate(-40),
-    description: "Entwicklung eines KI-Systems zur automatisierten Qualitätskontrolle in der Produktion von Automobilteilen.",
-    location: "Stuttgart, Baden-Württemberg",
-    contactPerson: "Dr. Klaus Schmidt",
-    contactEmail: "k.schmidt@autoteile.de",
-    contactPhone: "+49 711 456789",
-    milestones: [
-      {
-        id: uuid(),
-        title: "Erstgespräch",
-        description: "Erstes Gespräch zur Anforderungsermittlung",
-        status: "completed",
-        dueDate: createDate(-55),
-        completionDate: createDate(-55),
-        notes: ""
-      },
-      {
-        id: uuid(),
-        title: "Angebotserstellung",
-        description: "Erstellung eines Angebots für das KI-System",
-        status: "completed",
-        dueDate: createDate(-45),
-        completionDate: createDate(-46),
-        notes: ""
-      },
-      {
-        id: uuid(),
+        id: "ms-2-3",
         title: "Präsentation",
-        description: "Präsentation des Angebots beim Kunden",
+        description: "Präsentation vor dem Vorstand",
         status: "completed",
-        dueDate: createDate(-40),
-        completionDate: createDate(-40),
-        notes: "Angebot wurde abgelehnt, da ein Mitbewerber ein günstigeres Angebot vorgelegt hat."
+        dueDate: subDays(today, 60),
+        completionDate: subDays(today, 60),
+        notes: "Präsentation erfolgreich durchgeführt",
+        sequenceNumber: 30
+      },
+      {
+        id: "ms-2-4",
+        title: "Zuschlag erhalten",
+        description: "Projekt wurde uns zugesprochen",
+        status: "completed",
+        dueDate: subDays(today, 30),
+        completionDate: subDays(today, 32),
+        notes: "Offizielles Zuschlagsschreiben erhalten",
+        sequenceNumber: 40
       }
-    ]
+    ],
+    tags: ["Healthcare", "ERP", "Cloud", "Migration"]
+  },
+  {
+    id: "3",
+    title: "Mobile App für Versicherung",
+    externalReference: "VERS-2023-15",
+    internalReference: "2023-003",
+    description: "Entwicklung einer mobilen App für Versicherungskunden.",
+    client: "AllSecure Versicherung AG",
+    status: "draft",
+    createdAt: subDays(today, 10),
+    updatedAt: subDays(today, 10),
+    dueDate: addDays(today, 15),
+    budget: 120000,
+    location: "Hamburg",
+    contactPerson: "Jana Meier",
+    contactEmail: "j.meier@allsecure.de",
+    contactPhone: "+49 40 5678 1234",
+    progress: 10,
+    milestones: [
+      {
+        id: "ms-3-1",
+        title: "Ausschreibungsdokumente sichten",
+        description: "Prüfung der Anforderungen und Rahmenbedingungen",
+        status: "pending",
+        dueDate: addDays(today, 2),
+        completionDate: null,
+        notes: "Besonders auf die Anforderungen an Datenschutz und Sicherheit achten",
+        sequenceNumber: 10
+      },
+      {
+        id: "ms-3-2",
+        title: "Entscheidung über Teilnahme",
+        description: "Go/No-Go-Entscheidung für die Angebotserstellung",
+        status: "pending",
+        dueDate: addDays(today, 4),
+        completionDate: null,
+        notes: "Meeting mit Geschäftsführung und Technik-Team ansetzen",
+        sequenceNumber: 20
+      }
+    ],
+    tags: ["Versicherung", "Mobile App", "Kundenportal"]
+  },
+  {
+    id: "4",
+    title: "IT-Sicherheitsaudit",
+    externalReference: "BANK-2023-08",
+    internalReference: "2023-004",
+    description: "Durchführung eines umfassenden IT-Sicherheitsaudits.",
+    client: "Rhein-Main-Bank AG",
+    status: "submitted",
+    createdAt: subDays(today, 45),
+    updatedAt: subDays(today, 20),
+    dueDate: subDays(today, 5),
+    budget: 85000,
+    location: "Mainz",
+    contactPerson: "Christian Berger",
+    contactEmail: "c.berger@rm-bank.de",
+    contactPhone: "+49 6131 9876 5432",
+    progress: 75,
+    milestones: [
+      {
+        id: "ms-4-1",
+        title: "Ausschreibung erhalten",
+        description: "Einladung zur Angebotsabgabe erhalten",
+        status: "completed",
+        dueDate: subDays(today, 40),
+        completionDate: subDays(today, 40),
+        notes: "Persönliche Einladung vom IT-Sicherheitsbeauftragten",
+        sequenceNumber: 10
+      },
+      {
+        id: "ms-4-2",
+        title: "Angebotserstellung",
+        description: "Erstellung des detaillierten Angebots",
+        status: "completed",
+        dueDate: subDays(today, 30),
+        completionDate: subDays(today, 32),
+        notes: "Detaillierter Auditplan mit Zeitrahmen und Methodik",
+        sequenceNumber: 20
+      },
+      {
+        id: "ms-4-3",
+        title: "Angebotsabgabe",
+        description: "Formelle Einreichung des Angebots",
+        status: "completed",
+        dueDate: subDays(today, 20),
+        completionDate: subDays(today, 22),
+        notes: "Angebot fristgerecht eingereicht",
+        sequenceNumber: 30
+      }
+    ],
+    tags: ["Banken", "IT-Sicherheit", "Audit", "Compliance"]
+  },
+  {
+    id: "5",
+    title: "Entwicklung Online-Buchungssystem",
+    externalReference: "TOUR-2023-03",
+    internalReference: "2023-005",
+    description: "Entwicklung eines Online-Buchungssystems für Tourenanbieter.",
+    client: "Adventure Tours GmbH",
+    status: "lost",
+    createdAt: subDays(today, 60),
+    updatedAt: subDays(today, 30),
+    dueDate: subDays(today, 25),
+    budget: 95000,
+    location: "Berlin",
+    contactPerson: "Markus Schulz",
+    contactEmail: "m.schulz@adventure-tours.de",
+    contactPhone: "+49 30 2345 6789",
+    progress: 100,
+    milestones: [
+      {
+        id: "ms-5-1",
+        title: "Ausschreibung erhalten",
+        description: "RFP über Branchenkontakte erhalten",
+        status: "completed",
+        dueDate: subDays(today, 55),
+        completionDate: subDays(today, 55),
+        notes: "Ausschreibung von Branchenverband weitergeleitet bekommen",
+        sequenceNumber: 10
+      },
+      {
+        id: "ms-5-2",
+        title: "Angebotserstellung",
+        description: "Erstellung des Angebots",
+        status: "completed",
+        dueDate: subDays(today, 45),
+        completionDate: subDays(today, 46),
+        notes: "Fokus auf Integration mit bestehenden Systemen",
+        sequenceNumber: 20
+      },
+      {
+        id: "ms-5-3",
+        title: "Absage erhalten",
+        description: "Kunde hat sich für anderen Anbieter entschieden",
+        status: "completed",
+        dueDate: subDays(today, 30),
+        completionDate: subDays(today, 30),
+        notes: "Preis war ausschlaggebender Faktor laut Feedback",
+        sequenceNumber: 30
+      }
+    ],
+    tags: ["Tourismus", "Buchungssystem", "Web-Entwicklung"]
   }
 ];
+
+// Hilfsfunktion zum Erstellen eines leeren Tenders
+export const createEmptyTender = (): Tender => {
+  const id = uuidv4();
+  return {
+    id,
+    title: "Neue Ausschreibung",
+    externalReference: "",
+    internalReference: `${new Date().getFullYear()}-${id.substring(0, 3)}`,
+    description: "",
+    client: "",
+    status: "draft",
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    dueDate: addDays(new Date(), 30),
+    budget: undefined,
+    location: "",
+    contactPerson: "",
+    contactEmail: "",
+    contactPhone: "",
+    progress: 0,
+    milestones: [],
+    tags: []
+  };
+};
