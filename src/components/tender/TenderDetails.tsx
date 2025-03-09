@@ -54,10 +54,10 @@ export function TenderDetails({ tender }: TenderDetailsProps) {
     : 0;
 
   // Format dates
-  const createdAtFormatted = format(new Date(tender.createdAt), "MMMM d, yyyy");
-  const dueDateFormatted = format(new Date(tender.dueDate), "MMMM d, yyyy");
+  const createdAtFormatted = format(new Date(tender.createdAt), "d. MMMM yyyy");
+  const dueDateFormatted = format(new Date(tender.dueDate), "d. MMMM yyyy");
   const bindingPeriodDateFormatted = tender.bindingPeriodDate 
-    ? format(new Date(tender.bindingPeriodDate), "MMMM d, yyyy") 
+    ? format(new Date(tender.bindingPeriodDate), "d. MMMM yyyy") 
     : null;
   
   // Check if the due date is in the past
@@ -69,18 +69,7 @@ export function TenderDetails({ tender }: TenderDetailsProps) {
 
   // Function to format the status text
   const formatStatusText = (status: string): string => {
-    const statusMap: Record<string, string> = {
-      "entwurf": t('tenders.entwurf', 'Entwurf'),
-      "in-pruefung": t('tenders.in-pruefung', 'In Prüfung'),
-      "in-bearbeitung": t('tenders.in-bearbeitung', 'In Bearbeitung'),
-      "abgegeben": t('tenders.abgegeben', 'Abgegeben'),
-      "aufklaerung": t('tenders.aufklaerung', 'In Aufklärung'),
-      "gewonnen": t('tenders.gewonnen', 'Gewonnen'),
-      "verloren": t('tenders.verloren', 'Verloren'),
-      "abgeschlossen": t('tenders.abgeschlossen', 'Abgeschlossen')
-    };
-    
-    return statusMap[status] || status.charAt(0).toUpperCase() + status.slice(1);
+    return t(`tenders.${status}`, status);
   };
 
   return (
@@ -136,7 +125,7 @@ export function TenderDetails({ tender }: TenderDetailsProps) {
               
               {bindingPeriodDateFormatted && (
                 <>
-                  <dt className="text-tender-500">{t('tender.bindingPeriodDate', 'Bindefrist')}</dt>
+                  <dt className="text-tender-500">{t('tender.bindingPeriodDate')}</dt>
                   <dd className="flex items-center gap-1.5">
                     <Calendar className="h-4 w-4 text-tender-400" />
                     {bindingPeriodDateFormatted}
@@ -169,12 +158,12 @@ export function TenderDetails({ tender }: TenderDetailsProps) {
               
               {tender.conceptRequired !== undefined && (
                 <>
-                  <dt className="text-tender-500">{t('tender.conceptRequired', 'Konzept erforderlich')}</dt>
+                  <dt className="text-tender-500">{t('tender.conceptRequired')}</dt>
                   <dd className="flex items-center gap-1.5">
                     <ClipboardCheck className="h-4 w-4 text-tender-400" />
                     {tender.conceptRequired 
-                      ? t('general.yes') 
-                      : t('general.no')}
+                      ? t('yes') 
+                      : t('no')}
                   </dd>
                 </>
               )}
@@ -189,7 +178,7 @@ export function TenderDetails({ tender }: TenderDetailsProps) {
             
             {tender.evaluationScheme && (
               <div className="mt-4 pt-4 border-t border-tender-100">
-                <h4 className="font-medium mb-2">{t('tender.evaluationScheme', 'Wertungsschema')}</h4>
+                <h4 className="font-medium mb-2">{t('tender.evaluationScheme')}</h4>
                 <div className="text-tender-600 bg-tender-50 p-3 rounded-md">
                   <div className="flex items-start gap-2">
                     <Award className="h-4 w-4 mt-1 text-tender-400" />
@@ -245,7 +234,7 @@ export function TenderDetails({ tender }: TenderDetailsProps) {
                 )}
               </dl>
             ) : (
-              <p className="text-tender-500 italic">{t('tenderDetails.noContactInfo', 'Keine Kontaktinformationen verfügbar')}</p>
+              <p className="text-tender-500 italic">{t('tenderDetails.noContactInfo')}</p>
             )}
           </CardContent>
         </Card>

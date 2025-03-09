@@ -8,8 +8,11 @@ import {
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import { Globe } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 export function LanguageSwitcher() {
+  const { t } = useTranslation();
+  
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -19,7 +22,7 @@ export function LanguageSwitcher() {
           className="text-tender-500 hover:text-tender-600"
         >
           <Globe className="h-5 w-5" />
-          <span className="sr-only">Sprache</span>
+          <span className="sr-only">{t('selectLanguage')}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">

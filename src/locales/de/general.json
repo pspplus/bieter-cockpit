@@ -62,7 +62,15 @@
     "entwurf": "Entwurf",
     "in-pruefung": "In Prüfung",
     "in-bearbeitung": "In Bearbeitung",
-    "abgeschlossen": "Abgeschlossen"
+    "abgeschlossen": "Abgeschlossen",
+    "active": "Aktiv",
+    "review": "In Prüfung",
+    "submitted": "Eingereicht",
+    "inClarification": "In Aufklärung",
+    "won": "Gewonnen",
+    "lost": "Verloren",
+    "completed": "Abgeschlossen",
+    "draft": "Entwurf"
   },
   "tenderDetails": {
     "tenderInformation": "Ausschreibungsinformationen",

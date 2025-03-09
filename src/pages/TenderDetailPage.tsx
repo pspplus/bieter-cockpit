@@ -74,7 +74,7 @@ export default function TenderDetailPage() {
 
   if (isLoading) {
     return (
-      <Layout title={t("general.loading")}>
+      <Layout title={t("loading")}>
         <div className="flex items-center justify-center h-64">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
         </div>
@@ -93,7 +93,7 @@ export default function TenderDetailPage() {
             className="mt-4"
             variant="outline"
           >
-            {t("general.backToTenders")}
+            {t("backToTenders")}
           </Button>
         </div>
       </Layout>
@@ -142,10 +142,10 @@ export default function TenderDetailPage() {
             size="icon"
             onClick={handleDelete}
             className="ml-2 flex-shrink-0"
-            aria-label={t("general.delete")}
+            aria-label={t("delete")}
           >
             <Trash2 className="h-4 w-4" />
-            <span className="sr-only">{t("general.delete")}</span>
+            <span className="sr-only">{t("delete")}</span>
           </Button>
         </div>
       </div>

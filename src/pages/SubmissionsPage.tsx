@@ -135,7 +135,7 @@ export default function SubmissionsPage() {
                         {t('submittedDate')}
                       </div>
                       <div>
-                        {new Date(tender.updatedAt).toLocaleDateString()}
+                        {new Date(tender.updatedAt).toLocaleDateString('de-DE')}
                       </div>
                     </div>
                     <div>
