@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -82,36 +83,38 @@ export default function TenderDetailPage() {
     <Layout title={tender.title}>
       <div className="space-y-6">
         <div className="flex justify-between items-center">
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList>
-              <TabsTrigger value="details">{t('tenderDetails.details', 'Details')}</TabsTrigger>
-              <TabsTrigger value="milestones">{t('tenderDetails.milestones', 'Milestones')}</TabsTrigger>
-              <TabsTrigger value="edit">{t('tenderDetails.edit', 'Edit')}</TabsTrigger>
-            </TabsList>
-          </Tabs>
+          <div className="w-full">
+            <Tabs defaultValue={activeTab} onValueChange={setActiveTab} className="w-full">
+              <TabsList>
+                <TabsTrigger value="details">{t('tenderDetails.details', 'Details')}</TabsTrigger>
+                <TabsTrigger value="milestones">{t('tenderDetails.milestones', 'Milestones')}</TabsTrigger>
+                <TabsTrigger value="edit">{t('tenderDetails.edit', 'Edit')}</TabsTrigger>
+              </TabsList>
+            
+              <TabsContent value="details" className="mt-4">
+                <TenderDetails tender={tender} />
+              </TabsContent>
+              
+              <TabsContent value="milestones" className="mt-4">
+                <MilestonesList tender={tender} />
+              </TabsContent>
+              
+              <TabsContent value="edit" className="mt-4">
+                <TenderEditForm tender={tender} onCancel={() => setActiveTab("details")} />
+              </TabsContent>
+            </Tabs>
+          </div>
           
           <Button
             variant="destructive"
             size="icon"
             onClick={handleDelete}
-            className="ml-2"
+            className="ml-2 flex-shrink-0"
           >
             <Trash2 className="h-4 w-4" />
             <span className="sr-only">{t('tenderDetails.delete', 'Delete')}</span>
           </Button>
         </div>
-
-        <TabsContent value="details" className="mt-0">
-          <TenderDetails tender={tender} />
-        </TabsContent>
-        
-        <TabsContent value="milestones" className="mt-0">
-          <MilestonesList tender={tender} />
-        </TabsContent>
-
-        <TabsContent value="edit" className="mt-0">
-          <TenderEditForm tender={tender} onCancel={() => setActiveTab("details")} />
-        </TabsContent>
       </div>
     </Layout>
   );

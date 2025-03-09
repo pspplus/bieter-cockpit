@@ -1,4 +1,3 @@
-
 import React, { createContext, useState, useEffect } from "react";
 import { Tender, Milestone } from "@/types/tender";
 import { useAuth } from "@/context/AuthContext";
@@ -37,7 +36,6 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
   const { isAuthenticated } = useAuth();
   const { t } = useTranslation();
 
-  // Load tenders when authenticated
   useEffect(() => {
     if (isAuthenticated) {
       setIsLoading(true);
@@ -55,7 +53,6 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
     }
   }, [isAuthenticated, t]);
 
-  // Create a new tender
   const createTender = async (tenderData: Partial<Tender>): Promise<Tender> => {
     try {
       const newTender = await createTenderService(tenderData);
@@ -68,7 +65,6 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
     }
   };
 
-  // Update a tender
   const updateTender = async (id: string, updates: Partial<Tender>): Promise<void> => {
     try {
       await updateTenderService(id, updates);
@@ -83,7 +79,6 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
     }
   };
 
-  // Delete a tender
   const deleteTender = async (id: string): Promise<void> => {
     try {
       await deleteTenderService(id);
@@ -96,7 +91,6 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
     }
   };
 
-  // Create a milestone
   const createMilestone = async (tenderId: string, milestone: Partial<Milestone>): Promise<void> => {
     try {
       const newMilestone = await createMilestoneService({ ...milestone, tenderId });
@@ -119,7 +113,6 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
     }
   };
 
-  // Update a milestone
   const updateMilestone = async (milestone: Milestone): Promise<void> => {
     try {
       await updateMilestoneService(milestone.id, milestone);
@@ -143,7 +136,6 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
     }
   };
 
-  // Delete a milestone
   const deleteMilestone = async (tenderId: string, milestoneId: string): Promise<void> => {
     try {
       await deleteMilestoneService(milestoneId);

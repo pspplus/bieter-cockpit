@@ -49,21 +49,18 @@ export function TenderCreationForm() {
   };
 
   const handleClientCreated = (client: Client) => {
-    // Update the form data with the new client
     setFormData(prev => ({ ...prev, client: client.name }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Validation: check if client is selected
     if (!formData.client) {
       toast.error(t('errorMessages.selectClient', 'Bitte wählen Sie eine Vergabestelle aus'));
       return;
     }
     
     try {
-      // Create new tender
       const newTender = await createTender({
         title: formData.title || t('tenders.newTender'),
         reference: formData.reference,
@@ -77,7 +74,6 @@ export function TenderCreationForm() {
 
       toast.success(t('toasts.tenderCreated'));
 
-      // Navigate to the new tender page
       navigate(`/tenders/${newTender.id}`);
     } catch (error) {
       console.error("Error creating tender:", error);
@@ -152,7 +148,6 @@ export function TenderCreationForm() {
                         className="relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-2 pr-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 hover:bg-accent hover:text-accent-foreground border-t border-muted mt-1 pt-2"
                         onClick={() => {
                           setIsNewClientDialogOpen(true);
-                          // Close the select dropdown (this is a hack, but it works)
                           document.body.click();
                         }}
                       >
