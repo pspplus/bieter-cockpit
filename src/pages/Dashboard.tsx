@@ -47,7 +47,7 @@ export default function Dashboard() {
           <Card className="animate-blur-in">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium">Total Tenders</CardTitle>
-              <FileText className="h-4 w-4 text-tender-500" />
+              <FileText className="h-4 w-4 text-bieter-blue" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{totalTenders}</div>
@@ -58,7 +58,7 @@ export default function Dashboard() {
           <Card className="animate-blur-in" style={{ animationDelay: "50ms" }}>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium">Active Tenders</CardTitle>
-              <Clock className="h-4 w-4 text-blue-500" />
+              <Clock className="h-4 w-4 text-bieter-blue" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{tendersInProgress}</div>
@@ -69,7 +69,7 @@ export default function Dashboard() {
           <Card className="animate-blur-in" style={{ animationDelay: "100ms" }}>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium">Submitted</CardTitle>
-              <FileCheck className="h-4 w-4 text-indigo-500" />
+              <FileCheck className="h-4 w-4 text-bieter-blue" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{tendersSubmitted}</div>
@@ -80,7 +80,7 @@ export default function Dashboard() {
           <Card className="animate-blur-in" style={{ animationDelay: "150ms" }}>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium">Won Tenders</CardTitle>
-              <Flag className="h-4 w-4 text-green-500" />
+              <Flag className="h-4 w-4 text-bieter-blue" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{tendersWon}</div>
@@ -93,7 +93,7 @@ export default function Dashboard() {
         <Card className="animate-blur-in" style={{ animationDelay: "200ms" }}>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Zuschlagsquote</CardTitle>
-            <BarChart className="h-4 w-4 text-purple-500" />
+            <BarChart className="h-4 w-4 text-bieter-blue" />
           </CardHeader>
           <CardContent>
             <div className="flex items-center space-x-4">
@@ -105,7 +105,7 @@ export default function Dashboard() {
               </div>
               <div className="h-2 flex-1 bg-gray-200 rounded-full overflow-hidden">
                 <div 
-                  className="h-full bg-purple-500 rounded-full"
+                  className="h-full bg-bieter-blue rounded-full"
                   style={{ width: `${successRate}%` }}
                 ></div>
               </div>
@@ -117,7 +117,7 @@ export default function Dashboard() {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-medium">Active Tenders</h2>
-              <Link to="/tenders" className="text-sm text-primary flex items-center hover:underline">
+              <Link to="/tenders" className="text-sm text-bieter-blue flex items-center hover:underline">
                 View all
                 <ArrowRight className="h-3.5 w-3.5 ml-1" />
               </Link>
@@ -160,7 +160,7 @@ export default function Dashboard() {
                     
                     return (
                       <Link key={tender.id} to={`/tenders/${tender.id}`}>
-                        <Card className="hover:border-primary/30 transition-all">
+                        <Card className="hover:border-bieter-blue/30 transition-all">
                           <CardContent className="p-4">
                             <div className="flex justify-between items-center">
                               <div>

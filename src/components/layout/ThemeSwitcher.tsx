@@ -14,7 +14,7 @@ export function ThemeSwitcher() {
       size="icon"
       onClick={toggleTheme}
       title={theme === "light" ? t('theme.darkMode') : t('theme.lightMode')}
-      className="text-tender-500 hover:text-tender-600 transition-colors"
+      className="text-bieter-blue hover:text-bieter-blue/80 transition-colors"
     >
       {theme === "light" ? (
         <Moon className="h-5 w-5" />

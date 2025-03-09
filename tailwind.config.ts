@@ -24,7 +24,7 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ['-apple-system', 'BlinkMacSystemFont', 'San Francisco', 'Helvetica Neue', 'sans-serif'],
+        sans: ['Zona Pro', '-apple-system', 'BlinkMacSystemFont', 'San Francisco', 'Helvetica Neue', 'sans-serif'],
       },
       colors: {
         border: 'hsl(var(--border))',
@@ -45,8 +45,13 @@ export default {
           900: '#404652',
           950: '#272a33',
         },
+        bieter: {
+          blue: '#004494', // Brand blue from style guide
+          white: '#ffffff',
+          gray: '#AAAAAA', // Used for the icon background in style guide
+        },
         primary: {
-          DEFAULT: '#004494', // PSP Blue
+          DEFAULT: '#004494', // Bieter.Coach blue
           foreground: '#ffffff'
         },
         secondary: {

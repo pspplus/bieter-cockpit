@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -12,8 +13,7 @@ import {
   Settings,
   Users,
   Inbox,
-  FileText,
-  Smile
+  FileText
 } from "lucide-react";
 
 interface SidebarProps {
@@ -43,8 +43,10 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
     <div className="flex h-full flex-col">
       <div className="flex h-16 items-center border-b border-tender-100 dark:border-tender-800 px-6">
         <Link to="/" className="flex items-center gap-2 font-semibold tracking-tight">
-          <Smile className="h-9 w-9 text-yellow-400" />
-          <span className="text-xl">{t('general.appName')}</span>
+          <div className="h-9 w-9 bg-bieter-blue flex items-center justify-center">
+            <span className="text-white font-bold text-sm">b.c</span>
+          </div>
+          <span className="text-xl text-bieter-blue uppercase tracking-wider font-bold">Bieter.Coach</span>
         </Link>
         {isMobile && (
           <Button

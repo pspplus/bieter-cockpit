@@ -1,5 +1,6 @@
+
 import { cn } from "@/lib/utils";
-import { Bell, ChevronDown, Menu, PlusCircle, Search, Smile, ArrowLeft } from "lucide-react";
+import { Bell, ChevronDown, Menu, PlusCircle, Search, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -66,7 +67,7 @@ export function Header({ toggleSidebar, title = "Tender Management" }: HeaderPro
             <>
               <Button 
                 onClick={() => navigate("/tenders/new")}
-                className="hidden md:flex items-center gap-1.5 rounded-full"
+                className="hidden md:flex items-center gap-1.5 rounded-full bg-bieter-blue hover:bg-bieter-blue/90"
               >
                 <PlusCircle className="h-4 w-4" />
                 <span>{t('general.createNewTender')}</span>
@@ -92,7 +93,7 @@ export function Header({ toggleSidebar, title = "Tender Management" }: HeaderPro
                   >
                     <Avatar className="h-9 w-9">
                       <AvatarImage src="" alt={getUserName()} />
-                      <AvatarFallback className="bg-primary text-primary-foreground">
+                      <AvatarFallback className="bg-bieter-blue text-white">
                         {getUserName().substring(0, 2).toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
@@ -121,7 +122,7 @@ export function Header({ toggleSidebar, title = "Tender Management" }: HeaderPro
               </Button>
               <Button 
                 onClick={() => navigate('/signup')}
-                className="rounded-full"
+                className="rounded-full bg-bieter-blue hover:bg-bieter-blue/90"
               >
                 {t('auth.signup') || 'Registrieren'}
               </Button>
