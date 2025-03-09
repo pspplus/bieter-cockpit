@@ -1,255 +1,304 @@
 
-import { Tender, TenderStatus, MilestoneStatus } from "@/types/tender";
-import { v4 as uuid } from "uuid";
+import { Tender } from "@/types/tender";
+import { v4 as uuidv4 } from "uuid";
 
-// Helper to create a date object with custom days offset
-const createDate = (daysOffset: number) => {
-  const date = new Date();
-  date.setDate(date.getDate() + daysOffset);
-  return date;
+// Hilfsfunktion zur Erstellung von Meilensteinen mit sequentiellen Nummern
+const createMilestones = (count: number) => {
+  return Array.from({ length: count }).map((_, index) => ({
+    id: uuidv4(),
+    sequenceNumber: index + 1,
+    title: `Meilenstein ${index + 1}`,
+    description: `Beschreibung für Meilenstein ${index + 1}`,
+    status: Math.random() > 0.5 ? "completed" : "pending" as "completed" | "pending",
+    dueDate: new Date(Date.now() + (index + 1) * 86400000),
+    completionDate: Math.random() > 0.5 ? new Date() : null,
+    notes: `Notizen für Meilenstein ${index + 1}`
+  }));
 };
 
-// Generate mock tenders data
-export const MOCK_TENDERS: Tender[] = [
+export const mockTenders: Tender[] = [
   {
-    id: "5b8573f5-8a5e-4fdc-92b1-25d587b2592d",
-    title: "IT-Dienstleistungen für die Stadt München",
-    internalReference: "2023-001",
-    externalReference: "2023-01-MUEN",
-    client: "Stadt München",
-    status: "active",
-    createdAt: createDate(-20),
-    updatedAt: createDate(-3),
-    dueDate: createDate(15),
-    budget: 250000,
-    description: "Bereitstellung von IT-Support, Netzwerkmanagement und Softwareentwicklungsdienstleistungen für das Rathaus München.",
-    location: "München, Bayern",
-    contactPerson: "Thomas Müller",
-    contactEmail: "t.mueller@muenchen.de",
-    contactPhone: "+49 89 123456",
-    notes: "Die Stadt München legt besonderen Wert auf den Einsatz von Open-Source-Software.",
+    id: "1887fbb0-606a-4a39-b094-686076ec5972",
+    title: "Neubau Feuerwehrgebäude Musterhausen",
+    description: "Ausschreibung für den Neubau eines Feuerwehrgebäudes in Musterhausen.",
+    internalReference: "FW-2023-05",
+    externalReference: "VGR-2023-123456",
+    client: "Stadt Musterhausen",
+    status: "in-bearbeitung", // Alias: active
+    createdAt: new Date("2023-05-15"),
+    updatedAt: new Date("2023-05-20"),
+    dueDate: new Date("2023-07-20"),
+    submissionMethod: "Elektronisch via E-Vergabe-Plattform",
+    estimatedValue: 1750000,
+    contactPerson: "Max Mustermann",
+    contactEmail: "m.mustermann@musterhausen.de",
+    contactPhone: "+49123456789",
+    location: "Musterhausen, Deutschland",
+    notes: "Wichtige Kontakte: Architekturbüro Schmidt & Partner",
     milestones: [
       {
-        id: uuid(),
+        id: uuidv4(),
+        sequenceNumber: 1,
+        title: "Ausschreibungsunterlagen analysieren",
+        description: "Detaillierte Analyse aller Ausschreibungsunterlagen",
+        status: "completed",
+        dueDate: new Date("2023-05-18"),
+        completionDate: new Date("2023-05-17"),
+        notes: "Alle Unterlagen wurden gesichtet und wichtige Anforderungen markiert."
+      },
+      {
+        id: uuidv4(),
+        sequenceNumber: 2,
+        title: "Team zusammenstellen",
+        description: "Projektteam für die Angebotsbearbeitung zusammenstellen",
+        status: "completed",
+        dueDate: new Date("2023-05-20"),
+        completionDate: new Date("2023-05-19"),
+        notes: "Team besteht aus: Projektleiter, Architekt, Statiker, Bauingenieur, Elektroplaner"
+      },
+      {
+        id: uuidv4(),
+        sequenceNumber: 3,
+        title: "Angebotskalkulation",
+        description: "Detaillierte Kostenberechnung für alle Gewerke",
+        status: "pending",
+        dueDate: new Date("2023-06-15"),
+        completionDate: null,
+        notes: "Kalkulationsgrundlage: LV aus Ausschreibung plus 5% Puffer"
+      }
+    ]
+  },
+  {
+    id: "2ea5af48-6337-4c01-ab1e-e8c045debf21",
+    title: "Wartung und Betrieb Abwasserpumpwerk",
+    description: "5-Jahresvertrag für die Wartung und den Betrieb des Abwasserpumpwerks Nord",
+    internalReference: "APW-2023-07",
+    externalReference: "AW-2023-578",
+    client: "Stadtwerke Beispielstadt",
+    status: "abgegeben", // Alias: submitted
+    createdAt: new Date("2023-03-10"),
+    updatedAt: new Date("2023-04-25"),
+    dueDate: new Date("2023-05-01"),
+    submissionMethod: "Papierform, zweifache Ausfertigung",
+    estimatedValue: 780000,
+    contactPerson: "Erika Beispiel",
+    contactEmail: "e.beispiel@stadtwerke-beispielstadt.de",
+    contactPhone: "+49987654321",
+    location: "Beispielstadt, Deutschland",
+    notes: "Besonderheiten: 24/7 Bereitschaftsdienst erforderlich",
+    milestones: [
+      {
+        id: uuidv4(),
+        sequenceNumber: 1,
         title: "Anforderungsanalyse",
-        description: "Durchführung einer Anforderungsanalyse mit den verschiedenen Abteilungen",
+        description: "Analyse der technischen und vertraglichen Anforderungen",
         status: "completed",
-        dueDate: createDate(-10),
-        completionDate: createDate(-12),
-        notes: "Alle Abteilungen wurden erfolgreich befragt"
+        dueDate: new Date("2023-03-15"),
+        completionDate: new Date("2023-03-14"),
+        notes: "Technische Analyse abgeschlossen, besondere Herausforderungen dokumentiert"
       },
       {
-        id: uuid(),
+        id: uuidv4(),
+        sequenceNumber: 2,
+        title: "Ortsbegehung",
+        description: "Besichtigung des Abwasserpumpwerks",
+        status: "completed",
+        dueDate: new Date("2023-03-20"),
+        completionDate: new Date("2023-03-18"),
+        notes: "Vor-Ort-Besichtigung mit Teamleiter durchgeführt, Fotodokumentation erstellt"
+      },
+      {
+        id: uuidv4(),
+        sequenceNumber: 3,
         title: "Angebotserstellung",
-        description: "Erstellung eines detaillierten Angebots mit Kostenaufstellung",
+        description: "Erstellung des schriftlichen Angebots",
         status: "completed",
-        dueDate: createDate(-5),
-        completionDate: createDate(-6),
-        notes: "Angebot wurde intern geprüft und freigegeben"
+        dueDate: new Date("2023-04-15"),
+        completionDate: new Date("2023-04-10"),
+        notes: "Angebot mit allen erforderlichen Unterlagen erstellt"
       },
       {
-        id: uuid(),
-        title: "Präsentation vor dem Stadtrat",
-        description: "Präsentation des Angebots vor dem Stadtrat",
-        status: "pending",
-        dueDate: createDate(5),
-        completionDate: null,
-        notes: ""
+        id: uuidv4(),
+        sequenceNumber: 4,
+        title: "Angebotsabgabe",
+        description: "Fristgerechte Abgabe des Angebots",
+        status: "completed",
+        dueDate: new Date("2023-04-25"),
+        completionDate: new Date("2023-04-24"),
+        notes: "Angebot persönlich eingereicht, Eingangsbestätigung erhalten"
       }
     ]
   },
   {
-    id: uuid(),
-    title: "Schulungsmanagementsystem für Bildungsträger",
-    internalReference: "2023-002",
-    externalReference: "BT-SCH-2023",
-    client: "Bildungswerk Bayern",
-    status: "submitted",
-    createdAt: createDate(-45),
-    updatedAt: createDate(-10),
-    dueDate: createDate(-5),
-    budget: 95000,
-    description: "Entwicklung eines Systems zur Verwaltung von Schulungen, Teilnehmern und Dozenten für einen großen Bildungsträger.",
-    location: "Nürnberg, Bayern",
-    contactPerson: "Sandra Berger",
-    contactEmail: "s.berger@bildungswerk-bayern.de",
-    contactPhone: "+49 911 654321",
-    notes: "Kunde wünscht modulares System mit Möglichkeit zur späteren Erweiterung.",
+    id: "d14c3ef4-3a6e-47ec-9742-14b32a6c0bc3",
+    title: "Smart City Beleuchtungskonzept",
+    description: "Rahmenvertrag zur Modernisierung der Straßenbeleuchtung mit Smart City Funktionen",
+    internalReference: "SCB-2023-09",
+    externalReference: "SCMV-2023-42",
+    client: "Gemeinde Neustadt",
+    status: "gewonnen", // Alias: won
+    createdAt: new Date("2023-01-20"),
+    updatedAt: new Date("2023-03-15"),
+    dueDate: new Date("2023-02-28"),
+    submissionMethod: "Elektronisch per E-Mail",
+    estimatedValue: 1250000,
+    contactPerson: "Thomas Neumann",
+    contactEmail: "t.neumann@neustadt-gemeinde.de",
+    contactPhone: "+49135792468",
+    location: "Neustadt, Deutschland",
+    notes: "Auftragsvolumen für erste Phase: 250.000 EUR",
     milestones: [
       {
-        id: uuid(),
-        title: "Systemanalyse",
-        description: "Analyse der bestehenden Systeme und Prozesse",
+        id: uuidv4(),
+        sequenceNumber: 1,
+        title: "Bestandsaufnahme",
+        description: "Analyse der vorhandenen Beleuchtungsinfrastruktur",
         status: "completed",
-        dueDate: createDate(-30),
-        completionDate: createDate(-32),
-        notes: ""
+        dueDate: new Date("2023-01-25"),
+        completionDate: new Date("2023-01-24"),
+        notes: "Vollständige Dokumentation der vorhandenen Beleuchtungssysteme"
       },
       {
-        id: uuid(),
+        id: uuidv4(),
+        sequenceNumber: 2,
         title: "Konzepterstellung",
-        description: "Erstellung eines detaillierten Konzepts für das neue System",
+        description: "Technisches und wirtschaftliches Konzept",
         status: "completed",
-        dueDate: createDate(-20),
-        completionDate: createDate(-21),
-        notes: ""
+        dueDate: new Date("2023-02-10"),
+        completionDate: new Date("2023-02-08"),
+        notes: "Innovatives Konzept mit LED-Umrüstung und Smart-City-Integration"
       },
       {
-        id: uuid(),
-        title: "Angebotserstellung",
-        description: "Erstellung eines Angebots mit Kostenaufstellung",
+        id: uuidv4(),
+        sequenceNumber: 3,
+        title: "Angebotskalkulation",
+        description: "Detaillierte Preiskalkulation",
         status: "completed",
-        dueDate: createDate(-15),
-        completionDate: createDate(-14),
-        notes: ""
+        dueDate: new Date("2023-02-20"),
+        completionDate: new Date("2023-02-15"),
+        notes: "Wirtschaftlichkeitsberechnung mit ROI nach 5 Jahren"
       },
       {
-        id: uuid(),
-        title: "Präsentation",
-        description: "Präsentation des Konzepts vor der Geschäftsführung",
+        id: uuidv4(),
+        sequenceNumber: 4,
+        title: "Angebotspräsentation",
+        description: "Vorstellung des Konzepts beim Kunden",
         status: "completed",
-        dueDate: createDate(-10),
-        completionDate: createDate(-10),
-        notes: "Präsentation wurde sehr positiv aufgenommen"
+        dueDate: new Date("2023-02-25"),
+        completionDate: new Date("2023-02-23"),
+        notes: "Präsentation vor Gemeindevorstand erfolgreich"
       }
     ]
   },
   {
-    id: uuid(),
-    title: "Digitalisierung der Lagerlogistik",
-    internalReference: "2023-003",
-    externalReference: "LOG-DIG-2023",
-    client: "LogistikPro GmbH",
-    status: "won",
-    createdAt: createDate(-90),
-    updatedAt: createDate(-30),
-    dueDate: createDate(-40),
-    budget: 180000,
-    description: "Implementierung eines digitalisierten Lagerlogistiksystems inklusive Barcode-Scanner und Echtzeit-Bestandsmanagement.",
-    location: "Frankfurt, Hessen",
-    contactPerson: "Frank Schmitt",
-    contactEmail: "f.schmitt@logistikpro.de",
-    contactPhone: "+49 69 987654",
-    notes: "Kunde hat bereits positive Erfahrungen mit unseren früheren Projekten gemacht.",
+    id: "a6d8a6b2-aa35-4c0e-9ab3-cd8d06b0929d",
+    title: "Schulcampus Digitalisierung Phase 2",
+    description: "Erweiterung der digitalen Infrastruktur für den Schulcampus Musterbach",
+    internalReference: "DIGI-2023-04",
+    externalReference: "SCH-2023-99",
+    client: "Schulverband Musterbach",
+    status: "entwurf", // Alias: draft
+    createdAt: new Date("2023-06-01"),
+    updatedAt: new Date("2023-06-01"),
+    dueDate: new Date("2023-07-31"),
+    submissionMethod: "Online-Portal Vergabeplattform",
+    estimatedValue: 350000,
+    contactPerson: "Dr. Maria Schmidt",
+    contactEmail: "m.schmidt@schulverband-musterbach.de",
+    contactPhone: "+49246813579",
+    location: "Musterbach, Deutschland",
+    notes: "Aufbauend auf Phase 1, die wir bereits erfolgreich abgeschlossen haben",
     milestones: [
       {
-        id: uuid(),
+        id: uuidv4(),
+        sequenceNumber: 1,
         title: "Anforderungsanalyse",
-        description: "Analyse der bestehenden Logistikprozesse",
-        status: "completed",
-        dueDate: createDate(-80),
-        completionDate: createDate(-81),
-        notes: ""
+        description: "Analyse der Anforderungen aus Phase 2",
+        status: "pending",
+        dueDate: new Date("2023-06-10"),
+        completionDate: null,
+        notes: "Fokus auf neue Klassenzimmer und Verwaltungsbereich"
       },
       {
-        id: uuid(),
-        title: "Konzepterstellung",
-        description: "Erstellung eines Konzepts für die Digitalisierung",
-        status: "completed",
-        dueDate: createDate(-70),
-        completionDate: createDate(-72),
-        notes: ""
-      },
-      {
-        id: uuid(),
-        title: "Angebotserstellung",
-        description: "Erstellung eines detaillierten Angebots",
-        status: "completed",
-        dueDate: createDate(-60),
-        completionDate: createDate(-62),
-        notes: ""
-      },
-      {
-        id: uuid(),
-        title: "Vertragsverhandlung",
-        description: "Verhandlung der Vertragsbedingungen",
-        status: "completed",
-        dueDate: createDate(-50),
-        completionDate: createDate(-45),
-        notes: "Vertrag wurde erfolgreich abgeschlossen"
+        id: uuidv4(),
+        sequenceNumber: 2,
+        title: "Technisches Konzept",
+        description: "Erstellung des technischen Konzepts für Phase 2",
+        status: "pending",
+        dueDate: new Date("2023-06-20"),
+        completionDate: null,
+        notes: "Integration mit vorhandener Infrastruktur aus Phase 1"
       }
     ]
   },
   {
-    id: uuid(),
-    title: "Webseiten-Relaunch Handwerkskammer",
-    internalReference: "2023-004",
-    externalReference: "HWK-WEB-23",
-    client: "Handwerkskammer Oberbayern",
-    status: "draft",
-    createdAt: createDate(-10),
-    updatedAt: createDate(-10),
-    dueDate: createDate(30),
-    budget: 45000,
-    description: "Kompletter Relaunch der Webseite der Handwerkskammer mit modernem Design und verbesserter Benutzerführung.",
-    location: "Rosenheim, Bayern",
-    contactPerson: "Maria Weber",
-    contactEmail: "m.weber@hwk-oberbayern.de",
-    contactPhone: "+49 8031 123789",
+    id: "f9c7b6a5-d8e4-4f3a-2b1c-0a9b8c7d6e5f",
+    title: "Energetische Sanierung Rathaus",
+    description: "Energetische Sanierung des historischen Rathauses der Stadt Altdorf",
+    internalReference: "RATH-2023-01",
+    externalReference: "ES-2023-005",
+    client: "Stadt Altdorf",
+    status: "verloren", // Alias: lost
+    createdAt: new Date("2022-11-10"),
+    updatedAt: new Date("2023-01-20"),
+    dueDate: new Date("2022-12-15"),
+    submissionMethod: "Schriftlich per Post",
+    estimatedValue: 890000,
+    contactPerson: "Jürgen Altmann",
+    contactEmail: "j.altmann@altdorf-stadt.de",
+    contactPhone: "+4935791246",
+    location: "Altdorf, Deutschland",
+    notes: "Denkmalschutzauflagen beachten",
     milestones: [
       {
-        id: uuid(),
-        title: "Anforderungsworkshop",
-        description: "Workshop zur Ermittlung der Anforderungen an die neue Webseite",
-        status: "pending",
-        dueDate: createDate(5),
-        completionDate: null,
-        notes: ""
-      },
-      {
-        id: uuid(),
-        title: "Designkonzept",
-        description: "Erstellung eines Designkonzepts mit mehreren Varianten",
-        status: "pending",
-        dueDate: createDate(15),
-        completionDate: null,
-        notes: ""
-      }
-    ]
-  },
-  {
-    id: uuid(),
-    title: "KI-basierte Qualitätskontrolle für Automobilzulieferer",
-    internalReference: "2023-005",
-    externalReference: "AUTO-QS-2023",
-    client: "AutoTeile GmbH",
-    status: "lost",
-    createdAt: createDate(-60),
-    updatedAt: createDate(-30),
-    dueDate: createDate(-40),
-    description: "Entwicklung eines KI-Systems zur automatisierten Qualitätskontrolle in der Produktion von Automobilteilen.",
-    location: "Stuttgart, Baden-Württemberg",
-    contactPerson: "Dr. Klaus Schmidt",
-    contactEmail: "k.schmidt@autoteile.de",
-    contactPhone: "+49 711 456789",
-    milestones: [
-      {
-        id: uuid(),
-        title: "Erstgespräch",
-        description: "Erstes Gespräch zur Anforderungsermittlung",
+        id: uuidv4(),
+        sequenceNumber: 1,
+        title: "Bestandsaufnahme",
+        description: "Analyse des Ist-Zustands und Energiebilanz",
         status: "completed",
-        dueDate: createDate(-55),
-        completionDate: createDate(-55),
-        notes: ""
+        dueDate: new Date("2022-11-20"),
+        completionDate: new Date("2022-11-18"),
+        notes: "Energieausweis und Thermografie erstellt"
       },
       {
-        id: uuid(),
+        id: uuidv4(),
+        sequenceNumber: 2,
+        title: "Sanierungskonzept",
+        description: "Erstellung des Sanierungskonzepts unter Beachtung der Denkmalschutzauflagen",
+        status: "completed",
+        dueDate: new Date("2022-11-30"),
+        completionDate: new Date("2022-11-28"),
+        notes: "Konzept mit Denkmalschutzamt abgestimmt"
+      },
+      {
+        id: uuidv4(),
+        sequenceNumber: 3,
         title: "Angebotserstellung",
-        description: "Erstellung eines Angebots für das KI-System",
+        description: "Erstellung des detaillierten Angebots",
         status: "completed",
-        dueDate: createDate(-45),
-        completionDate: createDate(-46),
-        notes: ""
-      },
-      {
-        id: uuid(),
-        title: "Präsentation",
-        description: "Präsentation des Angebots beim Kunden",
-        status: "completed",
-        dueDate: createDate(-40),
-        completionDate: createDate(-40),
-        notes: "Angebot wurde abgelehnt, da ein Mitbewerber ein günstigeres Angebot vorgelegt hat."
+        dueDate: new Date("2022-12-10"),
+        completionDate: new Date("2022-12-08"),
+        notes: "Angebot mit allen erforderlichen Unterlagen erstellt"
       }
     ]
   }
 ];
+
+export const getEmptyTender = (): Omit<Tender, "id" | "createdAt" | "updatedAt" | "milestones"> => {
+  return {
+    title: "",
+    description: "",
+    internalReference: "",
+    externalReference: "",
+    client: "",
+    status: "entwurf",
+    dueDate: new Date(),
+    submissionMethod: "",
+    estimatedValue: null,
+    contactPerson: "",
+    contactEmail: "",
+    contactPhone: "",
+    location: "",
+    notes: "",
+  };
+};

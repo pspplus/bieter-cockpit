@@ -1,84 +1,93 @@
 
 import { Milestone } from "@/types/tender";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 
-export const defaultMilestones: Omit<Milestone, 'id'>[] = [
+export const milestoneTemplates: Omit<Milestone, "id">[] = [
   {
-    title: "Document Check",
-    description: "Initial review of tender documents and requirements",
+    title: "Ausschreibung analysieren",
+    description: "Initiale Analyse der Ausschreibungsunterlagen",
     status: "pending",
     dueDate: null,
-    completionDate: null
+    completionDate: null,
+    sequenceNumber: 1
   },
   {
-    title: "Property Inspection",
-    description: "Plan and conduct on-site property inspection",
+    title: "Entscheidung über Teilnahme",
+    description: "Evaluierung und Entscheidung zur Teilnahme an der Ausschreibung",
     status: "pending",
     dueDate: null,
-    completionDate: null
+    completionDate: null,
+    sequenceNumber: 2
   },
   {
-    title: "Strategy Development",
-    description: "Determine approach and competitive strategy",
+    title: "Team zusammenstellen",
+    description: "Festlegung des Angebotsteams und Verantwortlichkeiten",
     status: "pending",
     dueDate: null,
-    completionDate: null
+    completionDate: null,
+    sequenceNumber: 3
   },
   {
-    title: "Concept Creation",
-    description: "Develop the core concept and approach for the tender",
+    title: "Kostenkalkulation",
+    description: "Detaillierte Kostenkalkulation für das Angebot",
     status: "pending",
     dueDate: null,
-    completionDate: null
+    completionDate: null,
+    sequenceNumber: 4
   },
   {
-    title: "Cost Calculation",
-    description: "Prepare detailed cost calculations and financial proposal",
+    title: "Technisches Konzept",
+    description: "Erstellung des technischen Konzepts",
     status: "pending",
     dueDate: null,
-    completionDate: null
+    completionDate: null,
+    sequenceNumber: 5
   },
   {
-    title: "Document Compilation",
-    description: "Compile all required documents for submission",
+    title: "Entwurf des Angebots",
+    description: "Erstellung eines Angebotsentwurfs",
     status: "pending",
     dueDate: null,
-    completionDate: null
+    completionDate: null,
+    sequenceNumber: 6
   },
   {
-    title: "Submission",
-    description: "Submit completed tender package to client",
+    title: "Interne Prüfung",
+    description: "Interne Qualitätsprüfung des Angebots",
     status: "pending",
     dueDate: null,
-    completionDate: null
+    completionDate: null,
+    sequenceNumber: 7
   },
   {
-    title: "Clarification",
-    description: "Respond to any requests for clarification",
+    title: "Finalisierung",
+    description: "Finales Angebot zusammenstellen",
     status: "pending",
     dueDate: null,
-    completionDate: null
+    completionDate: null,
+    sequenceNumber: 8
   },
   {
-    title: "Follow-up",
-    description: "Follow up on submission status and evaluation process",
+    title: "Abgabe des Angebots",
+    description: "Formelle Einreichung des Angebots beim Auftraggeber",
     status: "pending",
     dueDate: null,
-    completionDate: null
+    completionDate: null,
+    sequenceNumber: 9
   },
   {
-    title: "Implementation",
-    description: "If awarded, initiate project implementation",
+    title: "Nachverfolgung",
+    description: "Nachverfolgung des Angebotsstatus und Anpassungen wenn nötig",
     status: "pending",
     dueDate: null,
-    completionDate: null
+    completionDate: null,
+    sequenceNumber: 10
   }
 ];
 
-export function generateMilestones(): Milestone[] {
-  return defaultMilestones.map(milestone => ({
-    ...milestone,
-    id: uuidv4(),
-    tenderId: "" // Add empty tenderId that will be set when actually creating milestones
+export const createDefaultMilestones = (): Milestone[] => {
+  return milestoneTemplates.map(template => ({
+    ...template,
+    id: uuidv4()
   }));
-}
+};

@@ -1,190 +1,139 @@
 
 import { Layout } from "@/components/layout/Layout";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { FileCheck, Filter, Plus, SortDesc } from "lucide-react";
-import { useTranslation } from "react-i18next";
+import { TenderCard } from "@/components/tender/TenderCard";
 import { useTender } from "@/hooks/useTender";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Skeleton } from "@/components/ui/skeleton";
 import { TenderStatus } from "@/types/tender";
-import { cn } from "@/lib/utils";
-import { 
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-  DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu";
-import { useState } from "react";
-import { Link } from "react-router-dom";
 
 export default function SubmissionsPage() {
-  const { t } = useTranslation();
-  const { tenders } = useTender();
-  const [filterStatus, setFilterStatus] = useState<TenderStatus | "all">("all");
-  
-  // Filter tenders that are in submitted status or beyond (won, lost)
-  const submittedTenders = tenders.filter(tender => 
-    ["submitted", "clarification", "won", "lost"].includes(tender.status)
-  );
-  
-  // Apply additional filter if selected
-  const filteredTenders = filterStatus === "all" 
-    ? submittedTenders 
-    : submittedTenders.filter(tender => tender.status === filterStatus);
-  
-  // Sort by submission date (most recent first)
-  const sortedTenders = [...filteredTenders].sort(
-    (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
-  );
+  const { tenders, isLoading } = useTender();
 
-  const getStatusBadgeStyles = (status: TenderStatus) => {
-    switch (status) {
-      case "submitted":
-        return "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400";
-      case "clarification":
-        return "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400";
-      case "won":
-        return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400";
-      case "lost":
-        return "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400";
-      default:
-        return "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-400";
-    }
+  // Helper function to check status
+  const checkStatus = (status: TenderStatus, target: TenderStatus) => {
+    if (status === target) return true;
+    
+    // Check aliases
+    if (target === "abgegeben" && status === "submitted") return true;
+    if (target === "aufklaerung" && status === "clarification") return true;
+    if (target === "gewonnen" && status === "won") return true;
+    if (target === "verloren" && status === "lost") return true;
+    
+    return false;
   };
 
-  // Get display reference - use internal reference as primary, fallback to external reference
-  const getDisplayReference = (tender) => {
-    return tender.internalReference || tender.externalReference || "-";
+  // Filter tenders by status
+  const submittedTenders = tenders.filter(tender => 
+    checkStatus(tender.status, "abgegeben")
+  );
+  
+  const clarificationTenders = tenders.filter(tender => 
+    checkStatus(tender.status, "aufklaerung")
+  );
+  
+  const wonTenders = tenders.filter(tender => 
+    checkStatus(tender.status, "gewonnen")
+  );
+  
+  const lostTenders = tenders.filter(tender => 
+    checkStatus(tender.status, "verloren")
+  );
+
+  const renderSkeletonCards = (count: number) => {
+    return Array(count).fill(0).map((_, i) => (
+      <div key={i} className="border border-border rounded-lg p-4 space-y-4">
+        <div className="space-y-2">
+          <Skeleton className="h-6 w-3/4" />
+          <Skeleton className="h-4 w-1/2" />
+        </div>
+        <div className="grid grid-cols-2 gap-2">
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-4 w-full" />
+        </div>
+        <div>
+          <Skeleton className="h-4 w-full mb-1" />
+          <Skeleton className="h-2 w-full" />
+        </div>
+      </div>
+    ));
   };
 
   return (
-    <Layout title={t('submissions.submissions')}>
+    <Layout title="Einreichungen">
       <div className="space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="flex items-center gap-2 w-full sm:w-auto">
-                <Filter className="h-4 w-4" />
-                {filterStatus === "all" 
-                  ? t('submissions.allSubmissions') 
-                  : t(`tenders.${filterStatus}`)}
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuRadioGroup 
-                value={filterStatus} 
-                onValueChange={(value) => setFilterStatus(value as TenderStatus | "all")}
-              >
-                <DropdownMenuRadioItem value="all">
-                  {t('submissions.allSubmissions')}
-                </DropdownMenuRadioItem>
-                <DropdownMenuRadioItem value="submitted">
-                  {t('tenders.submitted')}
-                </DropdownMenuRadioItem>
-                <DropdownMenuRadioItem value="clarification">
-                  {t('tenders.inClarification')}
-                </DropdownMenuRadioItem>
-                <DropdownMenuRadioItem value="won">
-                  {t('tenders.won')}
-                </DropdownMenuRadioItem>
-                <DropdownMenuRadioItem value="lost">
-                  {t('tenders.lost')}
-                </DropdownMenuRadioItem>
-              </DropdownMenuRadioGroup>
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          <Button asChild className="w-full sm:w-auto">
-            <Link to="/tenders" className="flex items-center gap-2">
-              <Plus className="h-4 w-4" />
-              {t('submissions.createSubmission')}
-            </Link>
-          </Button>
-        </div>
-
-        {sortedTenders.length > 0 ? (
-          <div className="grid gap-6">
-            {sortedTenders.map((tender) => (
-              <Card key={tender.id} className="overflow-hidden">
-                <CardHeader className="pb-3">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <CardTitle className="mb-1">{tender.title}</CardTitle>
-                      <CardDescription>
-                        {t('tender.reference')}: {getDisplayReference(tender)}
-                      </CardDescription>
-                    </div>
-                    <div className={cn(
-                      "px-2.5 py-0.5 rounded-full text-xs font-medium",
-                      getStatusBadgeStyles(tender.status)
-                    )}>
-                      {t(`tenders.${tender.status}`)}
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid md:grid-cols-3 gap-4">
-                    <div>
-                      <div className="text-sm font-medium text-tender-500 dark:text-tender-400">
-                        {t('tender.client')}
-                      </div>
-                      <div>{tender.client || "-"}</div>
-                    </div>
-                    <div>
-                      <div className="text-sm font-medium text-tender-500 dark:text-tender-400">
-                        {t('submissions.submittedDate')}
-                      </div>
-                      <div>
-                        {new Date(tender.updatedAt).toLocaleDateString()}
-                      </div>
-                    </div>
-                    <div>
-                      <div className="text-sm font-medium text-tender-500 dark:text-tender-400">
-                        {t('tender.budget')}
-                      </div>
-                      <div>
-                        {tender.budget 
-                          ? new Intl.NumberFormat('de-DE', { 
-                              style: 'currency', 
-                              currency: 'EUR' 
-                            }).format(tender.budget) 
-                          : "-"}
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="mt-4 flex justify-end">
-                    <Button variant="outline" asChild>
-                      <Link to={`/tenders/${tender.id}`} className="flex items-center gap-2">
-                        <FileCheck className="h-4 w-4" />
-                        {t('submissions.viewSubmission')}
-                      </Link>
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-16">
-            <FileCheck className="mx-auto h-12 w-12 text-tender-300 dark:text-tender-600" />
-            <h3 className="mt-4 text-lg font-medium">
-              {t('submissions.noSubmissionsFound')}
-            </h3>
-            <p className="mt-2 text-tender-500 dark:text-tender-400 max-w-md mx-auto">
-              {filterStatus === "all"
-                ? t('submissions.noSubmissionsCreated')
-                : t('submissions.noSubmissionsWithStatus', { 
-                    status: t(`tenders.${filterStatus}`) 
-                  })}
-            </p>
-            <Button asChild className="mt-6">
-              <Link to="/tenders">
-                {t('submissions.createYourFirstSubmission')}
-              </Link>
-            </Button>
-          </div>
-        )}
+        <Tabs defaultValue="submitted">
+          <TabsList className="w-full md:w-auto grid grid-cols-2 md:flex md:space-x-2">
+            <TabsTrigger value="submitted">Abgegeben</TabsTrigger>
+            <TabsTrigger value="clarification">Aufklärung</TabsTrigger>
+            <TabsTrigger value="won">Gewonnen</TabsTrigger>
+            <TabsTrigger value="lost">Verloren</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="submitted" className="mt-6">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {isLoading ? (
+                renderSkeletonCards(3)
+              ) : submittedTenders.length > 0 ? (
+                submittedTenders.map(tender => (
+                  <TenderCard key={tender.id} tender={tender} />
+                ))
+              ) : (
+                <div className="col-span-full text-center py-8">
+                  <p className="text-muted-foreground">Keine abgegebenen Ausschreibungen vorhanden</p>
+                </div>
+              )}
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="clarification" className="mt-6">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {isLoading ? (
+                renderSkeletonCards(3)
+              ) : clarificationTenders.length > 0 ? (
+                clarificationTenders.map(tender => (
+                  <TenderCard key={tender.id} tender={tender} />
+                ))
+              ) : (
+                <div className="col-span-full text-center py-8">
+                  <p className="text-muted-foreground">Keine Ausschreibungen in Aufklärung vorhanden</p>
+                </div>
+              )}
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="won" className="mt-6">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {isLoading ? (
+                renderSkeletonCards(3)
+              ) : wonTenders.length > 0 ? (
+                wonTenders.map(tender => (
+                  <TenderCard key={tender.id} tender={tender} />
+                ))
+              ) : (
+                <div className="col-span-full text-center py-8">
+                  <p className="text-muted-foreground">Keine gewonnenen Ausschreibungen vorhanden</p>
+                </div>
+              )}
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="lost" className="mt-6">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {isLoading ? (
+                renderSkeletonCards(3)
+              ) : lostTenders.length > 0 ? (
+                lostTenders.map(tender => (
+                  <TenderCard key={tender.id} tender={tender} />
+                ))
+              ) : (
+                <div className="col-span-full text-center py-8">
+                  <p className="text-muted-foreground">Keine verlorenen Ausschreibungen vorhanden</p>
+                </div>
+              )}
+            </div>
+          </TabsContent>
+        </Tabs>
       </div>
     </Layout>
   );
