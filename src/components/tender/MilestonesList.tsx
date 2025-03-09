@@ -1,3 +1,4 @@
+
 import { Tender, Milestone, MilestoneStatus } from "@/types/tender";
 import { cn } from "@/lib/utils";
 import { CheckCircle, Circle, Clock, XCircle } from "lucide-react";
@@ -38,14 +39,15 @@ export function MilestonesList({ tender }: MilestonesListProps) {
   const { updateMilestone, canUpdateMilestoneStatus } = useTender();
   const { t } = useTranslation();
 
-  // Use useMemo to avoid re-sorting on every render
+  // Stelle sicher, dass alle Meilensteine eine Sequenznummer haben (Fallback zu 0)
   const sortedMilestones = useMemo(() => {
-    // Sort milestones by their sequence number
-    return [...tender.milestones].sort((a, b) => {
-      const seqA = typeof a.sequenceNumber === 'number' ? a.sequenceNumber : 0;
-      const seqB = typeof b.sequenceNumber === 'number' ? b.sequenceNumber : 0;
-      return seqA - seqB;
-    });
+    const milestonesWithSequence = tender.milestones.map(m => ({
+      ...m,
+      sequenceNumber: m.sequenceNumber ?? 0 // Fallback, falls keine Sequenznummer vorhanden ist
+    }));
+    
+    // Sortiere nach Sequenznummer
+    return [...milestonesWithSequence].sort((a, b) => a.sequenceNumber - b.sequenceNumber);
   }, [tender.milestones]);
 
   // Memoize active milestones to avoid recalculation on every render

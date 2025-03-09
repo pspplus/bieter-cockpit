@@ -21,6 +21,7 @@ import { PlusCircle } from "lucide-react";
 import { Client } from "@/types/client";
 import { NewClientDialog } from "@/components/client/NewClientDialog";
 import { getDefaultMilestones } from "@/data/defaultMilestones";
+import { Tender, Milestone } from "@/types/tender";
 
 export function TenderCreationForm() {
   const { t } = useTranslation();
@@ -63,10 +64,10 @@ export function TenderCreationForm() {
     }
     
     try {
-      // Get default milestones with sequence numbers
+      // Standard-Meilensteine laden (jetzt mit Sequenznummern)
       const defaultMilestones = getDefaultMilestones();
       
-      // Create tender with default milestones
+      // Tender mit Standard-Meilensteinen erstellen
       const newTender = await createTender({
         title: formData.title || t('tenders.newTender'),
         externalReference: formData.externalReference || "",
@@ -77,7 +78,7 @@ export function TenderCreationForm() {
         contactEmail: formData.contactEmail,
         contactPhone: formData.contactPhone,
         milestones: defaultMilestones
-      });
+      } as Partial<Tender>);
 
       toast.success(t('toasts.tenderCreated'));
 

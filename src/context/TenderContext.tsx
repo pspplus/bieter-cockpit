@@ -68,30 +68,38 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
 
   const createTender = async (tenderData: Partial<Tender>): Promise<Tender> => {
     try {
-      const milestones = tenderData.milestones || [];
+      const partialMilestones = tenderData.milestones || [];
       
       const { milestones: _, ...tenderDataWithoutMilestones } = tenderData;
       
       const newTender = await createTenderService(tenderDataWithoutMilestones);
       
-      if (milestones.length > 0) {
+      if (partialMilestones.length > 0) {
         await Promise.all(
-          milestones.map(milestone => 
+          partialMilestones.map(milestone => 
             createMilestoneService({ 
               ...milestone,
-              sequenceNumber: milestone.sequenceNumber,
               tenderId: newTender.id 
             })
           )
         );
         
-        const sortedMilestones = sortMilestones(milestones as Milestone[]);
-        const updatedTender = { ...newTender, milestones: sortedMilestones };
-        setTenders([updatedTender, ...tenders]);
-        return updatedTender;
+        const updatedTender = await fetchTenders()
+          .then(tenders => tenders.find(t => t.id === newTender.id))
+          .catch(error => {
+            console.error("Error fetching updated tender:", error);
+            return newTender;
+          });
+          
+        if (updatedTender) {
+          const sortedMilestones = sortMilestones(updatedTender.milestones);
+          const finalTender = { ...updatedTender, milestones: sortedMilestones };
+          setTenders(prev => [finalTender, ...prev.filter(t => t.id !== finalTender.id)]);
+          return finalTender;
+        }
       }
       
-      setTenders([newTender, ...tenders]);
+      setTenders(prev => [newTender, ...prev]);
       return newTender;
     } catch (error) {
       console.error("Error creating tender:", error);
@@ -154,7 +162,8 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
       }
       
       if (typeof milestone.sequenceNumber !== 'number') {
-        throw new Error("Sequence number must be provided");
+        const maxSequence = Math.max(0, ...tender.milestones.map(m => m.sequenceNumber || 0));
+        milestone.sequenceNumber = maxSequence + 1;
       }
       
       const newMilestone = await createMilestoneService({ ...milestone, tenderId });
