@@ -53,6 +53,13 @@ export const fetchClientById = async (id: string): Promise<Client | null> => {
 
 // Create a new client
 export const createClient = async (clientData: Partial<Client>): Promise<Client> => {
+  // Get current user
+  const { data: { user } } = await supabase.auth.getUser();
+  
+  if (!user) {
+    throw new Error('User not authenticated');
+  }
+
   // Prepare the data for insertion
   const dbClient = {
     name: clientData.name || "",
@@ -60,6 +67,7 @@ export const createClient = async (clientData: Partial<Client>): Promise<Client>
     email: clientData.email || "",
     phone: clientData.phone || "",
     address: clientData.address || "",
+    user_id: user.id
   };
 
   // Insert the client

@@ -1,9 +1,12 @@
-
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
+
+interface UserMetadata {
+  name?: string;
+}
 
 type AuthContextType = {
   user: User | null;
@@ -12,6 +15,7 @@ type AuthContextType = {
   login: (email: string, password: string) => Promise<boolean>;
   signup: (email: string, password: string, name: string) => Promise<boolean>;
   logout: () => Promise<void>;
+  getUserName: () => string;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -22,7 +26,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  // Check if user is already logged in from Supabase session
   useEffect(() => {
     const checkSession = async () => {
       try {
@@ -45,7 +48,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     checkSession();
 
-    // Set up auth state change listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         setUser(session?.user || null);
@@ -149,6 +151,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const getUserName = (): string => {
+    if (!user) return "";
+    
+    const metadata = user.user_metadata as UserMetadata;
+    return metadata?.name || "User";
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -158,6 +167,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         login,
         signup,
         logout,
+        getUserName,
       }}
     >
       {children}

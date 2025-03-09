@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { useTranslation } from "react-i18next";
-import { Smile } from "lucide-react";
+import { ArrowLeft, Smile } from "lucide-react";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -32,7 +32,19 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-tender-50 px-4">
       <div className="w-full max-w-md">
-        <div className="mb-8 text-center">
+        <div className="mb-8 text-center flex flex-col items-center">
+          <div className="w-full flex justify-start mb-4">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={() => navigate("/")}
+              className="rounded-full"
+              aria-label="Zurück zur Startseite"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+          </div>
+          
           <Link to="/" className="inline-flex items-center gap-2">
             <Smile className="h-8 w-8 text-yellow-400" />
             <span className="text-2xl font-semibold">Tender Testing</span>

@@ -1,5 +1,6 @@
+
 import { cn } from "@/lib/utils";
-import { Bell, ChevronDown, Menu, PlusCircle, Search, Smile } from "lucide-react";
+import { Bell, ChevronDown, Menu, PlusCircle, Search, Smile, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -28,7 +29,7 @@ export function Header({ toggleSidebar, title = "Tender Management" }: HeaderPro
   const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
-  const { user, isAuthenticated, logout } = useAuth();
+  const { user, isAuthenticated, logout, getUserName } = useAuth();
 
   return (
     <header className="sticky top-0 z-30 w-full border-b border-tender-100 dark:border-tender-800 bg-white/80 dark:bg-tender-950/80 backdrop-blur-md">
@@ -91,15 +92,15 @@ export function Header({ toggleSidebar, title = "Tender Management" }: HeaderPro
                     className="relative h-9 w-9 rounded-full"
                   >
                     <Avatar className="h-9 w-9">
-                      <AvatarImage src="" alt={user?.name || "User"} />
+                      <AvatarImage src="" alt={getUserName()} />
                       <AvatarFallback className="bg-primary text-primary-foreground">
-                        {user?.name ? user.name.substring(0, 2).toUpperCase() : "JD"}
+                        {getUserName().substring(0, 2).toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-56" align="end">
-                  <DropdownMenuLabel>{user?.name || t('navigation.myAccount')}</DropdownMenuLabel>
+                  <DropdownMenuLabel>{getUserName() || t('navigation.myAccount')}</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem>{t('navigation.profile')}</DropdownMenuItem>
                   <DropdownMenuItem>{t('navigation.settings')}</DropdownMenuItem>
