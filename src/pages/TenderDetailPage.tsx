@@ -114,17 +114,45 @@ export default function TenderDetailPage() {
               </TabsList>
             
               <TabsContent value="details" className="mt-4">
-                <TenderDetails tender={tender} />
+                <div className="flex justify-between">
+                  <div className="flex-grow">
+                    <TenderDetails tender={tender} />
+                  </div>
+                  <Button
+                    variant="destructive"
+                    size="icon"
+                    onClick={handleDelete}
+                    className="ml-2 flex-shrink-0 h-10"
+                    aria-label={t("delete")}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                    <span className="sr-only">{t("delete")}</span>
+                  </Button>
+                </div>
               </TabsContent>
               
               <TabsContent value="documents" className="mt-4">
-                <DocumentList 
-                  documents={documents}
-                  tenderId={tender.id}
-                  folders={folders}
-                  onDocumentAdded={handleDocumentAdded}
-                  onDocumentDeleted={handleDocumentDeleted}
-                />
+                <div className="flex justify-between">
+                  <div className="flex-grow">
+                    <DocumentList 
+                      documents={documents}
+                      tenderId={tender.id}
+                      folders={folders}
+                      onDocumentAdded={handleDocumentAdded}
+                      onDocumentDeleted={handleDocumentDeleted}
+                    />
+                  </div>
+                  <Button
+                    variant="destructive"
+                    size="icon"
+                    onClick={handleDelete}
+                    className="ml-2 flex-shrink-0 h-10"
+                    aria-label={t("delete")}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                    <span className="sr-only">{t("delete")}</span>
+                  </Button>
+                </div>
               </TabsContent>
               
               <TabsContent value="milestones" className="mt-4">
@@ -132,21 +160,24 @@ export default function TenderDetailPage() {
               </TabsContent>
               
               <TabsContent value="edit" className="mt-4">
-                <TenderEditForm tender={tender} onCancel={() => setActiveTab("details")} />
+                <div className="flex justify-between">
+                  <div className="flex-grow">
+                    <TenderEditForm tender={tender} onCancel={() => setActiveTab("details")} />
+                  </div>
+                  <Button
+                    variant="destructive"
+                    size="icon"
+                    onClick={handleDelete}
+                    className="ml-2 flex-shrink-0 h-10"
+                    aria-label={t("delete")}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                    <span className="sr-only">{t("delete")}</span>
+                  </Button>
+                </div>
               </TabsContent>
             </Tabs>
           </div>
-          
-          <Button
-            variant="destructive"
-            size="icon"
-            onClick={handleDelete}
-            className="ml-2 flex-shrink-0"
-            aria-label={t("delete")}
-          >
-            <Trash2 className="h-4 w-4" />
-            <span className="sr-only">{t("delete")}</span>
-          </Button>
         </div>
       </div>
     </Layout>
