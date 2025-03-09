@@ -1,5 +1,5 @@
 
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState } from "react";
 import { Client } from "@/types/client";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
@@ -11,7 +11,11 @@ import {
   updateClient as updateClientService,
   deleteClient as deleteClientService
 } from "@/services/clientService";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { 
+  useQuery, 
+  useMutation, 
+  useQueryClient 
+} from "@tanstack/react-query";
 
 interface ClientContextType {
   clients: Client[];
