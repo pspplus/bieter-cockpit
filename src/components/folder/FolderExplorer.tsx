@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Folder, TenderDocument } from "@/types/tender";
 import { Button } from "@/components/ui/button";
@@ -21,7 +22,6 @@ import {
   Edit,
   MoreVertical
 } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { createFolder, deleteFolder, updateFolder } from "@/services/folderService";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
@@ -105,6 +105,7 @@ export function FolderExplorer({
     }
   };
 
+  // Fix: Update the updateFolder function call to only use one parameter
   const handleUpdateFolder = async () => {
     if (!editingFolder || !editedFolderName.trim()) {
       toast.error(t("folderExplorer.folderNameRequired"));
@@ -112,7 +113,9 @@ export function FolderExplorer({
     }
 
     try {
-      const updatedFolder = await updateFolder(editingFolder.id, {
+      // Fixed: updating the function call to match the signature in folderService
+      await updateFolder({
+        ...editingFolder,
         name: editedFolderName
       });
       
@@ -121,8 +124,12 @@ export function FolderExplorer({
       setEditedFolderName("");
       setIsEditingFolder(false);
       
+      // Fixed: Only call onFolderUpdated if it exists, with the updated folder
       if (onFolderUpdated) {
-        onFolderUpdated(updatedFolder);
+        onFolderUpdated({
+          ...editingFolder,
+          name: editedFolderName
+        });
       }
     } catch (error) {
       console.error("Error updating folder:", error);
