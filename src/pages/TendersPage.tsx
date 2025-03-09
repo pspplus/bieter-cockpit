@@ -11,16 +11,17 @@ import {
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import { useTender } from "@/context/TenderContext";
-import { ChevronDown, PlusCircle } from "lucide-react";
+import { ChevronDown, PlusCircle, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Tender } from "@/types/tender";
 import { useTranslation } from "react-i18next";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type FilterOption = "all" | Tender["status"];
 
 export default function TendersPage() {
   const { t } = useTranslation();
-  const { tenders } = useTender();
+  const { tenders, isLoading } = useTender();
   const [filterBy, setFilterBy] = useState<FilterOption>("all");
   const navigate = useNavigate();
   
@@ -75,7 +76,27 @@ export default function TendersPage() {
           </Button>
         </div>
         
-        {sortedTenders.length > 0 ? (
+        {isLoading ? (
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <div key={i} className="border border-border rounded-lg p-4 space-y-4">
+                <div className="space-y-2">
+                  <Skeleton className="h-6 w-3/4" />
+                  <Skeleton className="h-4 w-1/2" />
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-full" />
+                </div>
+                <div>
+                  <Skeleton className="h-4 w-full mb-1" />
+                  <Skeleton className="h-2 w-full" />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : sortedTenders.length > 0 ? (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {sortedTenders.map((tender) => (
               <TenderCard key={tender.id} tender={tender} />

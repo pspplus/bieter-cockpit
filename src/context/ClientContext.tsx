@@ -1,83 +1,131 @@
 
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState } from "react";
 import { Client } from "@/types/client";
-import { mockClients } from "@/data/mock-clients";
-import { v4 as uuidv4 } from 'uuid';
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
+import { useAuth } from "@/context/AuthContext";
+import { 
+  fetchClients, 
+  fetchClientById, 
+  createClient as createClientService, 
+  updateClient as updateClientService,
+  deleteClient as deleteClientService
+} from "@/services/clientService";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface ClientContextType {
   clients: Client[];
   activeClient: Client | null;
-  loadClient: (id: string) => void;
-  createClient: (clientData: Partial<Client>) => Client;
-  updateClient: (id: string, updates: Partial<Client>) => void;
-  deleteClient: (id: string) => void;
+  isLoading: boolean;
+  error: Error | null;
+  loadClient: (id: string) => Promise<void>;
+  createClient: (clientData: Partial<Client>) => Promise<Client>;
+  updateClient: (id: string, updates: Partial<Client>) => Promise<void>;
+  deleteClient: (id: string) => Promise<void>;
 }
 
 const ClientContext = createContext<ClientContextType | undefined>(undefined);
 
 export const ClientProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { t } = useTranslation();
-  const [clients, setClients] = useState<Client[]>([]);
+  const { isAuthenticated } = useAuth();
   const [activeClient, setActiveClient] = useState<Client | null>(null);
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    // Load mock data
-    setClients(mockClients);
-  }, []);
+  // Fetch all clients
+  const { 
+    data: clients = [], 
+    isLoading, 
+    error 
+  } = useQuery({
+    queryKey: ['clients'],
+    queryFn: fetchClients,
+    enabled: isAuthenticated,
+  });
 
-  const loadClient = (id: string) => {
-    const client = clients.find(c => c.id === id) || null;
-    setActiveClient(client);
-  };
-
-  const createClient = (clientData: Partial<Client>): Client => {
-    const newClient: Client = {
-      id: uuidv4(),
-      name: clientData.name || "",
-      contactPerson: clientData.contactPerson || "",
-      email: clientData.email || "",
-      phone: clientData.phone || "",
-      address: clientData.address || "",
-      createdAt: new Date(),
-      ...clientData,
-    };
-
-    setClients(prev => [...prev, newClient]);
-    toast.success(t('toasts.clientCreated', 'Client created successfully'));
-    return newClient;
-  };
-
-  const updateClient = (id: string, updates: Partial<Client>) => {
-    setClients(prev => 
-      prev.map(client => 
-        client.id === id 
-          ? { ...client, ...updates } 
-          : client
-      )
-    );
-
-    if (activeClient?.id === id) {
-      setActiveClient(prev => prev ? { ...prev, ...updates } : null);
+  // Create a client mutation
+  const createClientMutation = useMutation({
+    mutationFn: createClientService,
+    onSuccess: (newClient) => {
+      queryClient.invalidateQueries({ queryKey: ['clients'] });
+      toast.success(t('toasts.clientCreated', 'Client created successfully'));
+      return newClient;
+    },
+    onError: (error) => {
+      console.error('Error creating client:', error);
+      toast.error(t('toasts.errorCreatingClient', 'Error creating client'));
+      throw error;
     }
-    
-    toast.success(t('toasts.clientUpdated', 'Client updated successfully'));
+  });
+
+  // Update a client mutation
+  const updateClientMutation = useMutation({
+    mutationFn: async ({ id, updates }: { id: string; updates: Partial<Client> }) => {
+      await updateClientService(id, updates);
+      return { id, updates };
+    },
+    onSuccess: ({ id, updates }) => {
+      queryClient.invalidateQueries({ queryKey: ['clients'] });
+      
+      // Update the active client if it's the one being updated
+      if (activeClient?.id === id) {
+        setActiveClient(prev => prev ? { ...prev, ...updates } : null);
+      }
+      
+      toast.success(t('toasts.clientUpdated', 'Client updated successfully'));
+    },
+    onError: (error) => {
+      console.error('Error updating client:', error);
+      toast.error(t('toasts.errorUpdatingClient', 'Error updating client'));
+    }
+  });
+
+  // Delete a client mutation
+  const deleteClientMutation = useMutation({
+    mutationFn: deleteClientService,
+    onSuccess: (_, id) => {
+      queryClient.invalidateQueries({ queryKey: ['clients'] });
+      
+      // Clear the active client if it's the one being deleted
+      if (activeClient?.id === id) {
+        setActiveClient(null);
+      }
+      
+      toast.success(t('toasts.clientDeleted', 'Client deleted successfully'));
+    },
+    onError: (error) => {
+      console.error('Error deleting client:', error);
+      toast.error(t('toasts.errorDeletingClient', 'Error deleting client'));
+    }
+  });
+
+  const loadClient = async (id: string) => {
+    try {
+      const client = await fetchClientById(id);
+      setActiveClient(client);
+    } catch (error) {
+      console.error('Error loading client:', error);
+      toast.error(t('toasts.errorLoadingClient', 'Error loading client'));
+    }
   };
 
-  const deleteClient = (id: string) => {
-    setClients(prev => prev.filter(client => client.id !== id));
-    
-    if (activeClient?.id === id) {
-      setActiveClient(null);
-    }
-    
-    toast.success(t('toasts.clientDeleted', 'Client deleted successfully'));
+  const createClient = async (clientData: Partial<Client>): Promise<Client> => {
+    return createClientMutation.mutateAsync(clientData);
+  };
+
+  const updateClient = async (id: string, updates: Partial<Client>): Promise<void> => {
+    await updateClientMutation.mutateAsync({ id, updates });
+  };
+
+  const deleteClient = async (id: string): Promise<void> => {
+    await deleteClientMutation.mutateAsync(id);
   };
 
   const value = {
     clients,
     activeClient,
+    isLoading,
+    error: error as Error | null,
     loadClient,
     createClient,
     updateClient,

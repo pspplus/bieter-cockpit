@@ -2,12 +2,8 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
-
-type User = {
-  id: string;
-  email: string;
-  name: string;
-};
+import { supabase } from "@/integrations/supabase/client";
+import { User } from "@supabase/supabase-js";
 
 type AuthContextType = {
   user: User | null;
@@ -15,7 +11,7 @@ type AuthContextType = {
   isLoading: boolean;
   login: (email: string, password: string) => Promise<boolean>;
   signup: (email: string, password: string, name: string) => Promise<boolean>;
-  logout: () => void;
+  logout: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -26,41 +22,67 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  // Check if user is already logged in from localStorage
+  // Check if user is already logged in from Supabase session
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-    setIsLoading(false);
+    const checkSession = async () => {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        
+        if (error) {
+          console.error('Error getting session:', error);
+          throw error;
+        }
+        
+        if (session?.user) {
+          setUser(session.user);
+        }
+      } catch (error) {
+        console.error('Session check error:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    checkSession();
+
+    // Set up auth state change listener
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        setUser(session?.user || null);
+        setIsLoading(false);
+      }
+    );
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
       setIsLoading(true);
-      // In a real app, you would make a request to your authentication API
-      // This is a mock implementation
-      if (email && password) {
-        // Mock successful login with a fake user
-        const mockUser = {
-          id: "user-1",
-          email,
-          name: email.split('@')[0],
-        };
-        
-        setUser(mockUser);
-        localStorage.setItem("user", JSON.stringify(mockUser));
-        toast({
-          title: "Erfolgreich angemeldet",
-          description: "Sie sind jetzt eingeloggt.",
-        });
-        return true;
+      
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      
+      if (error) {
+        throw error;
       }
-      throw new Error("Ungültige Anmeldedaten");
-    } catch (error) {
+      
+      setUser(data.user);
+      
+      toast({
+        title: "Erfolgreich angemeldet",
+        description: "Sie sind jetzt eingeloggt.",
+      });
+      
+      return true;
+    } catch (error: any) {
       toast({
         title: "Anmeldung fehlgeschlagen",
-        description: error instanceof Error ? error.message : "Bitte überprüfen Sie Ihre Anmeldedaten",
+        description: error.message || "Bitte überprüfen Sie Ihre Anmeldedaten",
         variant: "destructive",
       });
       return false;
@@ -72,29 +94,33 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signup = async (email: string, password: string, name: string): Promise<boolean> => {
     try {
       setIsLoading(true);
-      // In a real app, you would make a request to your authentication API
-      // This is a mock implementation
-      if (email && password && name) {
-        // Mock successful signup with a fake user
-        const mockUser = {
-          id: "user-" + Date.now(),
-          email,
-          name,
-        };
-        
-        setUser(mockUser);
-        localStorage.setItem("user", JSON.stringify(mockUser));
-        toast({
-          title: "Konto erstellt",
-          description: "Ihr Konto wurde erfolgreich erstellt.",
-        });
-        return true;
+      
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            name,
+          },
+        },
+      });
+      
+      if (error) {
+        throw error;
       }
-      throw new Error("Ungültige Registrierungsdaten");
-    } catch (error) {
+      
+      setUser(data.user);
+      
+      toast({
+        title: "Konto erstellt",
+        description: "Ihr Konto wurde erfolgreich erstellt.",
+      });
+      
+      return true;
+    } catch (error: any) {
       toast({
         title: "Registrierung fehlgeschlagen",
-        description: error instanceof Error ? error.message : "Bitte überprüfen Sie Ihre Daten",
+        description: error.message || "Bitte überprüfen Sie Ihre Daten",
         variant: "destructive",
       });
       return false;
@@ -103,14 +129,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem("user");
-    toast({
-      title: "Abgemeldet",
-      description: "Sie wurden erfolgreich abgemeldet.",
-    });
-    navigate("/");
+  const logout = async (): Promise<void> => {
+    try {
+      await supabase.auth.signOut();
+      setUser(null);
+      
+      toast({
+        title: "Abgemeldet",
+        description: "Sie wurden erfolgreich abgemeldet.",
+      });
+      
+      navigate("/");
+    } catch (error: any) {
+      toast({
+        title: "Abmeldung fehlgeschlagen",
+        description: error.message || "Es gab ein Problem bei der Abmeldung",
+        variant: "destructive",
+      });
+    }
   };
 
   return (

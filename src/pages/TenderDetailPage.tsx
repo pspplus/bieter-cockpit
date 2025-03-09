@@ -8,26 +8,68 @@ import { MilestonesList } from "@/components/tender/MilestonesList";
 import { useTender } from "@/context/TenderContext";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, Edit, Save } from "lucide-react";
+import { ArrowLeft, Edit, Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function TenderDetailPage() {
   const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
-  const { loadTender, activeTender } = useTender();
+  const { loadTender, activeTender, isLoading } = useTender();
   const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
+  const [localLoading, setLocalLoading] = useState(true);
   
   useEffect(() => {
     if (id) {
-      loadTender(id);
+      setLocalLoading(true);
+      loadTender(id).finally(() => setLocalLoading(false));
     }
   }, [id, loadTender]);
   
   const toggleEdit = () => {
     setIsEditing(!isEditing);
   };
+  
+  const isLoadingPage = isLoading || localLoading;
+  
+  if (isLoadingPage) {
+    return (
+      <Layout>
+        <div className="space-y-6">
+          <div className="flex justify-between items-center">
+            <Skeleton className="h-10 w-32" />
+            <Skeleton className="h-10 w-40" />
+          </div>
+          <div className="space-y-6">
+            <div className="space-y-2">
+              <Skeleton className="h-8 w-3/4" />
+              <Skeleton className="h-4 w-1/2" />
+            </div>
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="border border-border rounded-lg p-6 space-y-4">
+                <Skeleton className="h-6 w-1/3" />
+                <div className="space-y-2">
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-2/3" />
+                </div>
+              </div>
+              <div className="border border-border rounded-lg p-6 space-y-4">
+                <Skeleton className="h-6 w-1/3" />
+                <div className="space-y-2">
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-2/3" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
   
   if (!activeTender) {
     return (
