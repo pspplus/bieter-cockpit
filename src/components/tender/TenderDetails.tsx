@@ -65,9 +65,9 @@ export function TenderDetails({ tender }: TenderDetailsProps) {
   const displayReference = tender.internalReference;
   const externalReferenceDisplay = tender.externalReference ? `${t('tender.externalReference')}: ${tender.externalReference}` : '';
 
-  // Funktion zum Formatieren des Status-Texts
-  const formatStatusText = (status: TenderStatus): string => {
-    const statusMap: Record<TenderStatus, string> = {
+  // Function to format the status text
+  const formatStatusText = (status: string): string => {
+    const statusMap: Record<string, string> = {
       "entwurf": t('tenders.drafts', 'Entwurf'),
       "in-pruefung": t('tenders.review', 'In Prüfung'),
       "in-bearbeitung": t('tenders.active', 'In Bearbeitung'),
