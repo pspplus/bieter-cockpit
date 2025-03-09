@@ -1,10 +1,15 @@
+
 {
   "general": {
     "appName": "TenderFlow",
     "createNewTender": "New Tender",
     "viewTenders": "View Tenders",
     "getStarted": "Get Started",
-    "slogan": "Simple Tender Management"
+    "slogan": "Simple Tender Management",
+    "noTendersFound": "No tenders found",
+    "noTendersCreated": "You haven't created any tenders yet",
+    "noTendersWithStatus": "No tenders with status: {{status}}",
+    "createYourFirstTender": "Create your first tender"
   },
   "theme": {
     "darkMode": "Dark Mode",
@@ -59,6 +64,17 @@
     "contactPerson": "Contact Person",
     "contactEmail": "Contact Email",
     "contactPhone": "Contact Phone"
+  },
+  "submissions": {
+    "submissions": "Submissions",
+    "allSubmissions": "All Submissions",
+    "submittedDate": "Submitted Date",
+    "viewSubmission": "View Submission",
+    "createSubmission": "Create Submission",
+    "noSubmissionsFound": "No submissions found",
+    "noSubmissionsCreated": "You haven't submitted any tenders yet",
+    "noSubmissionsWithStatus": "No submissions with status: {{status}}",
+    "createYourFirstSubmission": "Create your first submission"
   },
   "milestones": {
     "milestones": "Milestones",

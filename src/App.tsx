@@ -15,6 +15,7 @@ import TendersPage from "./pages/TendersPage";
 import TenderDetailPage from "./pages/TenderDetailPage";
 import ClientsPage from "./pages/ClientsPage";
 import ClientDetailPage from "./pages/ClientDetailPage";
+import SubmissionsPage from "./pages/SubmissionsPage";
 import NotFound from "./pages/NotFound";
 import LoginPage from "./pages/LoginPage";
 import SignUpPage from "./pages/SignUpPage";
@@ -40,6 +41,7 @@ const App = () => (
                     <Route path="/dashboard" element={<Dashboard />} />
                     <Route path="/tenders" element={<TendersPage />} />
                     <Route path="/tenders/:id" element={<TenderDetailPage />} />
+                    <Route path="/submissions" element={<SubmissionsPage />} />
                     <Route path="/clients" element={<ClientsPage />} />
                     <Route path="/clients/:id" element={<ClientDetailPage />} />
                     <Route path="*" element={<NotFound />} />

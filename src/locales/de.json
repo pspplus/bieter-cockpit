@@ -1,23 +1,143 @@
+
 {
   "general": {
     "appName": "TenderFlow",
     "createNewTender": "Neue Ausschreibung",
     "viewTenders": "Ausschreibungen anzeigen",
     "getStarted": "Loslegen",
-    "slogan": "Einfaches Ausschreibungsmanagement"
+    "slogan": "Einfaches Ausschreibungsmanagement",
+    "noTendersFound": "Keine Ausschreibungen gefunden",
+    "noTendersCreated": "Du hast noch keine Ausschreibungen erstellt",
+    "noTendersWithStatus": "Keine Ausschreibungen mit Status: {{status}}",
+    "createYourFirstTender": "Erstelle deine erste Ausschreibung"
   },
   "theme": {
     "darkMode": "Dunkelmodus",
     "lightMode": "Hellmodus",
     "toggleTheme": "Thema ändern"
   },
+  "dashboard": {
+    "dashboard": "Dashboard",
+    "totalTenders": "Gesamte Ausschreibungen",
+    "allTenderProjects": "Alle Ausschreibungsprojekte",
+    "activeTenders": "Aktive Ausschreibungen",
+    "currentlyInProgress": "Derzeit in Bearbeitung",
+    "submitted": "Eingereicht",
+    "awaitingResponse": "Warten auf Antwort",
+    "wonTenders": "Gewonnene Ausschreibungen",
+    "successRate": "Erfolgsquote: {{rate}}%",
+    "noActiveTenders": "Keine aktiven Ausschreibungen im Moment",
+    "upcomingDeadlines": "Bevorstehende Fristen",
+    "noUpcomingDeadlines": "Keine bevorstehenden Fristen in den nächsten 7 Tagen",
+    "daysLeft": "{{count}} Tag übrig",
+    "daysLeft_plural": "{{count}} Tage übrig",
+    "draftTenders": "Entwürfe",
+    "noDraftTenders": "Keine Entwürfe"
+  },
+  "tenders": {
+    "tenders": "Ausschreibungen",
+    "allTenders": "Alle Ausschreibungen",
+    "drafts": "Entwürfe",
+    "active": "Aktiv",
+    "submitted": "Eingereicht",
+    "inClarification": "In Klärung",
+    "won": "Gewonnen",
+    "lost": "Verloren",
+    "completed": "Abgeschlossen",
+    "review": "Überprüfung",
+    "newTender": "Neue Ausschreibung",
+    "tenderDetails": "Ausschreibungsdetails",
+    "tenderNotFound": "Ausschreibung nicht gefunden",
+    "tenderNotFoundDescription": "Die gesuchte Ausschreibung existiert nicht oder wurde entfernt.",
+    "backToTenders": "Zurück zu Ausschreibungen"
+  },
+  "tender": {
+    "title": "Titel",
+    "reference": "Referenz",
+    "client": "Kunde",
+    "dueDate": "Fälligkeitsdatum",
+    "status": "Status",
+    "budget": "Budget",
+    "location": "Standort",
+    "description": "Beschreibung",
+    "progress": "Fortschritt",
+    "contactPerson": "Kontaktperson",
+    "contactEmail": "Kontakt-E-Mail",
+    "contactPhone": "Kontakt-Telefon"
+  },
+  "submissions": {
+    "submissions": "Einreichungen",
+    "allSubmissions": "Alle Einreichungen",
+    "submittedDate": "Einreichungsdatum",
+    "viewSubmission": "Einreichung anzeigen",
+    "createSubmission": "Einreichung erstellen",
+    "noSubmissionsFound": "Keine Einreichungen gefunden",
+    "noSubmissionsCreated": "Du hast noch keine Ausschreibungen eingereicht",
+    "noSubmissionsWithStatus": "Keine Einreichungen mit Status: {{status}}",
+    "createYourFirstSubmission": "Erstelle deine erste Einreichung"
+  },
+  "milestones": {
+    "milestones": "Meilensteine",
+    "title": "Titel",
+    "description": "Beschreibung",
+    "status": "Status",
+    "dueDate": "Fälligkeitsdatum",
+    "completionDate": "Abschlussdatum",
+    "notes": "Notizen",
+    "pending": "Ausstehend",
+    "inProgress": "In Bearbeitung",
+    "completed": "Abgeschlossen",
+    "skipped": "Übersprungen",
+    "markAsInProgress": "Als in Bearbeitung markieren",
+    "markAsCompleted": "Als abgeschlossen markieren",
+    "markAsPending": "Als ausstehend markieren",
+    "markAsSkipped": "Als übersprungen markieren"
+  },
+  "tabs": {
+    "overview": "Übersicht",
+    "milestones": "Meilensteine",
+    "documents": "Dokumente",
+    "notes": "Notizen",
+    "documentManagement": "Dokumentenverwaltung",
+    "documentDescription": "Lade alle ausschreibungsbezogenen Dokumente hier hoch und verwalte sie.",
+    "uploadDocuments": "Dokumente hochladen",
+    "tenderNotes": "Ausschreibungsnotizen",
+    "notesDescription": "Füge wichtige Notizen und Kommentare zu dieser Ausschreibung hinzu.",
+    "addNotes": "Notizen hinzufügen"
+  },
+  "landing": {
+    "headline": "Vereinfachen Sie Ihr Ausschreibungsmanagement",
+    "subheadline": "Verwalten Sie Ausschreibungen, arbeiten Sie mit Kunden zusammen und bleiben Sie mit Ihrem Team auf dem Laufenden – alles an einem Ort.",
+    "featureHeading": "Funktionen, die Sie lieben werden",
+    "featureSubheading": "TenderFlow wurde entwickelt, um Ihren Ausschreibungsprozess zu optimieren und Ihnen zu helfen, organisiert und effizient zu bleiben.",
+    "feature1Title": "Mühelose Ausschreibungsverwaltung",
+    "feature1Description": "Erstellen, verwalten und verfolgen Sie alle Ihre Ausschreibungen ganz einfach von einem zentralen Dashboard aus.",
+    "feature2Title": "Nahtlose Zusammenarbeit",
+    "feature2Description": "Arbeiten Sie mit Teammitgliedern und Kunden in Echtzeit zusammen, um sicherzustellen, dass alle auf dem gleichen Stand sind.",
+    "feature3Title": "Bleiben Sie organisiert",
+    "feature3Description": "Mit unseren intuitiven Tools und Funktionen behalten Sie den Überblick über Ihre Ausschreibungen und Fristen."
+  },
   "auth": {
     "login": "Anmelden",
+    "loginDescription": "Melde dich an, um auf dein Konto zuzugreifen",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "forgotPassword": "Passwort vergessen?",
+    "loggingIn": "Anmeldung läuft...",
+    "noAccount": "Noch kein Konto?",
     "signup": "Registrieren",
-    "createAccount": "Konto erstellen"
+    "signupDescription": "Erstelle ein Konto, um loszulegen",
+    "name": "Name",
+    "confirmPassword": "Passwort bestätigen",
+    "passwordMismatch": "Passwörter stimmen nicht überein",
+    "passwordTooShort": "Passwort muss mindestens 6 Zeichen lang sein",
+    "creatingAccount": "Konto wird erstellt...",
+    "createAccount": "Konto erstellen",
+    "haveAccount": "Hast du bereits ein Konto?",
+    "logout": "Abmelden"
   },
   "navigation": {
-    "search": "Suche",
+    "search": "Ausschreibungen suchen...",
     "notifications": "Benachrichtigungen",
     "myAccount": "Mein Konto",
     "profile": "Profil",
@@ -34,19 +154,13 @@
     "clients": "Kunden",
     "settings": "Einstellungen"
   },
-  "tenders": {
-    "newTender": "Neue Ausschreibung"
-  },
-  "landing": {
-    "headline": "Vereinfachen Sie Ihr Ausschreibungsmanagement",
-    "subheadline": "Verwalten Sie Ausschreibungen, arbeiten Sie mit Kunden zusammen und bleiben Sie mit Ihrem Team auf dem Laufenden – alles an einem Ort.",
-    "featureHeading": "Funktionen, die Sie lieben werden",
-    "featureSubheading": "TenderFlow wurde entwickelt, um Ihren Ausschreibungsprozess zu optimieren und Ihnen zu helfen, organisiert und effizient zu bleiben.",
-    "feature1Title": "Mühelose Ausschreibungsverwaltung",
-    "feature1Description": "Erstellen, verwalten und verfolgen Sie alle Ihre Ausschreibungen ganz einfach von einem zentralen Dashboard aus.",
-    "feature2Title": "Nahtlose Zusammenarbeit",
-    "feature2Description": "Arbeiten Sie mit Teammitgliedern und Kunden in Echtzeit zusammen, um sicherzustellen, dass alle auf dem gleichen Stand sind.",
-    "feature3Title": "Bleiben Sie organisiert",
-    "feature3Description": "Mit unseren intuitiven Tools und Funktionen behalten Sie den Überblick über Ihre Ausschreibungen und Fristen."
+  "toasts": {
+    "tenderCreated": "Neue Ausschreibung erfolgreich erstellt",
+    "tenderUpdated": "Ausschreibung erfolgreich aktualisiert",
+    "milestoneUpdated": "Meilenstein aktualisiert",
+    "milestoneReset": "Meilenstein auf ausstehend zurückgesetzt",
+    "milestoneInProgress": "Meilenstein als in Bearbeitung markiert",
+    "milestoneCompleted": "Meilenstein abgeschlossen",
+    "milestoneSkipped": "Meilenstein übersprungen"
   }
 }
