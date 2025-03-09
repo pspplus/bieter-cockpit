@@ -1,6 +1,6 @@
 
 import { Tender, Milestone, MilestoneStatus } from "@/types/tender";
-import { useTender } from "@/hooks/useTender";
+import { useMilestone } from "@/hooks/useMilestone";
 import { useTranslation } from "react-i18next";
 import { MilestoneItem } from "./MilestoneItem";
 
@@ -9,7 +9,7 @@ interface MilestonesListProps {
 }
 
 export function MilestonesList({ tender }: MilestonesListProps) {
-  const { updateMilestone } = useTender();
+  const { updateMilestone } = useMilestone();
   const { t } = useTranslation();
 
   const sortedMilestones = [...tender.milestones].sort((a, b) => {
