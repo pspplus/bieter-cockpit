@@ -1,5 +1,5 @@
 
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 import { Client } from "@/types/client";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
@@ -48,12 +48,12 @@ export const ClientProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     mutationFn: createClientService,
     onSuccess: (newClient) => {
       queryClient.invalidateQueries({ queryKey: ['clients'] });
-      toast.success(t('toasts.clientCreated', 'Client created successfully'));
+      toast.success(t('toasts.clientCreated', 'Vergabestelle erfolgreich erstellt'));
       return newClient;
     },
     onError: (error) => {
       console.error('Error creating client:', error);
-      toast.error(t('toasts.errorCreatingClient', 'Error creating client'));
+      toast.error(t('toasts.errorCreatingClient', 'Fehler beim Erstellen der Vergabestelle'));
       throw error;
     }
   });
@@ -72,11 +72,11 @@ export const ClientProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         setActiveClient(prev => prev ? { ...prev, ...updates } : null);
       }
       
-      toast.success(t('toasts.clientUpdated', 'Client updated successfully'));
+      toast.success(t('toasts.clientUpdated', 'Vergabestelle erfolgreich aktualisiert'));
     },
     onError: (error) => {
       console.error('Error updating client:', error);
-      toast.error(t('toasts.errorUpdatingClient', 'Error updating client'));
+      toast.error(t('toasts.errorUpdatingClient', 'Fehler beim Aktualisieren der Vergabestelle'));
     }
   });
 
@@ -91,11 +91,11 @@ export const ClientProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         setActiveClient(null);
       }
       
-      toast.success(t('toasts.clientDeleted', 'Client deleted successfully'));
+      toast.success(t('toasts.clientDeleted', 'Vergabestelle erfolgreich gelöscht'));
     },
     onError: (error) => {
       console.error('Error deleting client:', error);
-      toast.error(t('toasts.errorDeletingClient', 'Error deleting client'));
+      toast.error(t('toasts.errorDeletingClient', 'Fehler beim Löschen der Vergabestelle'));
     }
   });
 
@@ -105,7 +105,7 @@ export const ClientProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       setActiveClient(client);
     } catch (error) {
       console.error('Error loading client:', error);
-      toast.error(t('toasts.errorLoadingClient', 'Error loading client'));
+      toast.error(t('toasts.errorLoadingClient', 'Fehler beim Laden der Vergabestelle'));
     }
   };
 

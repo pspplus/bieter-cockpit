@@ -1,4 +1,5 @@
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
@@ -10,10 +11,19 @@ import { useTender } from "@/context/TenderContext";
 import { ArrowLeft } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useToast } from "@/components/ui/use-toast";
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useClient } from "@/context/ClientContext";
 
 export default function NewTenderPage() {
   const { t } = useTranslation();
   const { createTender } = useTender();
+  const { clients, isLoading: isLoadingClients } = useClient();
   const navigate = useNavigate();
   const { toast } = useToast();
   
@@ -33,8 +43,22 @@ export default function NewTenderPage() {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+  const handleSelectChange = (name: string, value: string) => {
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validation: check if client is selected
+    if (!formData.client) {
+      toast({
+        title: t('errorMessages.validationError'),
+        description: t('errorMessages.selectClient', 'Bitte wählen Sie eine Vergabestelle aus'),
+        variant: "destructive",
+      });
+      return;
+    }
     
     try {
       // Create new tender
@@ -123,13 +147,23 @@ export default function NewTenderPage() {
 
               <div className="grid md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="client">{t('tender.client')}</Label>
-                  <Input 
-                    id="client" 
+                  <Label htmlFor="client">{t('tender.client')} *</Label>
+                  <Select 
                     name="client" 
                     value={formData.client} 
-                    onChange={handleChange} 
-                  />
+                    onValueChange={(value) => handleSelectChange("client", value)}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder={t('tenders.selectClient', 'Vergabestelle auswählen')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {clients.map((client) => (
+                        <SelectItem key={client.id} value={client.name}>
+                          {client.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="location">{t('tender.location')}</Label>
