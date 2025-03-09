@@ -1,3 +1,4 @@
+
 {
   "tender": {
     "title": "Titel",
@@ -44,7 +45,10 @@
     "profile": "Profil",
     "settings": "Einstellungen",
     "logout": "Abmelden",
-    "messages": "Nachrichten"
+    "messages": "Nachrichten",
+    "activityLog": "Aktivitätsprotokoll",
+    "home": "Startseite",
+    "dashboard": "Dashboard"
   },
   "cancel": "Abbrechen"
 }

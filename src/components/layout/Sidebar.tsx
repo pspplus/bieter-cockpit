@@ -111,7 +111,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
             )}
           >
             <Inbox className="h-5 w-5" />
-            <span>{t('navigation.messages', 'Nachrichten')}</span>
+            <span>{t('navigation.activityLog', 'Aktivitätsprotokoll')}</span>
           </Link>
           <Link
             to="/clients"

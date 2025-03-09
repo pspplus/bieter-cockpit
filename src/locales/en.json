@@ -170,7 +170,11 @@
     "notifications": "Notifications",
     "profile": "Profile",
     "settings": "Settings",
-    "logout": "Logout"
+    "logout": "Logout",
+    "messages": "Messages",
+    "activityLog": "Activity Log",
+    "home": "Home",
+    "dashboard": "Dashboard"
   },
   "landing": {
     "headline": "Manage your tender process efficiently",

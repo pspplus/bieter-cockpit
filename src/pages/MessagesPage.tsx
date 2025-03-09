@@ -35,7 +35,7 @@ const MessagesPage = () => {
       <div className="container mx-auto py-6">
         <div className="space-y-6">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">{t("navigation.messages")}</h1>
+            <h1 className="text-3xl font-bold tracking-tight">{t("navigation.activityLog")}</h1>
             <p className="text-muted-foreground">
               Alle Änderungen und Aktivitäten zu Ihren Ausschreibungen
             </p>
