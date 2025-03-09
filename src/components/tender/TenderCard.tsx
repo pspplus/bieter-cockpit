@@ -12,7 +12,7 @@ interface TenderCardProps {
   isActive?: boolean;
 }
 
-const statusColors: Record<Tender["status"], { bg: string; text: string }> = {
+const statusColors: Record<string, { bg: string; text: string }> = {
   "entwurf": { bg: "bg-tender-100", text: "text-tender-600" },
   "in-pruefung": { bg: "bg-amber-100", text: "text-amber-600" },
   "in-bearbeitung": { bg: "bg-blue-100", text: "text-blue-600" },
@@ -21,13 +21,15 @@ const statusColors: Record<Tender["status"], { bg: string; text: string }> = {
   "gewonnen": { bg: "bg-green-100", text: "text-green-600" },
   "verloren": { bg: "bg-red-100", text: "text-red-600" },
   "abgeschlossen": { bg: "bg-teal-100", text: "text-teal-600" },
+  // Fallback for any potential unknown statuses
+  "default": { bg: "bg-gray-100", text: "text-gray-600" }
 };
 
 export function TenderCard({ tender, isActive = false }: TenderCardProps) {
   const { t } = useTranslation();
   const { id, title, internalReference, externalReference, client, status, dueDate, location } = tender;
   
-  const statusColor = statusColors[status];
+  const statusColor = statusColors[status] || statusColors.default;
   const dueDateFormatted = format(new Date(dueDate), "MMM d, yyyy");
   
   // Calculate progress
