@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -14,6 +15,16 @@ import { Tender, TenderDocument, Folder } from "@/types/tender";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { Trash2 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 export default function TenderDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -22,6 +33,7 @@ export default function TenderDetailPage() {
   const [folders, setFolders] = useState<Folder[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("details");
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const navigate = useNavigate();
   const { t } = useTranslation();
 
@@ -120,7 +132,7 @@ export default function TenderDetailPage() {
                   <Button
                     variant="destructive"
                     size="icon"
-                    onClick={handleDelete}
+                    onClick={() => setDeleteDialogOpen(true)}
                     className="ml-2 flex-shrink-0 h-10"
                     aria-label={t("delete")}
                   >
@@ -151,6 +163,26 @@ export default function TenderDetailPage() {
           </div>
         </div>
       </div>
+
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t("deleteConfirmation.title", "Ausschreibung löschen")}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t("deleteConfirmation.description", "Sind Sie sicher, dass Sie diese Ausschreibung löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.")}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t("cancel", "Abbrechen")}</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={handleDelete}
+              variant="destructive"
+            >
+              {t("deleteConfirmation.confirm", "Ausschreibung löschen")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Layout>
   );
 }
