@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -32,7 +31,6 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Close sidebar automatically when route changes on mobile
   useEffect(() => {
     if (isMobile && isOpen) {
       onClose();
@@ -46,7 +44,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
           <img 
             src="/lovable-uploads/4ad70f59-6fd4-4e3e-9697-a48b2eb8680b.png" 
             alt="Bieter.Coach" 
-            className="h-10" 
+            className="h-20" 
           />
         </Link>
         {isMobile && (
@@ -145,14 +143,12 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
   if (isMobile) {
     return (
       <>
-        {/* Mobile overlay */}
         {isOpen && (
           <div
             className="fixed inset-0 z-40 bg-black/40 dark:bg-black/60 backdrop-blur-sm"
             onClick={onClose}
           />
         )}
-        {/* Mobile sidebar */}
         <aside
           className={cn(
             "fixed inset-y-0 left-0 z-50 w-72 border-r border-tender-100 dark:border-tender-800 bg-white dark:bg-tender-950 transition-transform duration-300 ease-in-out",

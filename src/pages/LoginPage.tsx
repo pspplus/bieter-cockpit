@@ -49,7 +49,7 @@ export default function LoginPage() {
             <img 
               src="/lovable-uploads/4ad70f59-6fd4-4e3e-9697-a48b2eb8680b.png" 
               alt="Bieter.Coach" 
-              className="h-12" 
+              className="h-24" 
             />
           </Link>
         </div>
