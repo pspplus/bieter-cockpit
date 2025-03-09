@@ -20,6 +20,7 @@ import {
 import { PlusCircle } from "lucide-react";
 import { Client } from "@/types/client";
 import { NewClientDialog } from "@/components/client/NewClientDialog";
+import { getDefaultMilestones } from "@/data/defaultMilestones";
 
 export function TenderCreationForm() {
   const { t } = useTranslation();
@@ -62,6 +63,9 @@ export function TenderCreationForm() {
     }
     
     try {
+      // Get default milestones
+      const defaultMilestones = getDefaultMilestones();
+      
       const newTender = await createTender({
         title: formData.title || t('tenders.newTender'),
         externalReference: formData.externalReference || "",
@@ -71,6 +75,7 @@ export function TenderCreationForm() {
         contactPerson: formData.contactPerson,
         contactEmail: formData.contactEmail,
         contactPhone: formData.contactPhone,
+        milestones: defaultMilestones
       });
 
       toast.success(t('toasts.tenderCreated'));

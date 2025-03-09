@@ -1,3 +1,4 @@
+
 import React, { createContext, useState, useEffect } from "react";
 import { Tender, Milestone } from "@/types/tender";
 import { useAuth } from "@/context/AuthContext";
@@ -55,7 +56,29 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
 
   const createTender = async (tenderData: Partial<Tender>): Promise<Tender> => {
     try {
-      const newTender = await createTenderService(tenderData);
+      // Store milestones before removing them from the tender data
+      const milestones = tenderData.milestones || [];
+      
+      // Create a copy of tenderData without milestones for initial tender creation
+      const { milestones: _, ...tenderDataWithoutMilestones } = tenderData;
+      
+      // Create the tender first
+      const newTender = await createTenderService(tenderDataWithoutMilestones);
+      
+      // If there are milestones, create them one by one
+      if (milestones.length > 0) {
+        await Promise.all(
+          milestones.map(milestone => 
+            createMilestoneService({ ...milestone, tenderId: newTender.id })
+          )
+        );
+        
+        // Refetch the tender with the newly created milestones
+        const updatedTender = { ...newTender, milestones };
+        setTenders([updatedTender, ...tenders]);
+        return updatedTender;
+      }
+      
       setTenders([newTender, ...tenders]);
       return newTender;
     } catch (error) {
