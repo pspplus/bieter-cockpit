@@ -2,7 +2,7 @@
 import { Layout } from "@/components/layout/Layout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { FileCheck, Filter, Plus } from "lucide-react";
+import { FileCheck, Filter } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useTender } from "@/hooks/useTender";
 import { TenderStatus } from "@/types/tender";
@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { getStatusColors } from "@/utils/statusUtils";
 
 export default function SubmissionsPage() {
   const { t } = useTranslation();
@@ -38,18 +39,8 @@ export default function SubmissionsPage() {
   );
 
   const getStatusBadgeStyles = (status: TenderStatus) => {
-    switch (status) {
-      case "abgegeben":
-        return "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400";
-      case "aufklaerung":
-        return "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400";
-      case "gewonnen":
-        return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400";
-      case "verloren":
-        return "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400";
-      default:
-        return "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-400";
-    }
+    const statusColor = getStatusColors(status);
+    return `${statusColor.bg} ${statusColor.text} dark:bg-${status === 'abgegeben' ? 'blue' : status === 'aufklaerung' ? 'purple' : status === 'gewonnen' ? 'green' : 'gray'}-900/30 dark:text-${status === 'abgegeben' ? 'blue' : status === 'aufklaerung' ? 'purple' : status === 'gewonnen' ? 'green' : 'gray'}-400`;
   };
 
   // Get display reference - use internal reference as primary, fallback to external reference
@@ -93,13 +84,6 @@ export default function SubmissionsPage() {
               </DropdownMenuRadioGroup>
             </DropdownMenuContent>
           </DropdownMenu>
-
-          <Button asChild className="w-full sm:w-auto">
-            <Link to="/tenders" className="flex items-center gap-2">
-              <Plus className="h-4 w-4" />
-              {t('createSubmission')}
-            </Link>
-          </Button>
         </div>
 
         {sortedTenders.length > 0 ? (
@@ -178,11 +162,6 @@ export default function SubmissionsPage() {
                     status: t(`tenders.${filterStatus}`) 
                   })}
             </p>
-            <Button asChild className="mt-6">
-              <Link to="/tenders">
-                {t('createYourFirstSubmission')}
-              </Link>
-            </Button>
           </div>
         )}
       </div>
