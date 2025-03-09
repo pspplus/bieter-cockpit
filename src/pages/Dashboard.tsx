@@ -1,14 +1,16 @@
+
 import { Layout } from "@/components/layout/Layout";
 import { useTender } from "@/hooks/useTender";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { TenderCard } from "@/components/tender/TenderCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowRight, FileCheck, FileText, Flag, Clock, AlertCircle } from "lucide-react";
+import { ArrowRight, FileCheck, FileText, Flag, Clock, AlertCircle, BarChart } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export default function Dashboard() {
   const { tenders } = useTender();
+  const { t } = useTranslation();
   
   // Filter tenders by status
   const activeTenders = tenders.filter(t => t.status === "active");
@@ -21,6 +23,10 @@ export default function Dashboard() {
   const tendersInProgress = activeTenders.length;
   const tendersSubmitted = submittedTenders.length;
   const tendersWon = tenders.filter(t => t.status === "won").length;
+  
+  // Calculate success rate (Zuschlagsquote)
+  const allSubmittedTenders = tenders.filter(t => ["submitted", "clarification", "won", "lost", "completed"].includes(t.status)).length;
+  const successRate = allSubmittedTenders > 0 ? Math.round((tendersWon / allSubmittedTenders) * 100) : 0;
   
   // Find upcoming deadlines (due in the next 7 days)
   const now = new Date();
@@ -82,6 +88,30 @@ export default function Dashboard() {
             </CardContent>
           </Card>
         </div>
+        
+        {/* Success Rate Card (Zuschlagsquote) */}
+        <Card className="animate-blur-in" style={{ animationDelay: "200ms" }}>
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium">Zuschlagsquote</CardTitle>
+            <BarChart className="h-4 w-4 text-purple-500" />
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center space-x-4">
+              <div className="flex-1">
+                <div className="text-2xl font-bold">{successRate}%</div>
+                <p className="text-xs text-tender-500">
+                  {tendersWon} won out of {allSubmittedTenders} submitted tenders
+                </p>
+              </div>
+              <div className="h-2 flex-1 bg-gray-200 rounded-full overflow-hidden">
+                <div 
+                  className="h-full bg-purple-500 rounded-full"
+                  style={{ width: `${successRate}%` }}
+                ></div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
         
         <div className="grid gap-6 md:grid-cols-2">
           <div className="space-y-4">
