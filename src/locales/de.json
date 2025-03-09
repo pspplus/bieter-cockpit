@@ -1,4 +1,3 @@
-
 {
   "general": {
     "loading": "Wird geladen...",
@@ -77,13 +76,21 @@
     "tenders": "Ausschreibungen",
     "tender": "Ausschreibung",
     "allTenders": "Alle Ausschreibungen",
+    "entwurf": "Entwurf",
     "drafts": "Entwürfe",
+    "in-bearbeitung": "In Bearbeitung",
     "active": "Aktiv",
+    "in-pruefung": "In Prüfung",
     "review": "In Prüfung",
+    "abgegeben": "Abgegeben", 
     "submitted": "Eingereicht",
+    "aufklaerung": "In Aufklärung",
     "inClarification": "In Aufklärung",
+    "gewonnen": "Gewonnen",
     "won": "Gewonnen",
+    "verloren": "Verloren",
     "lost": "Verloren",
+    "abgeschlossen": "Abgeschlossen",
     "completed": "Abgeschlossen",
     "createTender": "Ausschreibung erstellen",
     "editTender": "Ausschreibung bearbeiten",

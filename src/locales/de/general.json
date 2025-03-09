@@ -26,5 +26,7 @@
   "slogan": "Der smarte Weg, Ausschreibungen zu verwalten",
   "pageNotFound": "Seite nicht gefunden",
   "pageNotFoundDescription": "Die gesuchte Seite existiert nicht oder wurde verschoben.",
-  "returnToHome": "Zurück zur Startseite"
+  "returnToHome": "Zurück zur Startseite",
+  "submissions": "Einreichungen",
+  "allSubmissions": "Alle Einreichungen"
 }
