@@ -176,7 +176,7 @@ export default function TenderDetailPage() {
             <AlertDialogCancel>{t("cancel", "Abbrechen")}</AlertDialogCancel>
             <AlertDialogAction 
               onClick={handleDelete}
-              variant="destructive"
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
               {t("deleteConfirmation.confirm", "Ausschreibung löschen")}
             </AlertDialogAction>

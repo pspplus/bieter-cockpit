@@ -1,84 +1,97 @@
 
-import { Milestone } from "@/types/tender";
-import { v4 as uuidv4 } from 'uuid';
+import { Omit } from "@/types/tender";
 
-export const defaultMilestones: Omit<Milestone, 'id'>[] = [
+// Diese Datei wird nicht mehr verwendet, aber wir behalten sie bei 
+// und aktualisieren sie, um Build-Fehler zu vermeiden
+export const defaultMilestones: Omit<Milestone, "id">[] = [
   {
-    title: "Document Check",
-    description: "Initial review of tender documents and requirements",
+    title: "Ausschreibung analysieren",
+    description: "Initiale Analyse der Ausschreibung und Anforderungen.",
     status: "pending",
+    sequenceNumber: 1,
     dueDate: null,
-    completionDate: null
+    completionDate: null,
+    notes: ""
   },
   {
-    title: "Property Inspection",
-    description: "Plan and conduct on-site property inspection",
+    title: "Team zusammenstellen",
+    description: "Passende Teammitglieder für das Projekt auswählen.",
     status: "pending",
+    sequenceNumber: 2,
     dueDate: null,
-    completionDate: null
+    completionDate: null,
+    notes: ""
   },
   {
-    title: "Strategy Development",
-    description: "Determine approach and competitive strategy",
+    title: "Angebot erstellen",
+    description: "Detailiertes Angebot basierend auf den Anforderungen erstellen.",
     status: "pending",
+    sequenceNumber: 3,
     dueDate: null,
-    completionDate: null
+    completionDate: null,
+    notes: ""
   },
   {
-    title: "Concept Creation",
-    description: "Develop the core concept and approach for the tender",
+    title: "Kalkulation durchführen",
+    description: "Kostenberechnung und Preiskalkulation durchführen.",
     status: "pending",
+    sequenceNumber: 4,
     dueDate: null,
-    completionDate: null
+    completionDate: null,
+    notes: ""
   },
   {
-    title: "Cost Calculation",
-    description: "Prepare detailed cost calculations and financial proposal",
+    title: "Qualitätskontrolle",
+    description: "Überprüfung des Angebots durch andere Teammitglieder.",
     status: "pending",
+    sequenceNumber: 5,
     dueDate: null,
-    completionDate: null
+    completionDate: null,
+    notes: ""
   },
   {
-    title: "Document Compilation",
-    description: "Compile all required documents for submission",
+    title: "Angebot finalisieren",
+    description: "Finale Überarbeitung und Fertigstellung des Angebots.",
     status: "pending",
+    sequenceNumber: 6,
     dueDate: null,
-    completionDate: null
+    completionDate: null,
+    notes: ""
   },
   {
-    title: "Submission",
-    description: "Submit completed tender package to client",
+    title: "Angebot einreichen",
+    description: "Einreichung des fertigen Angebots beim Auftraggeber.",
     status: "pending",
+    sequenceNumber: 7,
     dueDate: null,
-    completionDate: null
+    completionDate: null,
+    notes: ""
   },
   {
-    title: "Clarification",
-    description: "Respond to any requests for clarification",
+    title: "Dokumentation ablegen",
+    description: "Archivierung aller Dokumente und Unterlagen.",
     status: "pending",
+    sequenceNumber: 8,
     dueDate: null,
-    completionDate: null
+    completionDate: null,
+    notes: ""
   },
   {
-    title: "Follow-up",
-    description: "Follow up on submission status and evaluation process",
+    title: "Nachfassen",
+    description: "Beim Auftraggeber nach dem Status der Entscheidung fragen.",
     status: "pending",
+    sequenceNumber: 9,
     dueDate: null,
-    completionDate: null
+    completionDate: null,
+    notes: ""
   },
   {
-    title: "Implementation",
-    description: "If awarded, initiate project implementation",
+    title: "Projektübergabe (bei Erfolg)",
+    description: "Bei erfolgreicher Ausschreibung Übergabe an das Projektteam.",
     status: "pending",
+    sequenceNumber: 10,
     dueDate: null,
-    completionDate: null
+    completionDate: null,
+    notes: ""
   }
 ];
-
-export function generateMilestones(): Milestone[] {
-  return defaultMilestones.map(milestone => ({
-    ...milestone,
-    id: uuidv4(),
-    tenderId: "" // Add empty tenderId that will be set when actually creating milestones
-  }));
-}
