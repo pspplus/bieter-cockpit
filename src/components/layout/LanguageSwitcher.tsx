@@ -8,11 +8,8 @@ import {
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import { Globe } from "lucide-react";
-import { useLanguage } from '@/context/LanguageContext';
 
 export function LanguageSwitcher() {
-  const { language, setLanguage } = useLanguage();
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -22,20 +19,11 @@ export function LanguageSwitcher() {
           className="text-tender-500 hover:text-tender-600"
         >
           <Globe className="h-5 w-5" />
-          <span className="sr-only">Sprache wechseln</span>
+          <span className="sr-only">Sprache</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem 
-          onClick={() => setLanguage('en')}
-          className={language === 'en' ? 'bg-tender-100' : ''}
-        >
-          English
-        </DropdownMenuItem>
-        <DropdownMenuItem 
-          onClick={() => setLanguage('de')}
-          className={language === 'de' ? 'bg-tender-100' : ''}
-        >
+        <DropdownMenuItem className="bg-tender-100">
           Deutsch
         </DropdownMenuItem>
       </DropdownMenuContent>

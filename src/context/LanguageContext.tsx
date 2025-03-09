@@ -1,35 +1,21 @@
 
-import React, { createContext, useState, useEffect, useContext } from 'react';
+import React, { createContext, useContext, useEffect } from 'react';
 import i18next from 'i18next';
 
-type Language = 'en' | 'de';
-
 interface LanguageContextType {
-  language: Language;
-  setLanguage: (lang: Language) => void;
+  language: 'de';
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [language, setLanguageState] = useState<Language>(() => {
-    const savedLanguage = localStorage.getItem('language');
-    return (savedLanguage as Language) || 'de'; // Default to German
-  });
-
-  const setLanguage = (lang: Language) => {
-    setLanguageState(lang);
-    localStorage.setItem('language', lang);
-    i18next.changeLanguage(lang);
-  };
-
+  // Fest auf Deutsch setzen
   useEffect(() => {
-    // Initialize with saved language or default to German
-    i18next.changeLanguage(language);
+    i18next.changeLanguage('de');
   }, []);
 
   return (
-    <LanguageContext.Provider value={{ language, setLanguage }}>
+    <LanguageContext.Provider value={{ language: 'de' }}>
       {children}
     </LanguageContext.Provider>
   );

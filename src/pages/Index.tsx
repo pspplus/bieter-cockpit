@@ -2,13 +2,11 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ChevronRight, FileText, CheckCircle } from "lucide-react";
-import { useTranslation } from "react-i18next";
 import { useAuth } from "@/context/AuthContext";
 import { ThemeSwitcher } from "@/components/layout/ThemeSwitcher";
 
 export default function Index() {
   const navigate = useNavigate();
-  const { t } = useTranslation(['general', 'auth', 'landing']);
   const { isAuthenticated } = useAuth();
 
   return (
@@ -26,7 +24,7 @@ export default function Index() {
             <ThemeSwitcher />
             {isAuthenticated ? (
               <Button onClick={() => navigate("/dashboard")} className="rounded-full">
-                {t('general:getStarted')}
+                Loslegen
               </Button>
             ) : (
               <>
@@ -35,13 +33,13 @@ export default function Index() {
                   onClick={() => navigate('/login')}
                   className="rounded-full"
                 >
-                  {t('auth:logIn')}
+                  Anmelden
                 </Button>
                 <Button 
                   onClick={() => navigate('/signup')}
                   className="rounded-full"
                 >
-                  {t('auth:signUp')}
+                  Registrieren
                 </Button>
               </>
             )}
@@ -53,13 +51,13 @@ export default function Index() {
         <section className="py-16 md:py-24">
           <div className="container mx-auto px-4 text-center max-w-3xl">
             <div className="inline-block px-3 py-1 bg-primary/10 text-primary rounded-full text-sm font-medium mb-6 animate-fade-in">
-              {t('general:slogan')}
+              Der smarte Weg, Ausschreibungen zu verwalten
             </div>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight mb-6 animate-slide-up text-bieter-blue">
-              {t('landing:headline')}
+              Optimieren Sie Ihren Ausschreibungsprozess
             </h1>
             <p className="text-lg text-tender-600 dark:text-tender-300 mb-8 animate-slide-up" style={{ animationDelay: "100ms" }}>
-              {t('landing:subheadline')}
+              Bieter Cockpit bietet eine vollständige Lösung für die Verwaltung und Teilnahme an öffentlichen Ausschreibungen - effizient und übersichtlich.
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4 animate-slide-up" style={{ animationDelay: "200ms" }}>
               {isAuthenticated ? (
@@ -68,7 +66,7 @@ export default function Index() {
                   onClick={() => navigate("/dashboard")}
                   className="rounded-full"
                 >
-                  {t('general:getStarted')}
+                  Loslegen
                   <ChevronRight className="h-4 w-4 ml-1" />
                 </Button>
               ) : (
@@ -77,7 +75,7 @@ export default function Index() {
                   onClick={() => navigate("/signup")}
                   className="rounded-full"
                 >
-                  {t('auth:createAccount')}
+                  Konto erstellen
                   <ChevronRight className="h-4 w-4 ml-1" />
                 </Button>
               )}
@@ -88,9 +86,9 @@ export default function Index() {
         <section className="py-16 bg-tender-50 dark:bg-tender-900">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-semibold mb-4 text-bieter-blue">{t('landing:featureHeading')}</h2>
+              <h2 className="text-3xl font-semibold mb-4 text-bieter-blue">Alles was Sie brauchen</h2>
               <p className="text-tender-600 dark:text-tender-300 max-w-2xl mx-auto">
-                {t('landing:featureSubheading')}
+                Unser Tool bietet alle Funktionen, die Sie für erfolgreiche Ausschreibungen benötigen.
               </p>
             </div>
             
@@ -99,9 +97,9 @@ export default function Index() {
                 <div className="rounded-full w-12 h-12 bg-bieter-blue/10 dark:bg-bieter-blue/20 text-bieter-blue flex items-center justify-center mb-4">
                   <FileText className="h-6 w-6" />
                 </div>
-                <h3 className="text-xl font-medium mb-2 text-bieter-blue">{t('landing:feature1Title')}</h3>
+                <h3 className="text-xl font-medium mb-2 text-bieter-blue">Dokumentenverwaltung</h3>
                 <p className="text-tender-600 dark:text-tender-300">
-                  {t('landing:feature1Description')}
+                  Organisieren Sie alle Ihre Ausschreibungsdokumente an einem zentralen Ort.
                 </p>
               </div>
               
@@ -113,9 +111,9 @@ export default function Index() {
                     className="h-6 w-6"
                   />
                 </div>
-                <h3 className="text-xl font-medium mb-2 text-bieter-blue">{t('landing:feature2Title')}</h3>
+                <h3 className="text-xl font-medium mb-2 text-bieter-blue">Automatisierte Workflows</h3>
                 <p className="text-tender-600 dark:text-tender-300">
-                  {t('landing:feature2Description')}
+                  Verbessern Sie Ihre Effizienz mit unseren automatisierten Ausschreibungsprozessen.
                 </p>
               </div>
               
@@ -123,9 +121,9 @@ export default function Index() {
                 <div className="rounded-full w-12 h-12 bg-bieter-blue/10 dark:bg-bieter-blue/20 text-bieter-blue flex items-center justify-center mb-4">
                   <CheckCircle className="h-6 w-6" />
                 </div>
-                <h3 className="text-xl font-medium mb-2 text-bieter-blue">{t('landing:feature3Title')}</h3>
+                <h3 className="text-xl font-medium mb-2 text-bieter-blue">Compliance sicherstellen</h3>
                 <p className="text-tender-600 dark:text-tender-300">
-                  {t('landing:feature3Description')}
+                  Bleiben Sie konform mit allen rechtlichen Anforderungen bei Ihren Ausschreibungen.
                 </p>
               </div>
             </div>
@@ -144,7 +142,7 @@ export default function Index() {
               />
             </div>
             <p className="text-tender-500 dark:text-tender-400 text-sm">
-              © 2023 Bieter Cockpit. All rights reserved.
+              © 2023 Bieter Cockpit. Alle Rechte vorbehalten.
             </p>
           </div>
         </div>
