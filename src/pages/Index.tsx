@@ -1,4 +1,3 @@
-
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ChevronRight, FileText, CheckCircle } from "lucide-react";
@@ -17,11 +16,10 @@ export default function Index() {
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center gap-2">
             <img 
-              src="/lovable-uploads/8d9b2e36-d9ae-456f-9e6b-28d57ee1e7e1.png" 
+              src="/lovable-uploads/4ad70f59-6fd4-4e3e-9697-a48b2eb8680b.png" 
               alt="Bieter Cockpit" 
-              className="h-8"
+              className="h-10"
             />
-            <span className="text-xl font-semibold text-bieter-blue">Bieter Cockpit</span>
           </div>
           <div className="flex items-center gap-3">
             <ThemeSwitcher />
@@ -147,11 +145,10 @@ export default function Index() {
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center gap-2 mb-4 md:mb-0">
               <img 
-                src="/lovable-uploads/8d9b2e36-d9ae-456f-9e6b-28d57ee1e7e1.png" 
+                src="/lovable-uploads/4ad70f59-6fd4-4e3e-9697-a48b2eb8680b.png" 
                 alt="Bieter Cockpit" 
-                className="h-8"
+                className="h-10"
               />
-              <span className="text-lg font-semibold text-bieter-blue">Bieter Cockpit</span>
             </div>
             <p className="text-tender-500 dark:text-tender-400 text-sm">
               © 2023 Bieter Cockpit. All rights reserved.

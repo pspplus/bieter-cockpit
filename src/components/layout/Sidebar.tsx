@@ -42,11 +42,12 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const sidebarContent = (
     <div className="flex h-full flex-col">
       <div className="flex h-16 items-center border-b border-tender-100 dark:border-tender-800 px-6">
-        <Link to="/" className="flex items-center gap-2 font-semibold tracking-tight">
-          <div className="h-9 w-9 bg-bieter-blue flex items-center justify-center">
-            <span className="text-white font-bold text-sm">b.c</span>
-          </div>
-          <span className="text-xl text-bieter-blue uppercase tracking-wider font-bold">Bieter.Coach</span>
+        <Link to="/" className="flex items-center justify-center">
+          <img 
+            src="/lovable-uploads/4ad70f59-6fd4-4e3e-9697-a48b2eb8680b.png" 
+            alt="Bieter.Coach" 
+            className="h-10" 
+          />
         </Link>
         {isMobile && (
           <Button

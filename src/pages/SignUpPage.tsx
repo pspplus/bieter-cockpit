@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { useTranslation } from "react-i18next";
-import { ArrowLeft, Smile } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 
 export default function SignUpPage() {
   const [name, setName] = useState("");
@@ -64,8 +64,11 @@ export default function SignUpPage() {
           </div>
           
           <Link to="/" className="inline-flex items-center gap-2">
-            <Smile className="h-8 w-8 text-yellow-400" />
-            <span className="text-2xl font-semibold">Tender Testing</span>
+            <img 
+              src="/lovable-uploads/4ad70f59-6fd4-4e3e-9697-a48b2eb8680b.png" 
+              alt="Bieter.Coach" 
+              className="h-12" 
+            />
           </Link>
         </div>
         
