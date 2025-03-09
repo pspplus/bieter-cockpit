@@ -51,6 +51,22 @@ export const fetchMilestoneDocuments = async (milestoneId: string): Promise<Tend
   return (data || []).map(mapDocumentFromDB);
 };
 
+// Fetch documents for a specific folder
+export const fetchFolderDocuments = async (folderId: string): Promise<TenderDocument[]> => {
+  const { data, error } = await supabase
+    .from('documents')
+    .select('*')
+    .eq('folder_id', folderId)
+    .order('upload_date', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching folder documents:', error);
+    throw error;
+  }
+
+  return (data || []).map(mapDocumentFromDB);
+};
+
 // Upload a document
 export const uploadDocument = async (
   file: File,
@@ -70,10 +86,10 @@ export const uploadDocument = async (
   // Create a unique file name to prevent overwriting
   const uniqueFileName = `${uuidv4()}-${file.name}`;
   
-  // Upload file to Storage
+  // Upload file to Storage - CHANGED FROM 'documents' to 'tender_documents'
   const { data: fileData, error: uploadError } = await supabase
     .storage
-    .from('documents')
+    .from('tender_documents')
     .upload(uniqueFileName, file);
 
   if (uploadError) {
@@ -81,10 +97,10 @@ export const uploadDocument = async (
     throw uploadError;
   }
 
-  // Get public URL for the file
+  // Get public URL for the file - CHANGED FROM 'documents' to 'tender_documents'
   const { data: urlData } = await supabase
     .storage
-    .from('documents')
+    .from('tender_documents')
     .getPublicUrl(uniqueFileName);
 
   const fileUrl = urlData.publicUrl;
@@ -136,10 +152,10 @@ export const deleteDocument = async (id: string): Promise<void> => {
   const fileName = fileUrl.split('/').pop();
 
   if (fileName) {
-    // Delete the file from storage
+    // Delete the file from storage - CHANGED FROM 'documents' to 'tender_documents'
     const { error: storageError } = await supabase
       .storage
-      .from('documents')
+      .from('tender_documents')
       .remove([fileName]);
 
     if (storageError) {
