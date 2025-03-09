@@ -2,6 +2,8 @@
 import { supabase } from "@/integrations/supabase/client";
 import { TenderDocument } from "@/types/tender";
 import { v4 as uuidv4 } from "uuid";
+import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 const STORAGE_BUCKET = 'tender_documents';
 
@@ -151,7 +153,12 @@ export const deleteDocument = async (documentId: string): Promise<void> => {
     }
 
     // Extract the file path from the URL
-    const filePath = doc.file_url.split('/').pop();
+    // The file path is in the format: {user_id}/{uuid}.{extension}
+    const urlParts = doc.file_url.split('/');
+    const fileName = urlParts[urlParts.length - 1];
+    const userId = urlParts[urlParts.length - 2];
+    const filePath = `${userId}/${fileName}`;
+
     if (filePath) {
       // Delete the file from storage
       const { error: storageError } = await supabase.storage
