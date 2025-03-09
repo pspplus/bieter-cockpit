@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { TenderDocument } from "@/types/tender";
+import { TenderDocument, Folder } from "@/types/tender";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -18,17 +18,20 @@ import {
   Trash2, 
   Download, 
   File, 
-  Upload 
+  Upload,
+  FolderClosed 
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { format } from "date-fns";
 import { toast } from "sonner";
 import { uploadDocument, deleteDocument } from "@/services/documentService";
+import { FolderTree } from "@/components/folder/FolderTree";
 
 interface DocumentListProps {
   documents: TenderDocument[];
   tenderId?: string;
   milestoneId?: string;
+  folders?: Folder[];
   onDocumentAdded: (document: TenderDocument) => void;
   onDocumentDeleted: (documentId: string) => void;
 }
@@ -37,6 +40,7 @@ export function DocumentList({
   documents,
   tenderId,
   milestoneId,
+  folders = [], // Default to empty array if not provided
   onDocumentAdded,
   onDocumentDeleted
 }: DocumentListProps) {
@@ -45,6 +49,7 @@ export function DocumentList({
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [documentName, setDocumentName] = useState("");
   const [documentDescription, setDocumentDescription] = useState("");
+  const [selectedFolder, setSelectedFolder] = useState<string | null>(null);
   
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -76,7 +81,8 @@ export function DocumentList({
         documentName,
         documentDescription,
         tenderId,
-        milestoneId
+        milestoneId,
+        selectedFolder
       );
       
       onDocumentAdded(newDocument);
@@ -86,6 +92,7 @@ export function DocumentList({
       setSelectedFile(null);
       setDocumentName("");
       setDocumentDescription("");
+      setSelectedFolder(null);
       
       // Close dialog by clicking the close button
       const closeButton = document.querySelector('[data-dialog-close]') as HTMLButtonElement;
@@ -139,7 +146,7 @@ export function DocumentList({
               {t('documents.upload')}
             </Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="max-w-lg">
             <DialogHeader>
               <DialogTitle>{t('documents.uploadDocument')}</DialogTitle>
             </DialogHeader>
@@ -165,6 +172,21 @@ export function DocumentList({
                   </span>
                 </label>
               </div>
+              
+              {folders && folders.length > 0 && (
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">
+                    {t('documents.selectFolder', 'Select Folder')}
+                  </label>
+                  <div className="border rounded-md p-4 max-h-48 overflow-y-auto">
+                    <FolderTree 
+                      folders={folders} 
+                      onSelectFolder={(folderId) => setSelectedFolder(folderId)}
+                      selectedFolderId={selectedFolder}
+                    />
+                  </div>
+                </div>
+              )}
               
               <div className="space-y-2">
                 <label htmlFor="document-name" className="text-sm font-medium">
@@ -209,6 +231,16 @@ export function DocumentList({
           </DialogContent>
         </Dialog>
       </div>
+      
+      {folders && folders.length > 0 && (
+        <div className="border rounded-md p-4 mb-4">
+          <div className="flex items-center gap-2 mb-3">
+            <FolderClosed className="h-5 w-5 text-muted-foreground" />
+            <h4 className="font-medium">{t('documents.folderStructure', 'Folder Structure')}</h4>
+          </div>
+          <FolderTree folders={folders} readOnly />
+        </div>
+      )}
       
       {documents.length === 0 ? (
         <div className="text-center py-8 border border-dashed rounded-md">
