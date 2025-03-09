@@ -1,4 +1,3 @@
-
 {
   "general": {
     "appName": "TenderFlow",
@@ -44,12 +43,15 @@
     "won": "Gewonnen",
     "lost": "Verloren",
     "completed": "Abgeschlossen",
-    "review": "Überprüfung",
+    "review": "Prüfung",
     "newTender": "Neue Ausschreibung",
     "tenderDetails": "Ausschreibungsdetails",
     "tenderNotFound": "Ausschreibung nicht gefunden",
     "tenderNotFoundDescription": "Die gesuchte Ausschreibung existiert nicht oder wurde entfernt.",
-    "backToTenders": "Zurück zu Ausschreibungen"
+    "backToTenders": "Zurück zu Ausschreibungen",
+    "editTender": "Ausschreibung bearbeiten",
+    "saveChanges": "Änderungen speichern",
+    "cancel": "Abbrechen"
   },
   "tender": {
     "title": "Titel",
@@ -161,6 +163,23 @@
     "milestoneReset": "Meilenstein auf ausstehend zurückgesetzt",
     "milestoneInProgress": "Meilenstein als in Bearbeitung markiert",
     "milestoneCompleted": "Meilenstein abgeschlossen",
-    "milestoneSkipped": "Meilenstein übersprungen"
+    "milestoneSkipped": "Meilenstein übersprungen",
+    "changesSaved": "Änderungen erfolgreich gespeichert"
+  },
+  "tenderDetails": {
+    "due": "Fällig",
+    "progress": "Fortschritt",
+    "tenderInformation": "Ausschreibungsinformationen",
+    "created": "Erstellt",
+    "contactInformation": "Kontaktinformationen",
+    "email": "E-Mail",
+    "phone": "Telefon",
+    "noContactInfo": "Keine Kontaktinformationen angegeben"
+  },
+  "milestoneActions": {
+    "complete": "Abschließen",
+    "start": "Starten",
+    "skip": "Überspringen",
+    "reset": "Zurücksetzen"
   }
 }
