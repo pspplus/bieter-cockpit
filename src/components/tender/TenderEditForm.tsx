@@ -1,6 +1,5 @@
-
 import { useState } from "react";
-import { Tender } from "@/types/tender";
+import { Tender, TenderStatus } from "@/types/tender";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { 
@@ -32,6 +31,7 @@ import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { statusDisplayMap } from "@/utils/statusUtils";
 
 interface TenderEditFormProps {
   tender: Tender;
@@ -184,14 +184,11 @@ export function TenderEditForm({ tender, onCancel }: TenderEditFormProps) {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="entwurf">Entwurf</SelectItem>
-                  <SelectItem value="in-pruefung">In Prüfung</SelectItem>
-                  <SelectItem value="in-bearbeitung">In Bearbeitung</SelectItem>
-                  <SelectItem value="abgegeben">Abgegeben</SelectItem>
-                  <SelectItem value="aufklaerung">Aufklärung</SelectItem>
-                  <SelectItem value="gewonnen">Gewonnen</SelectItem>
-                  <SelectItem value="verloren">Verloren</SelectItem>
-                  <SelectItem value="abgeschlossen">Abgeschlossen</SelectItem>
+                  {(Object.keys(statusDisplayMap) as TenderStatus[]).map((statusKey) => (
+                    <SelectItem key={statusKey} value={statusKey}>
+                      {statusDisplayMap[statusKey]}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>

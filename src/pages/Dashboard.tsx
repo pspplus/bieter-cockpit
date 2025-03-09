@@ -7,16 +7,17 @@ import { TenderCard } from "@/components/tender/TenderCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowRight, FileCheck, FileText, Flag, Clock, AlertCircle, BarChart } from "lucide-react";
 import { Link } from "react-router-dom";
+import { statusGroups } from "@/utils/statusUtils";
 
 export default function Dashboard() {
   const { tenders } = useTender();
   const { t } = useTranslation();
   
   // Filter tenders by status
-  const activeTenders = tenders.filter(t => t.status === "in-bearbeitung");
-  const draftTenders = tenders.filter(t => t.status === "entwurf");
-  const submittedTenders = tenders.filter(t => ["abgegeben", "aufklaerung"].includes(t.status));
-  const completedTenders = tenders.filter(t => ["gewonnen", "verloren", "abgeschlossen"].includes(t.status));
+  const activeTenders = tenders.filter(t => statusGroups.active.includes(t.status));
+  const draftTenders = tenders.filter(t => statusGroups.draft.includes(t.status));
+  const submittedTenders = tenders.filter(t => statusGroups.submitted.includes(t.status));
+  const completedTenders = tenders.filter(t => statusGroups.completed.includes(t.status));
   
   // Calculate statistics
   const totalTenders = tenders.length;
@@ -25,7 +26,7 @@ export default function Dashboard() {
   const tendersWon = tenders.filter(t => t.status === "gewonnen").length;
   
   // Calculate success rate (Zuschlagsquote)
-  const allSubmittedTenders = tenders.filter(t => ["abgegeben", "aufklaerung", "gewonnen", "verloren", "abgeschlossen"].includes(t.status)).length;
+  const allSubmittedTenders = tenders.filter(t => statusGroups.allSubmitted.includes(t.status)).length;
   const successRate = allSubmittedTenders > 0 ? Math.round((tendersWon / allSubmittedTenders) * 100) : 0;
   
   // Find upcoming deadlines (due in the next 7 days)
@@ -36,7 +37,7 @@ export default function Dashboard() {
   const upcomingDeadlines = tenders
     .filter(t => {
       const dueDate = new Date(t.dueDate);
-      return dueDate > now && dueDate <= oneWeekFromNow && t.status === "in-bearbeitung";
+      return dueDate > now && dueDate <= oneWeekFromNow && statusGroups.active.includes(t.status);
     })
     .sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime());
 
