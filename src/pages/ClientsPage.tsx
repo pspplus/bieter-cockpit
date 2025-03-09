@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Layout } from "@/components/layout/Layout";
 import { useClient } from "@/context/ClientContext";
@@ -71,25 +72,25 @@ const ClientsPage = () => {
   };
 
   return (
-    <Layout title={t('navigation.clients', 'Clients')}>
+    <Layout title={t('sidebar.clients', 'Vergabestellen')}>
       <div className="container mx-auto py-6">
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold">{t('navigation.clients', 'Clients')}</h1>
+          <h1 className="text-2xl font-bold">{t('sidebar.clients', 'Vergabestellen')}</h1>
           <Button onClick={() => setIsCreateDialogOpen(true)}>
             <PlusCircle className="mr-2 h-4 w-4" />
-            {t('clients.createNew', 'Create New Client')}
+            {t('clients.createNew', 'Neue Vergabestelle erstellen')}
           </Button>
         </div>
 
         <Card>
           <CardHeader className="px-6 py-4">
             <div className="flex items-center justify-between">
-              <CardTitle>{t('clients.clientsList', 'Clients List')}</CardTitle>
+              <CardTitle>{t('clients.clientsList', 'Vergabestellenliste')}</CardTitle>
               <div className="relative w-64">
                 <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-tender-400" />
                 <Input
                   type="search"
-                  placeholder={t('clients.searchClients', 'Search clients...')}
+                  placeholder={t('clients.searchClients', 'Vergabestellen suchen...')}
                   className="w-full pl-9"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
@@ -160,7 +161,7 @@ const ClientsPage = () => {
       <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>{t('clients.createNewClient', 'Create New Client')}</DialogTitle>
+            <DialogTitle>{t('clients.createNewClient', 'Neue Vergabestelle erstellen')}</DialogTitle>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">

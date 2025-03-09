@@ -1,4 +1,3 @@
-
 {
   "general": {
     "appName": "TenderFlow",
@@ -158,7 +157,7 @@
     "submissions": "Einreichungen",
     "projects": "Projekte",
     "messages": "Nachrichten",
-    "clients": "Kunden",
+    "clients": "Vergabestellen",
     "settings": "Einstellungen"
   },
   "toasts": {
@@ -186,5 +185,20 @@
     "start": "Starten",
     "skip": "Überspringen",
     "reset": "Zurücksetzen"
+  },
+  "clients": {
+    "clientDetails": "Vergabestellendetails",
+    "clientsList": "Vergabestellenliste",
+    "searchClients": "Vergabestellen suchen...",
+    "createNew": "Neue Vergabestelle erstellen",
+    "createNewClient": "Neue Vergabestelle erstellen",
+    "editClientInfo": "Vergabestelleninformation bearbeiten",
+    "name": "Name",
+    "contactPerson": "Kontaktperson",
+    "email": "E-Mail",
+    "phone": "Telefon",
+    "address": "Adresse",
+    "createdAt": "Erstellt am",
+    "noClientsFound": "Keine Vergabestellen gefunden"
   }
 }

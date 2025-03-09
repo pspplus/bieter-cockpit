@@ -18,7 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { CalendarIcon, Building, Users } from "lucide-react";
+import { CalendarIcon, Building } from "lucide-react";
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import { useClient } from "@/context/ClientContext";
@@ -136,7 +136,7 @@ export function TenderEditForm({ tender, onCancel }: TenderEditFormProps) {
                 onValueChange={(value) => handleSelectChange("client", value)}
               >
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select client" />
+                  <SelectValue placeholder={t('tenders.selectClient', 'Vergabestelle auswählen')} />
                 </SelectTrigger>
                 <SelectContent>
                   {clients.map((client) => (

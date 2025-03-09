@@ -1,4 +1,3 @@
-
 {
   "general": {
     "appName": "TenderFlow",
@@ -61,7 +60,7 @@
   "tender": {
     "title": "Title",
     "reference": "Reference",
-    "client": "Client",
+    "client": "Contracting Authority",
     "dueDate": "Due Date",
     "status": "Status",
     "budget": "Budget",
@@ -140,26 +139,14 @@
     "milestoneInProgress": "Milestone marked as in progress",
     "milestoneCompleted": "Milestone completed",
     "milestoneSkipped": "Milestone skipped",
-    "changesSaved": "Changes saved successfully"
-  },
-  "auth": {
-    "login": "Log in",
-    "loginDescription": "Sign in to access your account",
-    "email": "Email",
-    "password": "Password",
-    "forgotPassword": "Forgot password?",
-    "loggingIn": "Logging in...",
-    "noAccount": "Don't have an account?",
-    "signup": "Sign up",
-    "signupDescription": "Create an account to get started",
-    "name": "Name",
-    "confirmPassword": "Confirm Password",
-    "passwordMismatch": "Passwords do not match",
-    "passwordTooShort": "Password must be at least 6 characters long",
-    "creatingAccount": "Creating account...",
-    "createAccount": "Create account",
-    "haveAccount": "Already have an account?",
-    "logout": "Log out"
+    "changesSaved": "Changes saved successfully",
+    "clientCreated": "Contracting authority created successfully",
+    "clientUpdated": "Contracting authority updated successfully",
+    "clientDeleted": "Contracting authority deleted successfully",
+    "errorCreatingClient": "Error creating contracting authority",
+    "errorUpdatingClient": "Error updating contracting authority",
+    "errorDeletingClient": "Error deleting contracting authority",
+    "errorLoadingClient": "Error loading contracting authority"
   },
   "tenderDetails": {
     "due": "Due",
@@ -176,5 +163,20 @@
     "start": "Start",
     "skip": "Skip",
     "reset": "Reset"
+  },
+  "clients": {
+    "clientDetails": "Contracting Authority Details",
+    "clientsList": "Contracting Authorities List",
+    "searchClients": "Search contracting authorities...",
+    "createNew": "Create New Contracting Authority",
+    "createNewClient": "Create New Contracting Authority",
+    "editClientInfo": "Edit Contracting Authority Information",
+    "name": "Name",
+    "contactPerson": "Contact Person",
+    "email": "Email",
+    "phone": "Phone",
+    "address": "Address",
+    "createdAt": "Created At",
+    "noClientsFound": "No contracting authorities found"
   }
 }

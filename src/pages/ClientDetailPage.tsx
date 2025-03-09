@@ -44,7 +44,7 @@ const ClientDetailPage = () => {
 
   if (isLoading) {
     return (
-      <Layout title={t('clients.clientDetails', 'Client Details')}>
+      <Layout title={t('clients.clientDetails', 'Vergabestellendetails')}>
         <div className="container mx-auto py-6">
           <div className="animate-pulse">
             <div className="h-8 w-64 bg-gray-200 rounded mb-6"></div>
@@ -56,25 +56,25 @@ const ClientDetailPage = () => {
   }
 
   return (
-    <Layout title={clientData.name || t('clients.clientDetails', 'Client Details')}>
+    <Layout title={clientData.name || t('clients.clientDetails', 'Vergabestellendetails')}>
       <div className="container mx-auto py-6">
         <div className="flex items-center mb-6">
           <Button variant="ghost" onClick={() => navigate("/clients")} className="mr-4">
             <ArrowLeft className="mr-2 h-4 w-4" />
-            {t('general.back', 'Back')}
+            {t('general.back', 'Zurück')}
           </Button>
           <h1 className="text-2xl font-bold flex-1">
-            {clientData.name || t('clients.clientDetails', 'Client Details')}
+            {clientData.name || t('clients.clientDetails', 'Vergabestellendetails')}
           </h1>
           <Button onClick={handleSave} disabled={!clientData.name}>
             <Save className="mr-2 h-4 w-4" />
-            {t('general.save', 'Save')}
+            {t('general.save', 'Speichern')}
           </Button>
         </div>
 
         <Card>
           <CardHeader>
-            <CardTitle>{t('clients.editClientInfo', 'Edit Client Information')}</CardTitle>
+            <CardTitle>{t('clients.editClientInfo', 'Vergabestelleninformation bearbeiten')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid gap-2">

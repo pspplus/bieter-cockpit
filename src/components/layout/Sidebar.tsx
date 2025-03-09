@@ -127,7 +127,8 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
             to="/clients"
             className={cn(
               "tender-step dark:hover:bg-tender-800/50",
-              location.pathname === "/clients" && "tender-step-active dark:bg-tender-800/60 dark:text-primary-foreground dark:font-medium"
+              (location.pathname === "/clients" || 
+               location.pathname.startsWith("/clients/")) && "tender-step-active dark:bg-tender-800/60 dark:text-primary-foreground dark:font-medium"
             )}
           >
             <Users className="h-5 w-5" />
