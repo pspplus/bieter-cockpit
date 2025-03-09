@@ -35,5 +35,16 @@
   "noSubmissionsFound": "Keine Einreichungen gefunden",
   "noSubmissionsCreated": "Sie haben noch keine Einreichungen erstellt.",
   "noSubmissionsWithStatus": "Sie haben keine Einreichungen mit dem Status: {{status}}",
-  "createYourFirstSubmission": "Erstellen Sie Ihre erste Einreichung"
+  "createYourFirstSubmission": "Erstellen Sie Ihre erste Einreichung",
+  "tender": {
+    "referenz": "Referenz",
+    "vergabestelle": "Vergabestelle",
+    "budget": "Budget"
+  },
+  "tenders": {
+    "gewonnen": "Gewonnen",
+    "verloren": "Verloren",
+    "abgegeben": "Abgegeben",
+    "aufklaerung": "In Aufklärung"
+  }
 }

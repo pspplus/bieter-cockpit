@@ -2,7 +2,7 @@
 import { Layout } from "@/components/layout/Layout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { FileCheck, Filter, Plus, SortDesc } from "lucide-react";
+import { FileCheck, Filter, Plus } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useTender } from "@/hooks/useTender";
 import { TenderStatus } from "@/types/tender";
@@ -111,7 +111,7 @@ export default function SubmissionsPage() {
                     <div>
                       <CardTitle className="mb-1">{tender.title}</CardTitle>
                       <CardDescription>
-                        {t('tender.reference')}: {getDisplayReference(tender)}
+                        {t('tender.referenz')}: {getDisplayReference(tender)}
                       </CardDescription>
                     </div>
                     <div className={cn(
@@ -126,7 +126,7 @@ export default function SubmissionsPage() {
                   <div className="grid md:grid-cols-3 gap-4">
                     <div>
                       <div className="text-sm font-medium text-tender-500 dark:text-tender-400">
-                        {t('tender.client')}
+                        {t('tender.vergabestelle')}
                       </div>
                       <div>{tender.client || "-"}</div>
                     </div>
