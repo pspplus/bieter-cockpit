@@ -2,6 +2,7 @@
 import { supabase } from "@/integrations/supabase/client";
 import { Tender } from "@/types/tender";
 import { mapTenderFromDB, formatDateForDB } from "./utils/mapperUtils";
+import { createMilestone } from "./milestoneService";
 
 /**
  * Fetch all tenders for the current user
