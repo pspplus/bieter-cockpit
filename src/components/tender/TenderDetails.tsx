@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar, Clock, MapPin, User, Building, Phone, Mail, CreditCard, FileText } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
+import { useTranslation } from "react-i18next";
 
 interface TenderDetailsProps {
   tender: Tender;
@@ -22,6 +23,7 @@ const statusColors: Record<Tender["status"], { bg: string; text: string }> = {
 };
 
 export function TenderDetails({ tender }: TenderDetailsProps) {
+  const { t } = useTranslation();
   const statusColor = statusColors[tender.status];
   
   // Calculate progress
@@ -59,12 +61,12 @@ export function TenderDetails({ tender }: TenderDetailsProps) {
             isDueDatePast ? "bg-red-50 text-red-600" : "bg-green-50 text-green-600"
           )}>
             <Calendar className="h-4 w-4" />
-            <span>Due: {dueDateFormatted}</span>
+            <span>{t('tenderDetails.due')}: {dueDateFormatted}</span>
           </div>
           
           <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-tender-50 text-tender-600 text-sm">
             <FileText className="h-4 w-4" />
-            <span>Progress: {progress}%</span>
+            <span>{t('tenderDetails.progress')}: {progress}%</span>
           </div>
         </div>
       </div>
@@ -72,22 +74,22 @@ export function TenderDetails({ tender }: TenderDetailsProps) {
       <div className="grid gap-6 md:grid-cols-2">
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-base">Tender Information</CardTitle>
+            <CardTitle className="text-base">{t('tenderDetails.tenderInformation')}</CardTitle>
           </CardHeader>
           <CardContent className="text-sm">
             <dl className="grid grid-cols-2 gap-x-4 gap-y-3">
-              <dt className="text-tender-500">Client</dt>
+              <dt className="text-tender-500">{t('tender.client')}</dt>
               <dd className="font-medium flex items-center gap-1.5">
                 <Building className="h-4 w-4 text-tender-400" />
                 {tender.client}
               </dd>
               
-              <dt className="text-tender-500">Created</dt>
+              <dt className="text-tender-500">{t('tenderDetails.created')}</dt>
               <dd>{createdAtFormatted}</dd>
               
               {tender.location && (
                 <>
-                  <dt className="text-tender-500">Location</dt>
+                  <dt className="text-tender-500">{t('tender.location')}</dt>
                   <dd className="flex items-center gap-1.5">
                     <MapPin className="h-4 w-4 text-tender-400" />
                     {tender.location}
@@ -97,7 +99,7 @@ export function TenderDetails({ tender }: TenderDetailsProps) {
               
               {tender.budget && (
                 <>
-                  <dt className="text-tender-500">Budget</dt>
+                  <dt className="text-tender-500">{t('tender.budget')}</dt>
                   <dd className="flex items-center gap-1.5">
                     <CreditCard className="h-4 w-4 text-tender-400" />
                     ${tender.budget.toLocaleString()}
@@ -108,7 +110,7 @@ export function TenderDetails({ tender }: TenderDetailsProps) {
             
             {tender.description && (
               <div className="mt-4 pt-4 border-t border-tender-100">
-                <h4 className="font-medium mb-2">Description</h4>
+                <h4 className="font-medium mb-2">{t('tender.description')}</h4>
                 <p className="text-tender-600">{tender.description}</p>
               </div>
             )}
@@ -117,12 +119,12 @@ export function TenderDetails({ tender }: TenderDetailsProps) {
         
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-base">Contact Information</CardTitle>
+            <CardTitle className="text-base">{t('tenderDetails.contactInformation')}</CardTitle>
           </CardHeader>
           <CardContent className="text-sm">
             {tender.contactPerson ? (
               <dl className="grid grid-cols-2 gap-x-4 gap-y-3">
-                <dt className="text-tender-500">Contact Person</dt>
+                <dt className="text-tender-500">{t('tender.contactPerson')}</dt>
                 <dd className="font-medium flex items-center gap-1.5">
                   <User className="h-4 w-4 text-tender-400" />
                   {tender.contactPerson}
@@ -130,7 +132,7 @@ export function TenderDetails({ tender }: TenderDetailsProps) {
                 
                 {tender.contactEmail && (
                   <>
-                    <dt className="text-tender-500">Email</dt>
+                    <dt className="text-tender-500">{t('tenderDetails.email')}</dt>
                     <dd className="flex items-center gap-1.5">
                       <Mail className="h-4 w-4 text-tender-400" />
                       <a 
@@ -145,7 +147,7 @@ export function TenderDetails({ tender }: TenderDetailsProps) {
                 
                 {tender.contactPhone && (
                   <>
-                    <dt className="text-tender-500">Phone</dt>
+                    <dt className="text-tender-500">{t('tenderDetails.phone')}</dt>
                     <dd className="flex items-center gap-1.5">
                       <Phone className="h-4 w-4 text-tender-400" />
                       <a 
@@ -159,7 +161,7 @@ export function TenderDetails({ tender }: TenderDetailsProps) {
                 )}
               </dl>
             ) : (
-              <p className="text-tender-500 italic">No contact information available</p>
+              <p className="text-tender-500 italic">{t('tenderDetails.noContactInfo')}</p>
             )}
           </CardContent>
         </Card>

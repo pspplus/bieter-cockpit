@@ -70,7 +70,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
             )}
           >
             <Home className="h-5 w-5" />
-            <span>Home</span>
+            <span>{t('sidebar.home')}</span>
           </Link>
           <Link
             to="/dashboard"
@@ -80,7 +80,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
             )}
           >
             <LayoutDashboard className="h-5 w-5" />
-            <span>Dashboard</span>
+            <span>{t('sidebar.dashboard')}</span>
           </Link>
           <Link
             to="/tenders"
@@ -91,7 +91,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
             )}
           >
             <FileText className="h-5 w-5" />
-            <span>Tenders</span>
+            <span>{t('sidebar.tenders')}</span>
           </Link>
           <Link
             to="/submissions"
@@ -101,7 +101,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
             )}
           >
             <FileCheck className="h-5 w-5" />
-            <span>Submissions</span>
+            <span>{t('sidebar.submissions')}</span>
           </Link>
           <Link
             to="/projects"
@@ -111,7 +111,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
             )}
           >
             <Layers className="h-5 w-5" />
-            <span>Projects</span>
+            <span>{t('sidebar.projects')}</span>
           </Link>
           <Link
             to="/messages"
@@ -121,7 +121,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
             )}
           >
             <Inbox className="h-5 w-5" />
-            <span>Messages</span>
+            <span>{t('sidebar.messages')}</span>
           </Link>
           <Link
             to="/clients"
@@ -131,7 +131,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
             )}
           >
             <Users className="h-5 w-5" />
-            <span>Clients</span>
+            <span>{t('sidebar.clients')}</span>
           </Link>
         </nav>
       </ScrollArea>
@@ -144,7 +144,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
           )}
         >
           <Settings className="h-5 w-5" />
-          <span>Settings</span>
+          <span>{t('sidebar.settings')}</span>
         </Link>
       </div>
     </div>

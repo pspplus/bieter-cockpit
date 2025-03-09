@@ -11,6 +11,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { format } from "date-fns";
+import { useTranslation } from "react-i18next";
 
 interface MilestonesListProps {
   tender: Tender;
@@ -35,6 +36,7 @@ function StatusIcon({ status }: StatusIconProps) {
 
 export function MilestonesList({ tender }: MilestonesListProps) {
   const { setMilestoneStatus } = useTender();
+  const { t } = useTranslation();
 
   // Sort milestones by status: in-progress first, then pending, then completed, then skipped
   const sortedMilestones = [...tender.milestones].sort((a, b) => {
@@ -71,7 +73,7 @@ export function MilestonesList({ tender }: MilestonesListProps) {
 
   return (
     <div className="space-y-4">
-      <h3 className="text-lg font-medium">Milestones</h3>
+      <h3 className="text-lg font-medium">{t('milestones.milestones')}</h3>
       <div className="space-y-1">
         {sortedMilestones.map((milestone, index) => {
           const isActive = isActiveMilestone(milestone, index);
@@ -97,7 +99,7 @@ export function MilestonesList({ tender }: MilestonesListProps) {
                     <h4 className="font-medium text-base">{milestone.title}</h4>
                     {milestone.dueDate && (
                       <span className="text-xs text-tender-500">
-                        Due: {format(new Date(milestone.dueDate), "MMM d")}
+                        {t('milestones.dueDate')}: {format(new Date(milestone.dueDate), "MMM d")}
                       </span>
                     )}
                   </div>
@@ -107,7 +109,7 @@ export function MilestonesList({ tender }: MilestonesListProps) {
                   
                   {milestone.completionDate && (
                     <p className="text-xs text-tender-500 mt-2">
-                      Completed on {format(new Date(milestone.completionDate), "MMM d, yyyy")}
+                      {t('milestones.completionDate')}: {format(new Date(milestone.completionDate), "MMM d, yyyy")}
                     </p>
                   )}
                   
@@ -122,11 +124,11 @@ export function MilestonesList({ tender }: MilestonesListProps) {
                               className="h-8 border-green-200 text-green-600 hover:bg-green-50 hover:text-green-700"
                               onClick={() => handleStatusChange(milestone, "completed")}
                             >
-                              Complete
+                              {t('milestoneActions.complete')}
                             </Button>
                           </TooltipTrigger>
                           <TooltipContent>
-                            <p>Mark milestone as completed</p>
+                            <p>{t('milestones.markAsCompleted')}</p>
                           </TooltipContent>
                         </Tooltip>
                       )}
@@ -140,11 +142,11 @@ export function MilestonesList({ tender }: MilestonesListProps) {
                               className="h-8 border-blue-200 text-blue-600 hover:bg-blue-50 hover:text-blue-700"
                               onClick={() => handleStatusChange(milestone, "in-progress")}
                             >
-                              Start
+                              {t('milestoneActions.start')}
                             </Button>
                           </TooltipTrigger>
                           <TooltipContent>
-                            <p>Mark milestone as in progress</p>
+                            <p>{t('milestones.markAsInProgress')}</p>
                           </TooltipContent>
                         </Tooltip>
                       )}
@@ -158,11 +160,11 @@ export function MilestonesList({ tender }: MilestonesListProps) {
                               className="h-8 border-tender-200 text-tender-600 hover:bg-tender-50 hover:text-tender-700"
                               onClick={() => handleStatusChange(milestone, "skipped")}
                             >
-                              Skip
+                              {t('milestoneActions.skip')}
                             </Button>
                           </TooltipTrigger>
                           <TooltipContent>
-                            <p>Skip this milestone</p>
+                            <p>{t('milestones.markAsSkipped')}</p>
                           </TooltipContent>
                         </Tooltip>
                       )}
@@ -176,11 +178,11 @@ export function MilestonesList({ tender }: MilestonesListProps) {
                               className="h-8 border-tender-200 text-tender-600 hover:bg-tender-50 hover:text-tender-700"
                               onClick={() => handleStatusChange(milestone, "pending")}
                             >
-                              Reset
+                              {t('milestoneActions.reset')}
                             </Button>
                           </TooltipTrigger>
                           <TooltipContent>
-                            <p>Reset milestone status</p>
+                            <p>{t('milestones.markAsPending')}</p>
                           </TooltipContent>
                         </Tooltip>
                       )}

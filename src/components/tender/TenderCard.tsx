@@ -5,6 +5,7 @@ import { Calendar, Clock, User, MapPin, FileText } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
+import { useTranslation } from "react-i18next";
 
 interface TenderCardProps {
   tender: Tender;
@@ -23,6 +24,7 @@ const statusColors: Record<Tender["status"], { bg: string; text: string }> = {
 };
 
 export function TenderCard({ tender, isActive = false }: TenderCardProps) {
+  const { t } = useTranslation();
   const { id, title, reference, client, status, dueDate, location } = tender;
   
   const statusColor = statusColors[status];
@@ -74,7 +76,7 @@ export function TenderCard({ tender, isActive = false }: TenderCardProps) {
         
         <div className="mt-4">
           <div className="flex justify-between text-sm mb-1.5">
-            <span className="text-tender-600">Progress</span>
+            <span className="text-tender-600">{t('tender.progress')}</span>
             <span className="font-medium">{progress}%</span>
           </div>
           <div className="h-1.5 w-full bg-tender-100 rounded-full overflow-hidden">

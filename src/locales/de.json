@@ -1,3 +1,4 @@
+
 {
   "general": {
     "appName": "Tender Testing",
@@ -11,7 +12,9 @@
     "noTendersFound": "Keine Ausschreibungen gefunden",
     "noTendersCreated": "Sie haben noch keine Ausschreibungen erstellt.",
     "noTendersWithStatus": "Sie haben keine Ausschreibungen mit dem Status '{{status}}'.",
-    "createYourFirstTender": "Erstellen Sie Ihre erste Ausschreibung"
+    "createYourFirstTender": "Erstellen Sie Ihre erste Ausschreibung",
+    "back": "Zurück",
+    "save": "Speichern"
   },
   "dashboard": {
     "dashboard": "Dashboard",
@@ -118,6 +121,60 @@
     "milestoneReset": "Meilenstein auf ausstehend zurückgesetzt",
     "milestoneInProgress": "Meilenstein als in Bearbeitung markiert",
     "milestoneCompleted": "Meilenstein abgeschlossen",
-    "milestoneSkipped": "Meilenstein übersprungen"
+    "milestoneSkipped": "Meilenstein übersprungen",
+    "clientCreated": "Kunde erfolgreich erstellt",
+    "clientUpdated": "Kunde erfolgreich aktualisiert",
+    "clientDeleted": "Kunde erfolgreich gelöscht"
+  },
+  "clients": {
+    "clients": "Kunden",
+    "allClients": "Alle Kunden",
+    "clientDetails": "Kundendetails",
+    "name": "Name",
+    "contactPerson": "Kontaktperson",
+    "email": "E-Mail",
+    "phone": "Telefon",
+    "address": "Adresse",
+    "createdAt": "Erstellt am",
+    "newClient": "Neuer Kunde",
+    "editClientInfo": "Kundeninformationen bearbeiten",
+    "noClientsFound": "Keine Kunden gefunden",
+    "noClientsCreated": "Sie haben noch keine Kunden erstellt.",
+    "createYourFirstClient": "Erstellen Sie Ihren ersten Kunden",
+    "clientNotFound": "Kunde nicht gefunden",
+    "clientNotFoundDescription": "Der gesuchte Kunde existiert nicht oder wurde entfernt.",
+    "backToClients": "Zurück zu Kunden",
+    "createClient": "Kunde erstellen"
+  },
+  "sidebar": {
+    "home": "Startseite",
+    "dashboard": "Dashboard",
+    "tenders": "Ausschreibungen",
+    "submissions": "Einreichungen",
+    "projects": "Projekte",
+    "messages": "Nachrichten",
+    "clients": "Kunden",
+    "settings": "Einstellungen"
+  },
+  "tenderDetails": {
+    "tenderInformation": "Ausschreibungsinformationen",
+    "contactInformation": "Kontaktinformationen",
+    "client": "Kunde",
+    "created": "Erstellt",
+    "location": "Standort",
+    "budget": "Budget",
+    "description": "Beschreibung",
+    "contactPerson": "Kontaktperson",
+    "email": "E-Mail",
+    "phone": "Telefon",
+    "noContactInfo": "Keine Kontaktinformationen verfügbar",
+    "due": "Fällig",
+    "progress": "Fortschritt"
+  },
+  "milestoneActions": {
+    "complete": "Abschließen",
+    "start": "Starten",
+    "skip": "Überspringen",
+    "reset": "Zurücksetzen"
   }
 }

@@ -14,23 +14,25 @@ import { useTender } from "@/context/TenderContext";
 import { ChevronDown, PlusCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Tender } from "@/types/tender";
+import { useTranslation } from "react-i18next";
 
 type FilterOption = "all" | Tender["status"];
 
 export default function TendersPage() {
+  const { t } = useTranslation();
   const { tenders, createTender } = useTender();
   const [filterBy, setFilterBy] = useState<FilterOption>("all");
   const navigate = useNavigate();
   
   const filterOptions: { value: FilterOption; label: string }[] = [
-    { value: "all", label: "All Tenders" },
-    { value: "draft", label: "Drafts" },
-    { value: "active", label: "Active" },
-    { value: "submitted", label: "Submitted" },
-    { value: "clarification", label: "In Clarification" },
-    { value: "won", label: "Won" },
-    { value: "lost", label: "Lost" },
-    { value: "completed", label: "Completed" },
+    { value: "all", label: t('tenders.allTenders') },
+    { value: "draft", label: t('tenders.drafts') },
+    { value: "active", label: t('tenders.active') },
+    { value: "submitted", label: t('tenders.submitted') },
+    { value: "clarification", label: t('tenders.inClarification') },
+    { value: "won", label: t('tenders.won') },
+    { value: "lost", label: t('tenders.lost') },
+    { value: "completed", label: t('tenders.completed') },
   ];
   
   const filteredTenders = filterBy === "all" 
@@ -44,13 +46,13 @@ export default function TendersPage() {
   
   const handleCreateTender = () => {
     const newTender = createTender({
-      title: "New Tender"
+      title: t('tenders.newTender')
     });
     navigate(`/tenders/${newTender.id}`);
   };
 
   return (
-    <Layout title="Tenders">
+    <Layout title={t('tenders.tenders')}>
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <DropdownMenu>
@@ -73,7 +75,7 @@ export default function TendersPage() {
           
           <Button onClick={handleCreateTender} className="w-full sm:w-auto sm:self-end flex items-center gap-1.5">
             <PlusCircle className="h-4 w-4" />
-            Create New Tender
+            {t('general.createNewTender')}
           </Button>
         </div>
         
@@ -85,13 +87,13 @@ export default function TendersPage() {
           </div>
         ) : (
           <div className="text-center py-16">
-            <h3 className="text-lg font-medium mb-2">No tenders found</h3>
+            <h3 className="text-lg font-medium mb-2">{t('general.noTendersFound')}</h3>
             <p className="text-tender-500 mb-6">
               {filterBy === "all"
-                ? "You haven't created any tenders yet."
-                : `You don't have any tenders with '${filterBy}' status.`}
+                ? t('general.noTendersCreated')
+                : t('general.noTendersWithStatus', { status: filterOptions.find(option => option.value === filterBy)?.label })}
             </p>
-            <Button onClick={handleCreateTender}>Create Your First Tender</Button>
+            <Button onClick={handleCreateTender}>{t('general.createYourFirstTender')}</Button>
           </div>
         )}
       </div>
