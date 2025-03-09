@@ -24,10 +24,8 @@ import { PlusCircle, Search, Edit, Trash } from "lucide-react";
 import { format } from "date-fns";
 import { Client } from "@/types/client";
 import { useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next";
 
 const ClientsPage = () => {
-  const { t } = useTranslation();
   const { clients, createClient, deleteClient } = useClient();
   const [searchQuery, setSearchQuery] = useState("");
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
@@ -72,25 +70,25 @@ const ClientsPage = () => {
   };
 
   return (
-    <Layout title={t('sidebar.clients', 'Vergabestellen')}>
+    <Layout title="Vergabestellen">
       <div className="container mx-auto py-6">
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold">{t('sidebar.clients', 'Vergabestellen')}</h1>
+          <h1 className="text-2xl font-bold">Vergabestellen</h1>
           <Button onClick={() => setIsCreateDialogOpen(true)}>
             <PlusCircle className="mr-2 h-4 w-4" />
-            {t('clients.createNew', 'Neue Vergabestelle erstellen')}
+            Neue Vergabestelle erstellen
           </Button>
         </div>
 
         <Card>
           <CardHeader className="px-6 py-4">
             <div className="flex items-center justify-between">
-              <CardTitle>{t('clients.clientsList', 'Vergabestellenliste')}</CardTitle>
+              <CardTitle>Vergabestellenliste</CardTitle>
               <div className="relative w-64">
                 <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-tender-400" />
                 <Input
                   type="search"
-                  placeholder={t('clients.searchClients', 'Vergabestellen suchen...')}
+                  placeholder="Vergabestellen suchen..."
                   className="w-full pl-9"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
@@ -102,19 +100,19 @@ const ClientsPage = () => {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>{t('clients.name', 'Name')}</TableHead>
-                  <TableHead>{t('clients.contactPerson', 'Contact Person')}</TableHead>
-                  <TableHead>{t('clients.email', 'Email')}</TableHead>
-                  <TableHead>{t('clients.phone', 'Phone')}</TableHead>
-                  <TableHead>{t('clients.createdAt', 'Created At')}</TableHead>
-                  <TableHead className="text-right">{t('general.actions', 'Actions')}</TableHead>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Ansprechpartner</TableHead>
+                  <TableHead>E-Mail</TableHead>
+                  <TableHead>Telefon</TableHead>
+                  <TableHead>Erstellt am</TableHead>
+                  <TableHead className="text-right">Aktionen</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredClients.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={6} className="text-center py-10">
-                      {t('clients.noClientsFound', 'No clients found')}
+                      Keine Vergabestellen gefunden
                     </TableCell>
                   </TableRow>
                 ) : (
@@ -137,7 +135,7 @@ const ClientsPage = () => {
                             onClick={() => navigate(`/clients/${client.id}`)}
                           >
                             <Edit className="h-4 w-4" />
-                            <span className="sr-only">{t('general.edit', 'Edit')}</span>
+                            <span className="sr-only">Bearbeiten</span>
                           </Button>
                           <Button
                             variant="ghost"
@@ -145,7 +143,7 @@ const ClientsPage = () => {
                             onClick={() => deleteClient(client.id)}
                           >
                             <Trash className="h-4 w-4" />
-                            <span className="sr-only">{t('general.delete', 'Delete')}</span>
+                            <span className="sr-only">Löschen</span>
                           </Button>
                         </div>
                       </TableCell>
@@ -161,11 +159,11 @@ const ClientsPage = () => {
       <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>{t('clients.createNewClient', 'Neue Vergabestelle erstellen')}</DialogTitle>
+            <DialogTitle>Neue Vergabestelle erstellen</DialogTitle>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
-              <label htmlFor="name">{t('clients.name', 'Name')} *</label>
+              <label htmlFor="name">Name *</label>
               <Input
                 id="name"
                 name="name"
@@ -175,7 +173,7 @@ const ClientsPage = () => {
               />
             </div>
             <div className="grid gap-2">
-              <label htmlFor="contactPerson">{t('clients.contactPerson', 'Contact Person')}</label>
+              <label htmlFor="contactPerson">Ansprechpartner</label>
               <Input
                 id="contactPerson"
                 name="contactPerson"
@@ -184,7 +182,7 @@ const ClientsPage = () => {
               />
             </div>
             <div className="grid gap-2">
-              <label htmlFor="email">{t('clients.email', 'Email')}</label>
+              <label htmlFor="email">E-Mail</label>
               <Input
                 id="email"
                 name="email"
@@ -194,7 +192,7 @@ const ClientsPage = () => {
               />
             </div>
             <div className="grid gap-2">
-              <label htmlFor="phone">{t('clients.phone', 'Phone')}</label>
+              <label htmlFor="phone">Telefon</label>
               <Input
                 id="phone"
                 name="phone"
@@ -203,7 +201,7 @@ const ClientsPage = () => {
               />
             </div>
             <div className="grid gap-2">
-              <label htmlFor="address">{t('clients.address', 'Address')}</label>
+              <label htmlFor="address">Adresse</label>
               <Input
                 id="address"
                 name="address"
@@ -214,10 +212,10 @@ const ClientsPage = () => {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
-              {t('general.cancel', 'Cancel')}
+              Abbrechen
             </Button>
             <Button onClick={handleCreateClient} disabled={!newClient.name}>
-              {t('general.create', 'Create')}
+              Erstellen
             </Button>
           </DialogFooter>
         </DialogContent>

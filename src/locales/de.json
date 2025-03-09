@@ -1,3 +1,4 @@
+
 {
   "general": {
     "loading": "Wird geladen...",
@@ -162,7 +163,7 @@
     "tenders": "Ausschreibungen",
     "submissions": "Einreichungen",
     "messages": "Nachrichten",
-    "clients": "Kunden",
+    "clients": "Vergabestellen",
     "settings": "Einstellungen"
   },
   "navigation": {

@@ -120,7 +120,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
             )}
           >
             <Users className="h-5 w-5" />
-            <span>Kunden</span>
+            <span>Vergabestellen</span>
           </Link>
         </nav>
       </ScrollArea>
