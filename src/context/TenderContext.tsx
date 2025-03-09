@@ -122,42 +122,22 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
       return true;
     }
     
-    // Find the tender this milestone belongs to
-    const tender = tenders.find(t => 
-      t.milestones.some(m => m.id === milestone.id)
-    );
-    
-    if (!tender) {
-      return false;
-    }
-    
-    // Sort milestones by sequence number
-    const sortedMilestones = [...tender.milestones].sort(
-      (a, b) => a.sequenceNumber - b.sequenceNumber
-    );
-    
-    // Find the index of this milestone
-    const currentIndex = sortedMilestones.findIndex(m => m.id === milestone.id);
-    
-    if (currentIndex === -1) {
-      return false;
-    }
-    
-    // For the first milestone, allow any status change
-    if (currentIndex === 0) {
+    // Allow starting any milestone (regardless of sequence)
+    if (newStatus === "in-progress") {
       return true;
     }
     
-    // For subsequent milestones, check if the previous milestone is completed
-    const previousMilestone = sortedMilestones[currentIndex - 1];
-    
-    // If we're trying to skip, only allow it if the previous milestone is completed or skipped
-    if (newStatus === "skipped") {
-      return ["completed", "skipped"].includes(previousMilestone.status);
+    // For completion, only allow if the milestone is in-progress
+    if (newStatus === "completed") {
+      return milestone.status === "in-progress";
     }
     
-    // For other status changes (in-progress, completed), require the previous milestone to be completed
-    return previousMilestone.status === "completed";
+    // For skipping, allow skipping any pending milestone
+    if (newStatus === "skipped") {
+      return milestone.status === "pending";
+    }
+    
+    return false;
   };
 
   const createMilestone = async (tenderId: string, milestone: Partial<Milestone>): Promise<void> => {
@@ -197,7 +177,7 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
         const isAllowed = canUpdateMilestoneStatus(existingMilestone, milestone.status);
         
         if (!isAllowed) {
-          toast.error(t('errorMessages.invalidMilestoneTransition', 'Diese Statusänderung ist nicht erlaubt. Bitte vorherige Meilensteine abschließen.'));
+          toast.error(t('errorMessages.invalidMilestoneTransition', 'Diese Statusänderung ist nicht erlaubt.'));
           throw new Error("Invalid milestone status transition");
         }
       }

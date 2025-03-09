@@ -56,24 +56,12 @@ export function MilestonesList({ tender }: MilestonesListProps) {
     updateMilestone(updatedMilestone);
   };
 
-  // Find the first milestone that can be worked on
-  const getNextActiveMilestoneId = (): string | null => {
-    // Look for in-progress milestone first
-    const inProgressMilestone = sortedMilestones.find(m => m.status === "in-progress");
-    if (inProgressMilestone) return inProgressMilestone.id;
-    
-    // Find first pending milestone that can be started
-    for (let i = 0; i < sortedMilestones.length; i++) {
-      const milestone = sortedMilestones[i];
-      if (milestone.status === "pending" && canUpdateMilestoneStatus(milestone, "in-progress")) {
-        return milestone.id;
-      }
-    }
-    
-    return null;
+  // Find all active milestones (those in progress)
+  const getActiveMilestones = (): Milestone[] => {
+    return sortedMilestones.filter(m => m.status === "in-progress");
   };
 
-  const nextActiveMilestoneId = getNextActiveMilestoneId();
+  const activeMilestones = getActiveMilestones();
 
   return (
     <div className="space-y-4">
@@ -86,8 +74,7 @@ export function MilestonesList({ tender }: MilestonesListProps) {
       ) : (
         <div className="space-y-1">
           {sortedMilestones.map((milestone, index) => {
-            const isActive = milestone.id === nextActiveMilestoneId;
-            const isPrevious = sortedMilestones[index - 1];
+            const isActive = milestone.status === "in-progress";
             const canStart = canUpdateMilestoneStatus(milestone, "in-progress");
             const canComplete = milestone.status === "in-progress";
             const canSkip = canUpdateMilestoneStatus(milestone, "skipped");
@@ -120,7 +107,7 @@ export function MilestonesList({ tender }: MilestonesListProps) {
                         <h4 className="font-medium text-base">{milestone.title}</h4>
                         {isActive && (
                           <span className="text-xs bg-blue-100 text-blue-600 px-2 py-0.5 rounded-full">
-                            {t('milestones.current', 'Aktuell')}
+                            {t('milestones.inProgress', 'In Bearbeitung')}
                           </span>
                         )}
                       </div>
@@ -161,7 +148,7 @@ export function MilestonesList({ tender }: MilestonesListProps) {
                             <TooltipContent>
                               {canComplete 
                                 ? t('milestones.markAsCompleted')
-                                : t('milestones.cannotComplete', 'Dieser Meilenstein kann jetzt nicht abgeschlossen werden')}
+                                : t('milestones.cannotComplete', 'Meilenstein muss zuerst in Bearbeitung sein')}
                             </TooltipContent>
                           </Tooltip>
                         )}
@@ -172,20 +159,14 @@ export function MilestonesList({ tender }: MilestonesListProps) {
                               <Button
                                 size="sm"
                                 variant="outline"
-                                className={cn(
-                                  "h-8 border-blue-200 text-blue-600 hover:bg-blue-50 hover:text-blue-700",
-                                  !canStart && "opacity-50 cursor-not-allowed"
-                                )}
+                                className="h-8 border-blue-200 text-blue-600 hover:bg-blue-50 hover:text-blue-700"
                                 onClick={() => handleStatusChange(milestone, "in-progress")}
-                                disabled={!canStart}
                               >
                                 {t('milestoneActions.start')}
                               </Button>
                             </TooltipTrigger>
                             <TooltipContent>
-                              {canStart 
-                                ? t('milestones.markAsInProgress')
-                                : t('milestones.cannotStart', 'Vorherige Meilensteine müssen zuerst abgeschlossen werden')}
+                              {t('milestones.markAsInProgress')}
                             </TooltipContent>
                           </Tooltip>
                         )}
@@ -209,7 +190,7 @@ export function MilestonesList({ tender }: MilestonesListProps) {
                             <TooltipContent>
                               {canSkip 
                                 ? t('milestones.markAsSkipped')
-                                : t('milestones.cannotSkip', 'Vorherige Meilensteine müssen zuerst abgeschlossen oder übersprungen werden')}
+                                : t('milestones.cannotSkip', 'Nur Meilensteine mit Status "ausstehend" können übersprungen werden')}
                             </TooltipContent>
                           </Tooltip>
                         )}
