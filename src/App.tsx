@@ -8,6 +8,7 @@ import { TenderProvider } from "@/context/TenderContext";
 import { ClientProvider } from "@/context/ClientContext";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { AuthProvider } from "@/context/AuthContext";
+import { ThemeProvider } from "@/context/ThemeContext";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import TendersPage from "./pages/TendersPage";
@@ -24,29 +25,31 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <LanguageProvider>
-        <BrowserRouter>
-          <AuthProvider>
-            <TenderProvider>
-              <ClientProvider>
-                <Toaster />
-                <Sonner position="top-right" />
-                <Routes>
-                  <Route path="/" element={<Index />} />
-                  <Route path="/login" element={<LoginPage />} />
-                  <Route path="/signup" element={<SignUpPage />} />
-                  <Route path="/dashboard" element={<Dashboard />} />
-                  <Route path="/tenders" element={<TendersPage />} />
-                  <Route path="/tenders/:id" element={<TenderDetailPage />} />
-                  <Route path="/clients" element={<ClientsPage />} />
-                  <Route path="/clients/:id" element={<ClientDetailPage />} />
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </ClientProvider>
-            </TenderProvider>
-          </AuthProvider>
-        </BrowserRouter>
-      </LanguageProvider>
+      <ThemeProvider>
+        <LanguageProvider>
+          <BrowserRouter>
+            <AuthProvider>
+              <TenderProvider>
+                <ClientProvider>
+                  <Toaster />
+                  <Sonner position="top-right" />
+                  <Routes>
+                    <Route path="/" element={<Index />} />
+                    <Route path="/login" element={<LoginPage />} />
+                    <Route path="/signup" element={<SignUpPage />} />
+                    <Route path="/dashboard" element={<Dashboard />} />
+                    <Route path="/tenders" element={<TendersPage />} />
+                    <Route path="/tenders/:id" element={<TenderDetailPage />} />
+                    <Route path="/clients" element={<ClientsPage />} />
+                    <Route path="/clients/:id" element={<ClientDetailPage />} />
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </ClientProvider>
+              </TenderProvider>
+            </AuthProvider>
+          </BrowserRouter>
+        </LanguageProvider>
+      </ThemeProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );

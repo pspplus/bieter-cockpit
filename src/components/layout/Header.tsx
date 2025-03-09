@@ -16,6 +16,7 @@ import { useState } from "react";
 import { useTender } from "@/context/TenderContext";
 import { useNavigate } from "react-router-dom";
 import { LanguageSwitcher } from "./LanguageSwitcher";
+import { ThemeSwitcher } from "./ThemeSwitcher";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/context/AuthContext";
 
@@ -39,7 +40,7 @@ export function Header({ toggleSidebar, title = "Tender Management" }: HeaderPro
   };
 
   return (
-    <header className="sticky top-0 z-30 w-full border-b border-tender-100 bg-white/80 backdrop-blur-md">
+    <header className="sticky top-0 z-30 w-full border-b border-tender-100 dark:border-tender-800 bg-white/80 dark:bg-tender-950/80 backdrop-blur-md">
       <div className="flex h-16 items-center justify-between px-4 sm:px-6">
         <div className="flex items-center gap-4">
           {toggleSidebar && (
@@ -58,11 +59,11 @@ export function Header({ toggleSidebar, title = "Tender Management" }: HeaderPro
 
         <div className="flex-1 max-w-md mx-4 hidden md:block">
           <div className="relative">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-tender-400" />
+            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-tender-400 dark:text-tender-500" />
             <Input
               type="search"
               placeholder={t('navigation.search')}
-              className="w-full bg-tender-50 border-tender-100 pl-9 rounded-full h-9"
+              className="w-full bg-tender-50 dark:bg-tender-800 border-tender-100 dark:border-tender-700 pl-9 rounded-full h-9"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -83,12 +84,13 @@ export function Header({ toggleSidebar, title = "Tender Management" }: HeaderPro
               <Button
                 variant="ghost"
                 size="icon"
-                className="text-tender-500 hover:text-tender-600"
+                className="text-tender-500 hover:text-tender-600 dark:text-tender-400 dark:hover:text-tender-300"
               >
                 <Bell className="h-5 w-5" />
                 <span className="sr-only">{t('navigation.notifications')}</span>
               </Button>
 
+              <ThemeSwitcher />
               <LanguageSwitcher />
 
               <DropdownMenu>
@@ -117,6 +119,7 @@ export function Header({ toggleSidebar, title = "Tender Management" }: HeaderPro
             </>
           ) : (
             <>
+              <ThemeSwitcher />
               <LanguageSwitcher />
               <Button 
                 variant="outline" 

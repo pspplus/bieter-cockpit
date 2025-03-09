@@ -13,7 +13,7 @@ export function Layout({ children, title }: LayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen bg-background text-foreground">
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       <div className="flex flex-1 flex-col">
         <Header toggleSidebar={() => setSidebarOpen(true)} title={title} />

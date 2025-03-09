@@ -1,18 +1,15 @@
-
 {
   "general": {
-    "appName": "Tender Testing",
-    "slogan": "Public Tender Management Simplified",
-    "pageNotFound": "Page not found",
-    "pageNotFoundDescription": "Sorry, we couldn't find the page you're looking for. The page might have been removed or the URL might be incorrect.",
-    "returnToHome": "Return to Home",
-    "getStarted": "Get Started",
+    "appName": "TenderFlow",
+    "createNewTender": "New Tender",
     "viewTenders": "View Tenders",
-    "createNewTender": "Create New Tender",
-    "noTendersFound": "No tenders found",
-    "noTendersCreated": "You haven't created any tenders yet.",
-    "noTendersWithStatus": "You don't have any tenders with '{{status}}' status.",
-    "createYourFirstTender": "Create Your First Tender"
+    "getStarted": "Get Started",
+    "slogan": "Simple Tender Management"
+  },
+  "theme": {
+    "darkMode": "Dark Mode",
+    "lightMode": "Light Mode",
+    "toggleTheme": "Toggle Theme"
   },
   "dashboard": {
     "dashboard": "Dashboard",
