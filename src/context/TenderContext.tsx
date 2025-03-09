@@ -44,7 +44,11 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
         .then((data) => {
           const tendersWithSortedMilestones = data.map(tender => ({
             ...tender,
-            milestones: [...tender.milestones].sort((a, b) => a.sequenceNumber - b.sequenceNumber)
+            milestones: [...tender.milestones].sort((a, b) => {
+              const seqA = typeof a.sequenceNumber === 'number' ? a.sequenceNumber : 0;
+              const seqB = typeof b.sequenceNumber === 'number' ? b.sequenceNumber : 0;
+              return seqA - seqB;
+            })
           }));
           setTenders(tendersWithSortedMilestones);
         })
@@ -68,10 +72,10 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
       
       if (milestones.length > 0) {
         await Promise.all(
-          milestones.map(milestone => 
+          milestones.map((milestone, index) => 
             createMilestoneService({ 
               ...milestone,
-              sequenceNumber: milestone.sequenceNumber || 0,
+              sequenceNumber: typeof milestone.sequenceNumber === 'number' ? milestone.sequenceNumber : (index + 1),
               tenderId: newTender.id 
             })
           )
@@ -139,9 +143,18 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
 
   const createMilestone = async (tenderId: string, milestone: Partial<Milestone>): Promise<void> => {
     try {
+      const tender = tenders.find(t => t.id === tenderId);
+      if (!tender) {
+        throw new Error("Tender not found");
+      }
+      
+      const nextSequenceNumber = tender.milestones.length > 0 
+        ? Math.max(...tender.milestones.map(m => typeof m.sequenceNumber === 'number' ? m.sequenceNumber : 0)) + 1
+        : 1;
+      
       const milestoneWithSequence = {
         ...milestone,
-        sequenceNumber: milestone.sequenceNumber !== undefined ? milestone.sequenceNumber : 0
+        sequenceNumber: typeof milestone.sequenceNumber === 'number' ? milestone.sequenceNumber : nextSequenceNumber
       };
       
       const newMilestone = await createMilestoneService({ ...milestoneWithSequence, tenderId });
@@ -149,7 +162,11 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
       setTenders(tenders.map(tender => {
         if (tender.id === tenderId) {
           const updatedMilestones = [...tender.milestones, newMilestone];
-          updatedMilestones.sort((a, b) => a.sequenceNumber - b.sequenceNumber);
+          updatedMilestones.sort((a, b) => {
+            const seqA = typeof a.sequenceNumber === 'number' ? a.sequenceNumber : 0;
+            const seqB = typeof b.sequenceNumber === 'number' ? b.sequenceNumber : 0;
+            return seqA - seqB;
+          });
           
           return {
             ...tender,
@@ -184,7 +201,9 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
       
       const updatedMilestone = {
         ...milestone,
-        sequenceNumber: milestone.sequenceNumber || 0
+        sequenceNumber: typeof milestone.sequenceNumber === 'number' ? milestone.sequenceNumber : 
+                        (existingMilestone && typeof existingMilestone.sequenceNumber === 'number' ? 
+                         existingMilestone.sequenceNumber : 0)
       };
       
       await updateMilestoneService(updatedMilestone);
@@ -194,7 +213,11 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
           m.id === milestone.id ? updatedMilestone : m
         );
         
-        updatedMilestones.sort((a, b) => a.sequenceNumber - b.sequenceNumber);
+        updatedMilestones.sort((a, b) => {
+          const seqA = typeof a.sequenceNumber === 'number' ? a.sequenceNumber : 0;
+          const seqB = typeof b.sequenceNumber === 'number' ? b.sequenceNumber : 0;
+          return seqA - seqB;
+        });
         
         return {
           ...tender,
@@ -250,3 +273,4 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
     </TenderContext.Provider>
   );
 };
+
