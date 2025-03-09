@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -62,7 +63,7 @@ export function TenderCreationForm() {
     }
     
     try {
-      // Get default milestones
+      // Get default milestones with sequence numbers
       const defaultMilestones = getDefaultMilestones();
       
       // Create tender with default milestones

@@ -37,6 +37,14 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
   const { isAuthenticated } = useAuth();
   const { t } = useTranslation();
 
+  const sortMilestones = (milestones: Milestone[]): Milestone[] => {
+    return [...milestones].sort((a, b) => {
+      const seqA = typeof a.sequenceNumber === 'number' ? a.sequenceNumber : 0;
+      const seqB = typeof b.sequenceNumber === 'number' ? b.sequenceNumber : 0;
+      return seqA - seqB;
+    });
+  };
+
   useEffect(() => {
     if (isAuthenticated) {
       setIsLoading(true);
@@ -44,11 +52,7 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
         .then((data) => {
           const tendersWithSortedMilestones = data.map(tender => ({
             ...tender,
-            milestones: [...tender.milestones].sort((a, b) => {
-              const seqA = typeof a.sequenceNumber === 'number' ? a.sequenceNumber : 0;
-              const seqB = typeof b.sequenceNumber === 'number' ? b.sequenceNumber : 0;
-              return seqA - seqB;
-            })
+            milestones: sortMilestones(tender.milestones)
           }));
           setTenders(tendersWithSortedMilestones);
         })
@@ -72,16 +76,17 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
       
       if (milestones.length > 0) {
         await Promise.all(
-          milestones.map((milestone, index) => 
+          milestones.map(milestone => 
             createMilestoneService({ 
               ...milestone,
-              sequenceNumber: typeof milestone.sequenceNumber === 'number' ? milestone.sequenceNumber : (index + 1),
+              sequenceNumber: milestone.sequenceNumber,
               tenderId: newTender.id 
             })
           )
         );
         
-        const updatedTender = { ...newTender, milestones };
+        const sortedMilestones = sortMilestones(milestones as Milestone[]);
+        const updatedTender = { ...newTender, milestones: sortedMilestones };
         setTenders([updatedTender, ...tenders]);
         return updatedTender;
       }
@@ -148,25 +153,15 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
         throw new Error("Tender not found");
       }
       
-      const nextSequenceNumber = tender.milestones.length > 0 
-        ? Math.max(...tender.milestones.map(m => typeof m.sequenceNumber === 'number' ? m.sequenceNumber : 0)) + 1
-        : 1;
+      if (typeof milestone.sequenceNumber !== 'number') {
+        throw new Error("Sequence number must be provided");
+      }
       
-      const milestoneWithSequence = {
-        ...milestone,
-        sequenceNumber: typeof milestone.sequenceNumber === 'number' ? milestone.sequenceNumber : nextSequenceNumber
-      };
-      
-      const newMilestone = await createMilestoneService({ ...milestoneWithSequence, tenderId });
+      const newMilestone = await createMilestoneService({ ...milestone, tenderId });
       
       setTenders(tenders.map(tender => {
         if (tender.id === tenderId) {
-          const updatedMilestones = [...tender.milestones, newMilestone];
-          updatedMilestones.sort((a, b) => {
-            const seqA = typeof a.sequenceNumber === 'number' ? a.sequenceNumber : 0;
-            const seqB = typeof b.sequenceNumber === 'number' ? b.sequenceNumber : 0;
-            return seqA - seqB;
-          });
+          const updatedMilestones = sortMilestones([...tender.milestones, newMilestone]);
           
           return {
             ...tender,
@@ -201,9 +196,7 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
       
       const updatedMilestone = {
         ...milestone,
-        sequenceNumber: typeof milestone.sequenceNumber === 'number' ? milestone.sequenceNumber : 
-                        (existingMilestone && typeof existingMilestone.sequenceNumber === 'number' ? 
-                         existingMilestone.sequenceNumber : 0)
+        sequenceNumber: milestone.sequenceNumber
       };
       
       await updateMilestoneService(updatedMilestone);
@@ -213,15 +206,9 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
           m.id === milestone.id ? updatedMilestone : m
         );
         
-        updatedMilestones.sort((a, b) => {
-          const seqA = typeof a.sequenceNumber === 'number' ? a.sequenceNumber : 0;
-          const seqB = typeof b.sequenceNumber === 'number' ? b.sequenceNumber : 0;
-          return seqA - seqB;
-        });
-        
         return {
           ...tender,
-          milestones: updatedMilestones
+          milestones: sortMilestones(updatedMilestones)
         };
       }));
       
@@ -273,4 +260,3 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
     </TenderContext.Provider>
   );
 };
-
