@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { FileCheck, Filter, Plus, SortDesc } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { useTender } from "@/context/TenderContext";
+import { useTender } from "@/hooks/useTender";
 import { TenderStatus } from "@/types/tender";
 import { cn } from "@/lib/utils";
 import { 

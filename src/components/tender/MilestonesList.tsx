@@ -1,9 +1,8 @@
-
 import { Tender, Milestone, MilestoneStatus } from "@/types/tender";
 import { cn } from "@/lib/utils";
 import { CheckCircle, Circle, Clock, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useTender } from "@/context/TenderContext";
+import { useTender } from "@/hooks/useTender";
 import {
   Tooltip,
   TooltipContent,
@@ -38,7 +37,6 @@ export function MilestonesList({ tender }: MilestonesListProps) {
   const { updateMilestone } = useTender();
   const { t } = useTranslation();
 
-  // Sort milestones by status: in-progress first, then pending, then completed, then skipped
   const sortedMilestones = [...tender.milestones].sort((a, b) => {
     const statusOrder: Record<MilestoneStatus, number> = {
       "in-progress": 0,
@@ -49,11 +47,9 @@ export function MilestonesList({ tender }: MilestonesListProps) {
     return statusOrder[a.status] - statusOrder[b.status];
   });
 
-  // Helper to determine if a milestone is the current active one
   const isActiveMilestone = (milestone: Milestone, index: number): boolean => {
     if (milestone.status === "in-progress") return true;
     
-    // If no milestone is in progress, the first pending one is active
     if (
       milestone.status === "pending" &&
       !sortedMilestones.some((m) => m.status === "in-progress")

@@ -25,7 +25,6 @@ export function TenderCreationForm() {
   const { createTender } = useTender();
   const { clients } = useClient();
   const navigate = useNavigate();
-  const { toast } = useToast();
   
   const [formData, setFormData] = useState({
     title: "",
@@ -59,11 +58,7 @@ export function TenderCreationForm() {
     
     // Validation: check if client is selected
     if (!formData.client) {
-      toast({
-        title: t('errorMessages.validationError'),
-        description: t('errorMessages.selectClient', 'Bitte wählen Sie eine Vergabestelle aus'),
-        variant: "destructive",
-      });
+      toast.error(t('errorMessages.selectClient', 'Bitte wählen Sie eine Vergabestelle aus'));
       return;
     }
     
@@ -80,20 +75,13 @@ export function TenderCreationForm() {
         contactPhone: formData.contactPhone,
       });
 
-      toast({
-        title: t('toasts.tenderCreated'),
-        description: formData.title || t('tenders.newTender'),
-      });
+      toast.success(t('toasts.tenderCreated'));
 
       // Navigate to the new tender page
       navigate(`/tenders/${newTender.id}`);
     } catch (error) {
       console.error("Error creating tender:", error);
-      toast({
-        title: t('errorMessages.createFailed'),
-        description: t('errorMessages.couldNotCreateTender'),
-        variant: "destructive",
-      });
+      toast.error(t('errorMessages.couldNotCreateTender'));
     }
   };
 

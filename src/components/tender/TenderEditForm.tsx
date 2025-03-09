@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Tender } from "@/types/tender";
 import { Input } from "@/components/ui/input";
@@ -10,7 +11,7 @@ import {
   CardTitle 
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useTender } from "@/context/TenderContext";
+import { useTender } from "@/hooks/useTender";
 import { 
   Select,
   SelectContent,

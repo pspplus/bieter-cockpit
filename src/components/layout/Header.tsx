@@ -1,4 +1,3 @@
-
 import { cn } from "@/lib/utils";
 import { Bell, ChevronDown, Menu, PlusCircle, Search, Smile, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -13,7 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
-import { useTender } from "@/context/TenderContext";
+import { useTender } from "@/hooks/useTender";
 import { useNavigate } from "react-router-dom";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { ThemeSwitcher } from "./ThemeSwitcher";
