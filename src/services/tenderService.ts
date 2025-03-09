@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { Tender, TenderStatus, Milestone, MilestoneStatus } from "@/types/tender";
 import { format } from "date-fns";
@@ -354,7 +353,13 @@ export const createMilestone = async (milestone: Partial<Milestone>): Promise<Mi
 };
 
 // Update a milestone
-export const updateMilestone = async (id: string, updates: Partial<Milestone>): Promise<void> => {
+export const updateMilestone = async (milestone: Milestone): Promise<void> => {
+  // Use the function to update the milestone
+  return updateMilestoneService(milestone.id, milestone);
+};
+
+// Update a milestone with the service
+export const updateMilestoneService = async (id: string, updates: Partial<Milestone>): Promise<void> => {
   // Format dates for Supabase if they exist
   const formattedDueDate = updates.dueDate 
     ? format(new Date(updates.dueDate), "yyyy-MM-dd'T'HH:mm:ss'Z'")
