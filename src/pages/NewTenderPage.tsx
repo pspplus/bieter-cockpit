@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useTender } from "@/context/TenderContext";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, PlusCircle } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useToast } from "@/components/ui/use-toast";
 import { 
@@ -19,11 +19,19 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useClient } from "@/context/ClientContext";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Client } from "@/types/client";
 
 export default function NewTenderPage() {
   const { t } = useTranslation();
   const { createTender } = useTender();
-  const { clients, isLoading: isLoadingClients } = useClient();
+  const { clients, isLoading: isLoadingClients, createClient } = useClient();
   const navigate = useNavigate();
   const { toast } = useToast();
   
@@ -38,6 +46,15 @@ export default function NewTenderPage() {
     contactPhone: "",
   });
 
+  const [isNewClientDialogOpen, setIsNewClientDialogOpen] = useState(false);
+  const [newClient, setNewClient] = useState<Partial<Client>>({
+    name: "",
+    contactPerson: "",
+    email: "",
+    phone: "",
+    address: "",
+  });
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -45,6 +62,46 @@ export default function NewTenderPage() {
 
   const handleSelectChange = (name: string, value: string) => {
     setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleNewClientInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setNewClient(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleCreateClient = async () => {
+    if (!newClient.name) return;
+    
+    try {
+      const client = await createClient(newClient);
+      
+      // Update the form data with the new client
+      setFormData(prev => ({ ...prev, client: client.name }));
+      
+      // Reset the new client form
+      setNewClient({
+        name: "",
+        contactPerson: "",
+        email: "",
+        phone: "",
+        address: "",
+      });
+      
+      // Close the dialog
+      setIsNewClientDialogOpen(false);
+      
+      toast({
+        title: t('toasts.clientCreated', 'Vergabestelle erfolgreich erstellt'),
+        description: client.name,
+      });
+    } catch (error) {
+      console.error("Error creating client:", error);
+      toast({
+        title: t('errorMessages.createFailed', 'Erstellung fehlgeschlagen'),
+        description: t('errorMessages.couldNotCreateClient', 'Vergabestelle konnte nicht erstellt werden'),
+        variant: "destructive",
+      });
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -148,22 +205,36 @@ export default function NewTenderPage() {
               <div className="grid md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="client">{t('tender.client')} *</Label>
-                  <Select 
-                    name="client" 
-                    value={formData.client} 
-                    onValueChange={(value) => handleSelectChange("client", value)}
-                  >
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder={t('tenders.selectClient', 'Vergabestelle auswählen')} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {clients.map((client) => (
-                        <SelectItem key={client.id} value={client.name}>
-                          {client.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <div className="flex space-x-2">
+                    <Select 
+                      name="client" 
+                      value={formData.client} 
+                      onValueChange={(value) => handleSelectChange("client", value)}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder={t('tenders.selectClient', 'Vergabestelle auswählen')} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {clients.map((client) => (
+                          <SelectItem key={client.id} value={client.name}>
+                            {client.name}
+                          </SelectItem>
+                        ))}
+                        <button
+                          type="button"
+                          className="relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-2 pr-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 hover:bg-accent hover:text-accent-foreground border-t border-muted mt-1 pt-2"
+                          onClick={() => {
+                            setIsNewClientDialogOpen(true);
+                            // Close the select dropdown (this is a hack, but it works)
+                            document.body.click();
+                          }}
+                        >
+                          <PlusCircle className="mr-2 h-4 w-4" />
+                          {t('clients.createNew', 'Neue Vergabestelle erstellen')}
+                        </button>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="location">{t('tender.location')}</Label>
@@ -225,6 +296,72 @@ export default function NewTenderPage() {
           </form>
         </Card>
       </div>
+
+      {/* Dialog for creating a new client */}
+      <Dialog open={isNewClientDialogOpen} onOpenChange={setIsNewClientDialogOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>{t('clients.createNewClient', 'Neue Vergabestelle erstellen')}</DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <label htmlFor="name">{t('clients.name', 'Name')} *</label>
+              <Input
+                id="name"
+                name="name"
+                value={newClient.name}
+                onChange={handleNewClientInputChange}
+                required
+              />
+            </div>
+            <div className="grid gap-2">
+              <label htmlFor="contactPerson">{t('clients.contactPerson', 'Contact Person')}</label>
+              <Input
+                id="contactPerson"
+                name="contactPerson"
+                value={newClient.contactPerson}
+                onChange={handleNewClientInputChange}
+              />
+            </div>
+            <div className="grid gap-2">
+              <label htmlFor="email">{t('clients.email', 'Email')}</label>
+              <Input
+                id="email"
+                name="email"
+                type="email"
+                value={newClient.email}
+                onChange={handleNewClientInputChange}
+              />
+            </div>
+            <div className="grid gap-2">
+              <label htmlFor="phone">{t('clients.phone', 'Phone')}</label>
+              <Input
+                id="phone"
+                name="phone"
+                value={newClient.phone}
+                onChange={handleNewClientInputChange}
+              />
+            </div>
+            <div className="grid gap-2">
+              <label htmlFor="address">{t('clients.address', 'Address')}</label>
+              <Input
+                id="address"
+                name="address"
+                value={newClient.address}
+                onChange={handleNewClientInputChange}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsNewClientDialogOpen(false)}>
+              {t('general.cancel', 'Cancel')}
+            </Button>
+            <Button onClick={handleCreateClient} disabled={!newClient.name}>
+              {t('general.create', 'Create')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Layout>
   );
 }
