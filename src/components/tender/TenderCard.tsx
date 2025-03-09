@@ -57,7 +57,7 @@ export function TenderCard({ tender, isActive = false }: TenderCardProps) {
           </div>
           <div className="flex items-center gap-1.5">
             <Calendar className="h-4 w-4 text-tender-400" />
-            <span>{dueDateFormatted}</span>
+            <span>{t('tenderDetails.due')}: {dueDateFormatted}</span>
           </div>
           {bindingPeriodDate && (
             <div className="flex items-center gap-1.5">
