@@ -23,12 +23,13 @@ import { Input } from '@/components/ui/input';
 interface FolderTreeProps {
   folders: Folder[];
   documents?: Record<string, TenderDocument[]>;
-  onFolderSelect: (folder: Folder) => void;
-  selectedFolderId?: string;
+  onFolderSelect?: (folder: Folder) => void;
+  selectedFolderId?: string | null;
   tenderId: string;
   onFolderCreate?: (folder: Folder) => void;
   onFolderDelete?: (folderId: string) => void;
   readOnly?: boolean;
+  onSelectFolder?: (folderId: string | null) => void;
 }
 
 export function FolderTree({ 
@@ -39,7 +40,8 @@ export function FolderTree({
   tenderId,
   onFolderCreate,
   onFolderDelete,
-  readOnly = false
+  readOnly = false,
+  onSelectFolder
 }: FolderTreeProps) {
   const { t } = useTranslation();
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set());
@@ -63,7 +65,12 @@ export function FolderTree({
   };
 
   const handleFolderClick = (folder: Folder) => {
-    onFolderSelect(folder);
+    if (onFolderSelect) {
+      onFolderSelect(folder);
+    }
+    if (onSelectFolder) {
+      onSelectFolder(folder.id);
+    }
   };
 
   const handleDeleteFolder = async () => {
@@ -202,10 +209,10 @@ export function FolderTree({
 
   return (
     <div className="w-full">
-      <div className="flex items-center justify-between mb-2">
-        <h3 className="text-sm font-medium">{t('folders.folders')}</h3>
-        
-        {!readOnly && (
+      {!readOnly && (
+        <div className="flex items-center justify-between mb-2">
+          <h3 className="text-sm font-medium">{t('folders.folders')}</h3>
+          
           <Button 
             variant="outline" 
             size="sm" 
@@ -215,10 +222,10 @@ export function FolderTree({
             <Plus className="h-3.5 w-3.5 mr-1" />
             {t('folders.newFolder')}
           </Button>
-        )}
-      </div>
+        </div>
+      )}
       
-      <div className="rounded-md border p-2 h-[calc(100vh-300px)] overflow-y-auto">
+      <div className={cn("rounded-md border p-2", !readOnly && "h-[calc(100vh-300px)] overflow-y-auto")}>
         {folders.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-muted-foreground text-center p-4">
             <FolderIcon className="h-8 w-8 mb-2 opacity-50" />

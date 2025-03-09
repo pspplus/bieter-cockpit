@@ -24,7 +24,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { format } from "date-fns";
 import { toast } from "sonner";
-import { uploadDocument, deleteDocument } from "@/services/documentService";
+import { uploadDocument, deleteDocument, fetchFolderDocuments } from "@/services/documentService";
 import { FolderTree } from "@/components/folder/FolderTree";
 
 interface DocumentListProps {
@@ -50,6 +50,8 @@ export function DocumentList({
   const [documentName, setDocumentName] = useState("");
   const [documentDescription, setDocumentDescription] = useState("");
   const [selectedFolder, setSelectedFolder] = useState<string | null>(null);
+  const [currentDocuments, setCurrentDocuments] = useState<TenderDocument[]>(documents);
+  const [currentFolderId, setCurrentFolderId] = useState<string | null>(null);
   
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -86,13 +88,13 @@ export function DocumentList({
       );
       
       onDocumentAdded(newDocument);
+      setCurrentDocuments(prev => [newDocument, ...prev]);
       toast.success(t('documents.uploadSuccess', 'Document uploaded successfully'));
       
       // Reset form
       setSelectedFile(null);
       setDocumentName("");
       setDocumentDescription("");
-      setSelectedFolder(null);
       
       // Close dialog by clicking the close button
       const closeButton = document.querySelector('[data-dialog-close]') as HTMLButtonElement;
@@ -109,6 +111,7 @@ export function DocumentList({
     try {
       await deleteDocument(documentId);
       onDocumentDeleted(documentId);
+      setCurrentDocuments(prev => prev.filter(doc => doc.id !== documentId));
       toast.success(t('documents.deleteSuccess', 'Document deleted successfully'));
     } catch (error) {
       console.error("Error deleting document:", error);
@@ -132,6 +135,24 @@ export function DocumentList({
     if (fileType.includes('word') || fileType.includes('document')) return <FileIcon className="text-indigo-500" />;
     if (fileType.includes('excel') || fileType.includes('sheet')) return <FileIcon className="text-green-500" />;
     return <File />;
+  };
+
+  // New function to handle folder selection
+  const handleFolderSelect = async (folder: Folder) => {
+    try {
+      setCurrentFolderId(folder.id);
+      const folderDocuments = await fetchFolderDocuments(folder.id);
+      setCurrentDocuments(folderDocuments);
+    } catch (error) {
+      console.error("Error fetching folder documents:", error);
+      toast.error(t('errorMessages.couldNotLoadDocuments', 'Failed to load folder documents'));
+    }
+  };
+
+  // Function to reset to all documents view
+  const handleResetView = () => {
+    setCurrentFolderId(null);
+    setCurrentDocuments(documents);
   };
   
   return (
@@ -183,6 +204,8 @@ export function DocumentList({
                       folders={folders} 
                       onSelectFolder={(folderId) => setSelectedFolder(folderId)}
                       selectedFolderId={selectedFolder}
+                      readOnly={false}
+                      tenderId={tenderId || ""}
                     />
                   </div>
                 </div>
@@ -232,78 +255,108 @@ export function DocumentList({
         </Dialog>
       </div>
       
-      {folders && folders.length > 0 && (
-        <div className="border rounded-md p-4 mb-4">
+      <div className="flex space-x-4">
+        <div className="w-1/3 border rounded-md p-4">
           <div className="flex items-center gap-2 mb-3">
             <FolderClosed className="h-5 w-5 text-muted-foreground" />
             <h4 className="font-medium">{t('documents.folderStructure', 'Folder Structure')}</h4>
           </div>
-          <FolderTree folders={folders} readOnly />
-        </div>
-      )}
-      
-      {documents.length === 0 ? (
-        <div className="text-center py-8 border border-dashed rounded-md">
-          <File className="w-8 h-8 mx-auto text-muted-foreground" />
-          <p className="mt-2 text-sm text-muted-foreground">
-            {t('documents.noDocuments')}
-          </p>
-        </div>
-      ) : (
-        <div className="border rounded-md divide-y">
-          {documents.map((document) => (
-            <div 
-              key={document.id} 
-              className="flex items-center justify-between p-3 hover:bg-muted/50"
-            >
-              <div className="flex items-center space-x-3">
-                <div className="p-2 bg-muted rounded">
-                  {getFileTypeIcon(document.fileType)}
-                </div>
-                
-                <div>
-                  <h4 className="font-medium">
-                    {document.name}
-                  </h4>
-                  <div className="flex space-x-3 text-xs text-muted-foreground">
-                    <span>{formatFileSize(document.fileSize)}</span>
-                    <span>•</span>
-                    <span>{format(new Date(document.uploadDate), 'PPP')}</span>
-                  </div>
-                  {document.description && (
-                    <p className="text-sm text-muted-foreground mt-1">
-                      {document.description}
-                    </p>
-                  )}
-                </div>
+          {folders && folders.length > 0 ? (
+            <>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="mb-2 text-sm" 
+                onClick={handleResetView}
+              >
+                {t('documents.allDocuments', 'All Documents')}
+              </Button>
+              <div className="max-h-[calc(100vh-400px)] overflow-y-auto">
+                <FolderTree 
+                  folders={folders} 
+                  onFolderSelect={handleFolderSelect}
+                  selectedFolderId={currentFolderId}
+                  tenderId={tenderId || ""}
+                  readOnly={true}
+                />
               </div>
-              
-              <div className="flex space-x-2">
-                <Button 
-                  variant="ghost" 
-                  size="icon"
-                  asChild
-                >
-                  <a href={document.fileUrl} target="_blank" rel="noopener noreferrer" download>
-                    <Download className="w-4 h-4" />
-                    <span className="sr-only">{t('documents.download')}</span>
-                  </a>
-                </Button>
-                
-                <Button 
-                  variant="ghost" 
-                  size="icon"
-                  className="text-destructive hover:text-destructive"
-                  onClick={() => handleDelete(document.id)}
-                >
-                  <Trash2 className="w-4 h-4" />
-                  <span className="sr-only">{t('documents.delete')}</span>
-                </Button>
-              </div>
+            </>
+          ) : (
+            <div className="text-center py-4">
+              <p className="text-sm text-muted-foreground">
+                {t('documents.noFolders', 'No folders available')}
+              </p>
             </div>
-          ))}
+          )}
         </div>
-      )}
+        
+        <div className="w-2/3">
+          {currentDocuments.length === 0 ? (
+            <div className="text-center py-8 border border-dashed rounded-md">
+              <File className="w-8 h-8 mx-auto text-muted-foreground" />
+              <p className="mt-2 text-sm text-muted-foreground">
+                {currentFolderId 
+                  ? t('documents.noDocumentsInFolder', 'No documents in this folder') 
+                  : t('documents.noDocuments', 'No documents available')}
+              </p>
+            </div>
+          ) : (
+            <div className="border rounded-md divide-y max-h-[calc(100vh-300px)] overflow-y-auto">
+              {currentDocuments.map((document) => (
+                <div 
+                  key={document.id} 
+                  className="flex items-center justify-between p-3 hover:bg-muted/50"
+                >
+                  <div className="flex items-center space-x-3">
+                    <div className="p-2 bg-muted rounded">
+                      {getFileTypeIcon(document.fileType)}
+                    </div>
+                    
+                    <div>
+                      <h4 className="font-medium">
+                        {document.name}
+                      </h4>
+                      <div className="flex space-x-3 text-xs text-muted-foreground">
+                        <span>{formatFileSize(document.fileSize)}</span>
+                        <span>•</span>
+                        <span>{format(new Date(document.uploadDate), 'PPP')}</span>
+                      </div>
+                      {document.description && (
+                        <p className="text-sm text-muted-foreground mt-1">
+                          {document.description}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                  
+                  <div className="flex space-x-2">
+                    <Button 
+                      variant="ghost" 
+                      size="icon"
+                      asChild
+                    >
+                      <a href={document.fileUrl} target="_blank" rel="noopener noreferrer" download>
+                        <Download className="w-4 h-4" />
+                        <span className="sr-only">{t('documents.download')}</span>
+                      </a>
+                    </Button>
+                    
+                    <Button 
+                      variant="ghost" 
+                      size="icon"
+                      className="text-destructive hover:text-destructive"
+                      onClick={() => handleDelete(document.id)}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                      <span className="sr-only">{t('documents.delete')}</span>
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
