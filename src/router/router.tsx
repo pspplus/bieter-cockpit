@@ -16,7 +16,7 @@ import NewTenderPage from "@/pages/NewTenderPage";
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <Layout>Index</Layout>,
+    element: <Layout />,
     children: [
       { index: true, element: <Index /> },
       { path: "dashboard", element: <Dashboard /> },
