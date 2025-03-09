@@ -25,7 +25,7 @@ const statusColors: Record<Tender["status"], { bg: string; text: string }> = {
 
 export function TenderCard({ tender, isActive = false }: TenderCardProps) {
   const { t } = useTranslation();
-  const { id, title, reference, client, status, dueDate, location } = tender;
+  const { id, title, internalReference, externalReference, client, status, dueDate, location } = tender;
   
   const statusColor = statusColors[status];
   const dueDateFormatted = format(new Date(dueDate), "MMM d, yyyy");
@@ -39,6 +39,9 @@ export function TenderCard({ tender, isActive = false }: TenderCardProps) {
     ? Math.round((completedMilestones / totalMilestones) * 100) 
     : 0;
 
+  // Use internal reference for display, fallback to external if needed
+  const displayReference = internalReference || externalReference;
+
   return (
     <Link to={`/tenders/${id}`}>
       <div 
@@ -50,7 +53,7 @@ export function TenderCard({ tender, isActive = false }: TenderCardProps) {
         <div className="flex justify-between items-start">
           <div>
             <h3 className="font-medium text-lg line-clamp-1">{title}</h3>
-            <p className="text-sm text-tender-500 mt-1">{reference}</p>
+            <p className="text-sm text-tender-500 mt-1">{displayReference}</p>
           </div>
           <Badge className={cn("ml-2", statusColor.bg, statusColor.text)}>
             {status.charAt(0).toUpperCase() + status.slice(1)}

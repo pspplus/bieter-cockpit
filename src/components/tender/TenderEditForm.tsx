@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Tender } from "@/types/tender";
 import { Input } from "@/components/ui/input";
@@ -43,7 +42,7 @@ export function TenderEditForm({ tender, onCancel }: TenderEditFormProps) {
   
   const [formData, setFormData] = useState({
     title: tender.title,
-    reference: tender.reference,
+    externalReference: tender.externalReference,
     client: tender.client || "",
     status: tender.status,
     dueDate: new Date(tender.dueDate),
@@ -78,7 +77,7 @@ export function TenderEditForm({ tender, onCancel }: TenderEditFormProps) {
     
     const updates: Partial<Tender> = {
       title: formData.title,
-      reference: formData.reference,
+      externalReference: formData.externalReference,
       client: formData.client,
       status: formData.status as Tender["status"],
       dueDate: formData.dueDate,
@@ -113,13 +112,13 @@ export function TenderEditForm({ tender, onCancel }: TenderEditFormProps) {
             </div>
             
             <div className="space-y-2">
-              <label htmlFor="reference" className="text-sm font-medium">
-                {t('tender.reference')}
+              <label htmlFor="externalReference" className="text-sm font-medium">
+                {t('tender.externalReference')}
               </label>
               <Input
-                id="reference"
-                name="reference"
-                value={formData.reference}
+                id="externalReference"
+                name="externalReference"
+                value={formData.externalReference}
                 onChange={handleChange}
                 required
               />

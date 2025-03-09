@@ -1,4 +1,3 @@
-
 import { Layout } from "@/components/layout/Layout";
 import { useTender } from "@/hooks/useTender";
 import { toast } from "sonner";
@@ -89,7 +88,6 @@ export default function Dashboard() {
           </Card>
         </div>
         
-        {/* Success Rate Card (Zuschlagsquote) */}
         <Card className="animate-blur-in" style={{ animationDelay: "200ms" }}>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Zuschlagsquote</CardTitle>
@@ -165,7 +163,7 @@ export default function Dashboard() {
                             <div className="flex justify-between items-center">
                               <div>
                                 <h3 className="font-medium">{tender.title}</h3>
-                                <p className="text-sm text-tender-500">{tender.reference}</p>
+                                <p className="text-sm text-tender-500">{tender.internalReference}</p>
                               </div>
                               <div className={`rounded-full px-3 py-1 text-sm flex items-center gap-1.5 ${urgencyClass} font-medium`}>
                                 <AlertCircle className="h-4 w-4" />

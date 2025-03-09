@@ -42,6 +42,10 @@ export function TenderDetails({ tender }: TenderDetailsProps) {
   // Check if the due date is in the past
   const isDueDatePast = new Date(tender.dueDate) < new Date();
 
+  // Use the internal reference as primary, and external as secondary if available
+  const displayReference = tender.internalReference;
+  const externalReferenceDisplay = tender.externalReference ? `${t('tender.externalReference')}: ${tender.externalReference}` : '';
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
@@ -52,7 +56,8 @@ export function TenderDetails({ tender }: TenderDetailsProps) {
               {tender.status.charAt(0).toUpperCase() + tender.status.slice(1)}
             </Badge>
           </div>
-          <p className="text-tender-500 mt-1">{tender.reference}</p>
+          <p className="text-tender-500 mt-1">{displayReference}</p>
+          {externalReferenceDisplay && <p className="text-tender-500 text-sm">{externalReferenceDisplay}</p>}
         </div>
         
         <div className="flex flex-wrap gap-2">
