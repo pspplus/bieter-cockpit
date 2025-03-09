@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -9,7 +8,6 @@ import {
   ChevronLeft,
   FileCheck,
   Home,
-  Layers,
   LayoutDashboard,
   Settings,
   Users,
@@ -102,16 +100,6 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
           >
             <FileCheck className="h-5 w-5" />
             <span>{t('sidebar.submissions')}</span>
-          </Link>
-          <Link
-            to="/projects"
-            className={cn(
-              "tender-step dark:hover:bg-tender-800/50",
-              location.pathname === "/projects" && "tender-step-active dark:bg-tender-800/60 dark:text-primary-foreground dark:font-medium"
-            )}
-          >
-            <Layers className="h-5 w-5" />
-            <span>{t('sidebar.projects')}</span>
           </Link>
           <Link
             to="/messages"
