@@ -25,7 +25,9 @@
     "profile": "Profil",
     "aboutApp": "Über BietKIT",
     "notifications": "Benachrichtigungen",
-    "selectLanguage": "Sprache auswählen"
+    "selectLanguage": "Sprache auswählen",
+    "getStarted": "Loslegen",
+    "slogan": "Der smarte Weg, Ausschreibungen zu verwalten"
   },
   "folders": {
     "folders": "Ordner",
@@ -88,7 +90,8 @@
     "upcomingMilestones": "Bevorstehende Meilensteine",
     "yourTenders": "Ihre Ausschreibungen",
     "viewAll": "Alle anzeigen",
-    "noUpcomingMilestones": "Keine bevorstehenden Meilensteine"
+    "noUpcomingMilestones": "Keine bevorstehenden Meilensteine",
+    "progress": "Fortschritt"
   },
   "errorMessages": {
     "couldNotLoadTenders": "Ausschreibungen konnten nicht geladen werden",
@@ -106,5 +109,43 @@
     "couldNotUploadDocument": "Dokument konnte nicht hochgeladen werden",
     "couldNotDeleteDocument": "Dokument konnte nicht gelöscht werden",
     "unknownError": "Ein unbekannter Fehler ist aufgetreten"
+  },
+  "sidebar": {
+    "home": "Startseite",
+    "dashboard": "Dashboard",
+    "tenders": "Ausschreibungen",
+    "submissions": "Einreichungen",
+    "messages": "Nachrichten",
+    "clients": "Kunden",
+    "settings": "Einstellungen"
+  },
+  "navigation": {
+    "search": "Suchen",
+    "notifications": "Benachrichtigungen",
+    "profile": "Profil",
+    "settings": "Einstellungen",
+    "logout": "Abmelden"
+  },
+  "landing": {
+    "headline": "Verwalten Sie Ihren Ausschreibungsprozess effizient",
+    "subheadline": "Von der ersten Prüfung bis zur finalen Einreichung",
+    "featureHeading": "Funktionen",
+    "featureSubheading": "Alles, was Sie brauchen, um Ihren Ausschreibungsprozess zu optimieren",
+    "feature1Title": "Dokumentenverwaltung",
+    "feature1Description": "Organisieren und verwalten Sie alle Ihre Ausschreibungsdokumente an einem Ort",
+    "feature2Title": "Fortschrittsverfolgung",
+    "feature2Description": "Verfolgen Sie Ihren Ausschreibungsfortschritt mit anpassbaren Meilensteinen",
+    "feature3Title": "Kollaborationstools",
+    "feature3Description": "Arbeiten Sie nahtlos mit Ihrem Team zusammen"
+  },
+  "theme": {
+    "darkMode": "Dunkler Modus"
+  },
+  "notifications": {
+    "tenderUpdated": "Ausschreibung erfolgreich aktualisiert",
+    "tenderDeleted": "Ausschreibung erfolgreich gelöscht",
+    "milestoneCreated": "Meilenstein erfolgreich erstellt",
+    "milestoneUpdated": "Meilenstein erfolgreich aktualisiert",
+    "milestoneDeleted": "Meilenstein erfolgreich gelöscht"
   }
 }

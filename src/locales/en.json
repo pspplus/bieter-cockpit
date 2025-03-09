@@ -25,7 +25,9 @@
     "profile": "Profile",
     "aboutApp": "About BietKIT",
     "notifications": "Notifications",
-    "selectLanguage": "Select language"
+    "selectLanguage": "Select language",
+    "getStarted": "Get Started",
+    "slogan": "The smart way to manage tenders"
   },
   "folders": {
     "folders": "Folders",
@@ -88,7 +90,8 @@
     "upcomingMilestones": "Upcoming Milestones",
     "yourTenders": "Your Tenders",
     "viewAll": "View All",
-    "noUpcomingMilestones": "No upcoming milestones"
+    "noUpcomingMilestones": "No upcoming milestones",
+    "progress": "Progress"
   },
   "errorMessages": {
     "couldNotLoadTenders": "Could not load tenders",
@@ -106,5 +109,43 @@
     "couldNotUploadDocument": "Could not upload document",
     "couldNotDeleteDocument": "Could not delete document",
     "unknownError": "An unknown error occurred"
+  },
+  "sidebar": {
+    "home": "Home",
+    "dashboard": "Dashboard",
+    "tenders": "Tenders",
+    "submissions": "Submissions",
+    "messages": "Messages",
+    "clients": "Clients",
+    "settings": "Settings"
+  },
+  "navigation": {
+    "search": "Search",
+    "notifications": "Notifications",
+    "profile": "Profile",
+    "settings": "Settings",
+    "logout": "Logout"
+  },
+  "landing": {
+    "headline": "Manage your tender process efficiently",
+    "subheadline": "From initial assessment to final submission",
+    "featureHeading": "Features",
+    "featureSubheading": "Everything you need to streamline your tender process",
+    "feature1Title": "Document Management",
+    "feature1Description": "Organize and manage all your tender documents in one place",
+    "feature2Title": "Progress Tracking",
+    "feature2Description": "Track your tender progress with customizable milestones",
+    "feature3Title": "Collaboration Tools",
+    "feature3Description": "Work together with your team seamlessly"
+  },
+  "theme": {
+    "darkMode": "Dark Mode"
+  },
+  "notifications": {
+    "tenderUpdated": "Tender updated successfully",
+    "tenderDeleted": "Tender deleted successfully",
+    "milestoneCreated": "Milestone created successfully",
+    "milestoneUpdated": "Milestone updated successfully",
+    "milestoneDeleted": "Milestone deleted successfully"
   }
 }

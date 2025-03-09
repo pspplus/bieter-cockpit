@@ -1,4 +1,3 @@
-
 import React, { createContext, useState, useEffect } from "react";
 import { Tender, Milestone, MilestoneStatus } from "@/types/tender";
 import { useAuth } from "@/context/AuthContext";
@@ -59,7 +58,7 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
         })
         .catch((error) => {
           console.error("Error loading tenders:", error);
-          toast.error(t('errorMessages.couldNotLoadTenders', 'Could not load tenders'));
+          toast.error(t('errorMessages.couldNotLoadTenders'));
         })
         .finally(() => {
           setIsLoading(false);
@@ -105,7 +104,7 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
       return newTender;
     } catch (error) {
       console.error("Error creating tender:", error);
-      toast.error(t('errorMessages.couldNotCreateTender', 'Could not create tender'));
+      toast.error(t('errorMessages.couldNotCreateTender'));
       throw error;
     }
   };
@@ -116,10 +115,10 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
       setTenders(tenders.map(tender => 
         tender.id === id ? { ...tender, ...updates } : tender
       ));
-      toast.success(t('notifications.tenderUpdated', 'Tender updated'));
+      toast.success(t('notifications.tenderUpdated'));
     } catch (error) {
       console.error("Error updating tender:", error);
-      toast.error(t('errorMessages.couldNotUpdateTender', 'Could not update tender'));
+      toast.error(t('errorMessages.couldNotUpdateTender'));
       throw error;
     }
   };
@@ -128,10 +127,10 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
     try {
       await deleteTenderService(id);
       setTenders(tenders.filter(tender => tender.id !== id));
-      toast.success(t('notifications.tenderDeleted', 'Tender deleted'));
+      toast.success(t('notifications.tenderDeleted'));
     } catch (error) {
       console.error("Error deleting tender:", error);
-      toast.error(t('errorMessages.couldNotDeleteTender', 'Could not delete tender'));
+      toast.error(t('errorMessages.couldNotDeleteTender'));
       throw error;
     }
   };
@@ -182,10 +181,10 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
         return tender;
       }));
       
-      toast.success(t('notifications.milestoneCreated', 'Milestone created'));
+      toast.success(t('notifications.milestoneCreated'));
     } catch (error) {
       console.error("Error creating milestone:", error);
-      toast.error(t('errorMessages.couldNotCreateMilestone', 'Could not create milestone'));
+      toast.error(t('errorMessages.couldNotCreateMilestone'));
       throw error;
     }
   };
@@ -200,7 +199,7 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
         const isAllowed = canUpdateMilestoneStatus(existingMilestone, milestone.status);
         
         if (!isAllowed) {
-          toast.error(t('errorMessages.invalidMilestoneTransition', 'Diese Statusänderung ist nicht erlaubt.'));
+          toast.error(t('errorMessages.invalidMilestoneTransition'));
           throw new Error("Invalid milestone status transition");
         }
       }
@@ -223,11 +222,11 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
         };
       }));
       
-      toast.success(t('notifications.milestoneUpdated', 'Milestone updated'));
+      toast.success(t('notifications.milestoneUpdated'));
     } catch (error) {
       console.error("Error updating milestone:", error);
       if (!(error instanceof Error && error.message === "Invalid milestone status transition")) {
-        toast.error(t('errorMessages.couldNotUpdateMilestone', 'Could not update milestone'));
+        toast.error(t('errorMessages.couldNotUpdateMilestone'));
       }
       throw error;
     }
@@ -247,10 +246,10 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
         return tender;
       }));
       
-      toast.success(t('notifications.milestoneDeleted', 'Milestone deleted'));
+      toast.success(t('notifications.milestoneDeleted'));
     } catch (error) {
       console.error("Error deleting milestone:", error);
-      toast.error(t('errorMessages.couldNotDeleteMilestone', 'Could not delete milestone'));
+      toast.error(t('errorMessages.couldNotDeleteMilestone'));
       throw error;
     }
   };
