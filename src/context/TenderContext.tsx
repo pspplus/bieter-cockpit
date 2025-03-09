@@ -1,4 +1,3 @@
-
 import React, { createContext, useState, useEffect } from "react";
 import { Tender, Milestone, MilestoneStatus } from "@/types/tender";
 import { useAuth } from "@/context/AuthContext";
@@ -43,7 +42,11 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
       setIsLoading(true);
       fetchTenders()
         .then((data) => {
-          setTenders(data);
+          const tendersWithSortedMilestones = data.map(tender => ({
+            ...tender,
+            milestones: [...tender.milestones].sort((a, b) => a.sequenceNumber - b.sequenceNumber)
+          }));
+          setTenders(tendersWithSortedMilestones);
         })
         .catch((error) => {
           console.error("Error loading tenders:", error);
@@ -57,24 +60,23 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
 
   const createTender = async (tenderData: Partial<Tender>): Promise<Tender> => {
     try {
-      // Store milestones before removing them from the tender data
       const milestones = tenderData.milestones || [];
       
-      // Create a copy of tenderData without milestones for initial tender creation
       const { milestones: _, ...tenderDataWithoutMilestones } = tenderData;
       
-      // Create the tender first
       const newTender = await createTenderService(tenderDataWithoutMilestones);
       
-      // If there are milestones, create them one by one
       if (milestones.length > 0) {
         await Promise.all(
           milestones.map(milestone => 
-            createMilestoneService({ ...milestone, tenderId: newTender.id })
+            createMilestoneService({ 
+              ...milestone,
+              sequenceNumber: milestone.sequenceNumber || 0,
+              tenderId: newTender.id 
+            })
           )
         );
         
-        // Refetch the tender with the newly created milestones
         const updatedTender = { ...newTender, milestones };
         setTenders([updatedTender, ...tenders]);
         return updatedTender;
@@ -115,24 +117,19 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
     }
   };
 
-  // Helper function to check if a milestone can be updated to a new status
   const canUpdateMilestoneStatus = (milestone: Milestone, newStatus: MilestoneStatus): boolean => {
-    // Always allow resetting to pending
     if (newStatus === "pending") {
       return true;
     }
     
-    // Allow starting any milestone (regardless of sequence)
     if (newStatus === "in-progress") {
       return true;
     }
     
-    // For completion, only allow if the milestone is in-progress
     if (newStatus === "completed") {
       return milestone.status === "in-progress";
     }
     
-    // For skipping, allow skipping any pending milestone
     if (newStatus === "skipped") {
       return milestone.status === "pending";
     }
@@ -142,11 +139,15 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
 
   const createMilestone = async (tenderId: string, milestone: Partial<Milestone>): Promise<void> => {
     try {
-      const newMilestone = await createMilestoneService({ ...milestone, tenderId });
+      const milestoneWithSequence = {
+        ...milestone,
+        sequenceNumber: milestone.sequenceNumber !== undefined ? milestone.sequenceNumber : 0
+      };
+      
+      const newMilestone = await createMilestoneService({ ...milestoneWithSequence, tenderId });
       
       setTenders(tenders.map(tender => {
         if (tender.id === tenderId) {
-          // Add the new milestone and sort by sequence number
           const updatedMilestones = [...tender.milestones, newMilestone];
           updatedMilestones.sort((a, b) => a.sequenceNumber - b.sequenceNumber);
           
@@ -168,7 +169,6 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
 
   const updateMilestone = async (milestone: Milestone): Promise<void> => {
     try {
-      // If we're trying to change the status, validate the transition is allowed
       const existingMilestone = tenders
         .flatMap(t => t.milestones)
         .find(m => m.id === milestone.id);
@@ -182,14 +182,18 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
         }
       }
       
-      await updateMilestoneService(milestone);
+      const updatedMilestone = {
+        ...milestone,
+        sequenceNumber: milestone.sequenceNumber || 0
+      };
+      
+      await updateMilestoneService(updatedMilestone);
       
       setTenders(tenders.map(tender => {
         const updatedMilestones = tender.milestones.map(m => 
-          m.id === milestone.id ? milestone : m
+          m.id === milestone.id ? updatedMilestone : m
         );
         
-        // Sort by sequence number
         updatedMilestones.sort((a, b) => a.sequenceNumber - b.sequenceNumber);
         
         return {

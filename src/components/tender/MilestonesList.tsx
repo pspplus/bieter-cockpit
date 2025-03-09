@@ -1,7 +1,6 @@
-
 import { Tender, Milestone, MilestoneStatus } from "@/types/tender";
 import { cn } from "@/lib/utils";
-import { CheckCircle, Circle, Clock, XCircle, ChevronRight } from "lucide-react";
+import { CheckCircle, Circle, Clock, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTender } from "@/hooks/useTender";
 import {
@@ -12,6 +11,7 @@ import {
 } from "@/components/ui/tooltip";
 import { format } from "date-fns";
 import { useTranslation } from "react-i18next";
+import { useMemo } from "react";
 
 interface MilestonesListProps {
   tender: Tender;
@@ -38,9 +38,16 @@ export function MilestonesList({ tender }: MilestonesListProps) {
   const { updateMilestone, canUpdateMilestoneStatus } = useTender();
   const { t } = useTranslation();
 
-  // Sort milestones by sequence number
-  const sortedMilestones = [...tender.milestones].sort((a, b) => 
-    a.sequenceNumber - b.sequenceNumber
+  // Use useMemo to avoid re-sorting on every render
+  const sortedMilestones = useMemo(() => 
+    [...tender.milestones].sort((a, b) => (a.sequenceNumber || 0) - (b.sequenceNumber || 0)),
+    [tender.milestones]
+  );
+
+  // Memoize active milestones to avoid recalculation on every render
+  const activeMilestones = useMemo(() => 
+    sortedMilestones.filter(m => m.status === "in-progress"),
+    [sortedMilestones]
   );
 
   const handleStatusChange = (milestone: Milestone, newStatus: MilestoneStatus) => {
@@ -55,13 +62,6 @@ export function MilestonesList({ tender }: MilestonesListProps) {
     };
     updateMilestone(updatedMilestone);
   };
-
-  // Find all active milestones (those in progress)
-  const getActiveMilestones = (): Milestone[] => {
-    return sortedMilestones.filter(m => m.status === "in-progress");
-  };
-
-  const activeMilestones = getActiveMilestones();
 
   return (
     <div className="space-y-4">
@@ -102,7 +102,7 @@ export function MilestonesList({ tender }: MilestonesListProps) {
                     <div className="flex justify-between items-start">
                       <div className="flex items-center gap-2">
                         <span className="text-xs rounded-full bg-tender-100 text-tender-600 px-2 py-0.5">
-                          {index + 1}
+                          {(milestone.sequenceNumber || 0)}
                         </span>
                         <h4 className="font-medium text-base">{milestone.title}</h4>
                         {isActive && (
