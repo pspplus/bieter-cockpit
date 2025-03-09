@@ -91,14 +91,7 @@
     "yourTenders": "Your Tenders",
     "viewAll": "View All",
     "noUpcomingMilestones": "No upcoming milestones",
-    "progress": "Progress",
-    "cancel": "Cancel",
-    "saveChanges": "Save Changes",
-    "backToTenders": "Back to Tenders",
-    "fillTenderDetails": "Fill in tender details",
-    "newTender": "New Tender",
-    "descriptionPlaceholder": "Describe the tender",
-    "selectClient": "Select client"
+    "progress": "Progress"
   },
   "errorMessages": {
     "couldNotLoadTenders": "Could not load tenders",
@@ -115,8 +108,7 @@
     "couldNotLoadDocuments": "Could not load documents",
     "couldNotUploadDocument": "Could not upload document",
     "couldNotDeleteDocument": "Could not delete document",
-    "unknownError": "An unknown error occurred",
-    "selectClient": "Please select a client"
+    "unknownError": "An unknown error occurred"
   },
   "sidebar": {
     "home": "Home",
@@ -155,33 +147,5 @@
     "milestoneCreated": "Milestone created successfully",
     "milestoneUpdated": "Milestone updated successfully",
     "milestoneDeleted": "Milestone deleted successfully"
-  },
-  "tender": {
-    "title": "Title",
-    "externalReference": "External Reference Number",
-    "externalReferenceHelp": "The reference number provided by the client",
-    "internalReference": "Internal Reference Number",
-    "internalReferenceHelp": "Will be generated automatically when created",
-    "description": "Description",
-    "client": "Client",
-    "location": "Location",
-    "status": "Status",
-    "dueDate": "Due Date",
-    "budget": "Budget",
-    "contactPerson": "Contact Person",
-    "contactEmail": "Email",
-    "contactPhone": "Phone",
-    "progress": "Progress"
-  },
-  "tenderDetails": {
-    "contactInformation": "Contact Information",
-    "email": "Email",
-    "phone": "Phone"
-  },
-  "clients": {
-    "createNew": "Create New Client"
-  },
-  "toasts": {
-    "tenderCreated": "Tender created successfully"
   }
 }

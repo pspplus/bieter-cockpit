@@ -91,14 +91,7 @@
     "yourTenders": "Ihre Ausschreibungen",
     "viewAll": "Alle anzeigen",
     "noUpcomingMilestones": "Keine bevorstehenden Meilensteine",
-    "progress": "Fortschritt",
-    "cancel": "Abbrechen",
-    "saveChanges": "Änderungen speichern",
-    "backToTenders": "Zurück zu Ausschreibungen",
-    "fillTenderDetails": "Füllen Sie die Details der Ausschreibung aus",
-    "newTender": "Neue Ausschreibung",
-    "descriptionPlaceholder": "Beschreiben Sie die Ausschreibung",
-    "selectClient": "Vergabestelle auswählen"
+    "progress": "Fortschritt"
   },
   "errorMessages": {
     "couldNotLoadTenders": "Ausschreibungen konnten nicht geladen werden",
@@ -115,8 +108,7 @@
     "couldNotLoadDocuments": "Dokumente konnten nicht geladen werden",
     "couldNotUploadDocument": "Dokument konnte nicht hochgeladen werden",
     "couldNotDeleteDocument": "Dokument konnte nicht gelöscht werden",
-    "unknownError": "Ein unbekannter Fehler ist aufgetreten",
-    "selectClient": "Bitte wählen Sie eine Vergabestelle aus"
+    "unknownError": "Ein unbekannter Fehler ist aufgetreten"
   },
   "sidebar": {
     "home": "Startseite",
@@ -155,33 +147,5 @@
     "milestoneCreated": "Meilenstein erfolgreich erstellt",
     "milestoneUpdated": "Meilenstein erfolgreich aktualisiert",
     "milestoneDeleted": "Meilenstein erfolgreich gelöscht"
-  },
-  "tender": {
-    "title": "Titel",
-    "externalReference": "Externe Referenznummer",
-    "externalReferenceHelp": "Die vom Kunden vergebene Referenznummer",
-    "internalReference": "Interne Referenznummer",
-    "internalReferenceHelp": "Wird beim Erstellen automatisch generiert",
-    "description": "Beschreibung",
-    "client": "Vergabestelle",
-    "location": "Standort",
-    "status": "Status",
-    "dueDate": "Fälligkeitsdatum",
-    "budget": "Budget",
-    "contactPerson": "Ansprechpartner",
-    "contactEmail": "E-Mail",
-    "contactPhone": "Telefon",
-    "progress": "Fortschritt"
-  },
-  "tenderDetails": {
-    "contactInformation": "Kontaktinformationen",
-    "email": "E-Mail",
-    "phone": "Telefon"
-  },
-  "clients": {
-    "createNew": "Neue Vergabestelle erstellen"
-  },
-  "toasts": {
-    "tenderCreated": "Ausschreibung erfolgreich erstellt"
   }
 }
