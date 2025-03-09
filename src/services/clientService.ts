@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { Client } from "@/types/client";
 
@@ -11,8 +10,7 @@ const mapClientFromDB = (client: any): Client => {
     email: client.email || "",
     phone: client.phone || "",
     address: client.address || "",
-    createdAt: new Date(client.created_at),
-    updatedAt: new Date(client.updated_at),
+    createdAt: new Date(client.created_at)
   };
 };
 

@@ -39,7 +39,7 @@ const mapMilestoneFromDB = (milestone: any): Milestone => {
 
 // Convert application Milestone type to Supabase format
 const mapMilestoneForDB = (milestone: Partial<Milestone>) => {
-  return {
+  const dbMilestone: any = {
     ...(milestone.id && { id: milestone.id }),
     ...(milestone.title && { title: milestone.title }),
     ...(milestone.description !== undefined && { description: milestone.description }),
@@ -48,6 +48,8 @@ const mapMilestoneForDB = (milestone: Partial<Milestone>) => {
     ...(milestone.completionDate && { completion_date: milestone.completionDate.toISOString() }),
     ...(milestone.notes !== undefined && { notes: milestone.notes }),
   };
+  
+  return dbMilestone;
 };
 
 // Fetch all tenders for the current user
@@ -305,7 +307,7 @@ export const updateMilestone = async (id: string, updates: Partial<Milestone>): 
     completionDate: formattedCompletionDate ? new Date(formattedCompletionDate) : undefined,
   });
 
-  // Add updated_at
+  // Add updated_at timestamp separately
   dbUpdates.updated_at = new Date().toISOString();
 
   // Update the milestone

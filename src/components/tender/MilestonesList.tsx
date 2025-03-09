@@ -35,7 +35,7 @@ function StatusIcon({ status }: StatusIconProps) {
 }
 
 export function MilestonesList({ tender }: MilestonesListProps) {
-  const { setMilestoneStatus } = useTender();
+  const { updateMilestone } = useTender();
   const { t } = useTranslation();
 
   // Sort milestones by status: in-progress first, then pending, then completed, then skipped
@@ -68,7 +68,12 @@ export function MilestonesList({ tender }: MilestonesListProps) {
   };
 
   const handleStatusChange = (milestone: Milestone, newStatus: MilestoneStatus) => {
-    setMilestoneStatus(tender.id, milestone.id, newStatus);
+    const updatedMilestone = {
+      ...milestone,
+      status: newStatus,
+      completionDate: newStatus === "completed" ? new Date() : milestone.completionDate
+    };
+    updateMilestone(updatedMilestone);
   };
 
   return (
