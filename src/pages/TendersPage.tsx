@@ -13,11 +13,11 @@ import {
 import { useTender } from "@/hooks/useTender";
 import { ChevronDown, PlusCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { Tender, TenderStatus } from "@/types/tender";
+import { Tender } from "@/types/tender";
 import { useTranslation } from "react-i18next";
 import { Skeleton } from "@/components/ui/skeleton";
 
-type FilterOption = "all" | TenderStatus;
+type FilterOption = "all" | Tender["status"];
 
 export default function TendersPage() {
   const { t } = useTranslation();
@@ -25,26 +25,21 @@ export default function TendersPage() {
   const [filterBy, setFilterBy] = useState<FilterOption>("all");
   const navigate = useNavigate();
   
-  // Define which statuses to show on this page - only drafts and in-progress
-  const draftStatuses: TenderStatus[] = ["entwurf", "in-pruefung", "in-bearbeitung"];
-  
-  // First filter tenders that are in draft status
-  const draftTenders = tenders.filter(tender => 
-    draftStatuses.includes(tender.status as TenderStatus)
-  );
-  
-  // Then apply additional status filter if selected
-  const filteredTenders = filterBy === "all" 
-    ? draftTenders 
-    : draftTenders.filter(tender => tender.status === filterBy);
-  
-  // Updated filter options to only include relevant statuses
   const filterOptions: { value: FilterOption; label: string }[] = [
-    { value: "all", label: t('allTenders') || "Alle Ausschreibungen" },
-    { value: "entwurf", label: t('tenders.entwurf') || "Entwurf" },
-    { value: "in-pruefung", label: t('tenders.in-pruefung') || "In Prüfung" },
-    { value: "in-bearbeitung", label: t('tenders.in-bearbeitung') || "In Bearbeitung" },
+    { value: "all", label: "Alle Ausschreibungen" },
+    { value: "entwurf", label: "Entwurf" },
+    { value: "in-pruefung", label: "In Prüfung" },
+    { value: "in-bearbeitung", label: "In Bearbeitung" },
+    { value: "abgegeben", label: "Abgegeben" },
+    { value: "aufklaerung", label: "Aufklärung" },
+    { value: "gewonnen", label: "Gewonnen" },
+    { value: "verloren", label: "Verloren" },
+    { value: "abgeschlossen", label: "Abgeschlossen" },
   ];
+  
+  const filteredTenders = filterBy === "all" 
+    ? tenders 
+    : tenders.filter(tender => tender.status === filterBy);
   
   // Sort tenders by updated date (most recent first)
   const sortedTenders = [...filteredTenders].sort(
@@ -52,7 +47,7 @@ export default function TendersPage() {
   );
   
   return (
-    <Layout title={t('tenders') || "Ausschreibungen"}>
+    <Layout title="Ausschreibungen">
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <DropdownMenu>
@@ -78,7 +73,7 @@ export default function TendersPage() {
             className="w-full sm:w-auto sm:self-end flex items-center gap-1.5"
           >
             <PlusCircle className="h-4 w-4" />
-            {t('createNewTender') || "Neue Ausschreibung"}
+            Neue Ausschreibung
           </Button>
         </div>
         
@@ -110,17 +105,15 @@ export default function TendersPage() {
           </div>
         ) : (
           <div className="text-center py-16">
-            <h3 className="text-lg font-medium mb-2">{t('noTendersFound') || "Keine Ausschreibungen gefunden"}</h3>
+            <h3 className="text-lg font-medium mb-2">Keine Ausschreibungen gefunden</h3>
             <p className="text-tender-500 mb-6">
               {filterBy === "all"
-                ? t('noTendersCreated') || "Sie haben noch keine Ausschreibungen erstellt"
-                : t('noTendersWithStatus', { 
-                    status: filterOptions.find(option => option.value === filterBy)?.label 
-                  }) || `Es gibt keine Ausschreibungen mit dem Status "${filterOptions.find(option => option.value === filterBy)?.label}"`}
+                ? "Sie haben noch keine Ausschreibungen erstellt"
+                : `Es gibt keine Ausschreibungen mit dem Status "${filterOptions.find(option => option.value === filterBy)?.label}"`}
             </p>
             
             <Button onClick={() => navigate("/tenders/new")}>
-              {t('createYourFirstTender') || "Erstellen Sie Ihre erste Ausschreibung"}
+              Erstellen Sie Ihre erste Ausschreibung
             </Button>
           </div>
         )}

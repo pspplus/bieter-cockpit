@@ -23,12 +23,9 @@ export default function SubmissionsPage() {
   const { tenders } = useTender();
   const [filterStatus, setFilterStatus] = useState<TenderStatus | "all">("all");
   
-  // Define submission statuses to include the "abgeschlossen" status
-  const submissionStatuses: TenderStatus[] = ["abgegeben", "aufklaerung", "gewonnen", "verloren", "abgeschlossen"];
-  
-  // Filter tenders that are in submitted status or beyond (won, lost, completed)
+  // Filter tenders that are in submitted status or beyond (won, lost)
   const submittedTenders = tenders.filter(tender => 
-    submissionStatuses.includes(tender.status as TenderStatus)
+    ["abgegeben", "aufklaerung", "gewonnen", "verloren"].includes(tender.status)
   );
   
   // Apply additional filter if selected
@@ -43,7 +40,7 @@ export default function SubmissionsPage() {
 
   const getStatusBadgeStyles = (status: TenderStatus) => {
     const statusColor = getStatusColors(status);
-    return `${statusColor.bg} ${statusColor.text} dark:bg-${status === 'abgegeben' ? 'blue' : status === 'aufklaerung' ? 'purple' : status === 'gewonnen' ? 'green' : status === 'abgeschlossen' ? 'indigo' : 'gray'}-900/30 dark:text-${status === 'abgegeben' ? 'blue' : status === 'aufklaerung' ? 'purple' : status === 'gewonnen' ? 'green' : status === 'abgeschlossen' ? 'indigo' : 'gray'}-400`;
+    return `${statusColor.bg} ${statusColor.text} dark:bg-${status === 'abgegeben' ? 'blue' : status === 'aufklaerung' ? 'purple' : status === 'gewonnen' ? 'green' : 'gray'}-900/30 dark:text-${status === 'abgegeben' ? 'blue' : status === 'aufklaerung' ? 'purple' : status === 'gewonnen' ? 'green' : 'gray'}-400`;
   };
 
   // Get display reference - use internal reference as primary, fallback to external reference
@@ -83,9 +80,6 @@ export default function SubmissionsPage() {
                 </DropdownMenuRadioItem>
                 <DropdownMenuRadioItem value="verloren">
                   {t('tenders.verloren')}
-                </DropdownMenuRadioItem>
-                <DropdownMenuRadioItem value="abgeschlossen">
-                  {t('tenders.abgeschlossen')}
                 </DropdownMenuRadioItem>
               </DropdownMenuRadioGroup>
             </DropdownMenuContent>
