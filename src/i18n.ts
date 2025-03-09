@@ -20,10 +20,17 @@ i18n
   .use(initReactI18next)
   .init({
     resources,
-    fallbackLng: 'en',
+    fallbackLng: 'de',
+    lng: 'de', // Set default language to German
     debug: process.env.NODE_ENV === 'development',
     interpolation: {
       escapeValue: false // React already escapes values
+    },
+    detection: {
+      // Lower the priority of language detection from browser
+      order: ['localStorage', 'cookie', 'navigator'],
+      // Always load with German first
+      caches: []
     }
   });
 

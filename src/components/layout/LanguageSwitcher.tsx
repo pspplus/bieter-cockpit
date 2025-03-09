@@ -22,7 +22,7 @@ export function LanguageSwitcher() {
           className="text-tender-500 hover:text-tender-600"
         >
           <Globe className="h-5 w-5" />
-          <span className="sr-only">Switch Language</span>
+          <span className="sr-only">Sprache wechseln</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
