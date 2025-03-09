@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Layout } from "@/components/layout/Layout";
 import { TenderCard } from "@/components/tender/TenderCard";
@@ -66,7 +67,13 @@ export default function TendersPage() {
             </DropdownMenuContent>
           </DropdownMenu>
           
-          
+          <Button 
+            onClick={() => navigate("/tenders/new")} 
+            className="w-full sm:w-auto sm:self-end flex items-center gap-1.5"
+          >
+            <PlusCircle className="h-4 w-4" />
+            {t('general.createNewTender')}
+          </Button>
         </div>
         
         {isLoading ? (

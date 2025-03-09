@@ -13,7 +13,8 @@ export const uploadDocument = async (
   name: string,
   description: string,
   tenderId?: string,
-  milestoneId?: string
+  milestoneId?: string,
+  folderId?: string
 ): Promise<TenderDocument> => {
   try {
     // Check if user is authenticated
@@ -41,12 +42,30 @@ export const uploadDocument = async (
       .from(STORAGE_BUCKET)
       .getPublicUrl(filePath);
 
+    // Get folder path if folder id is provided
+    let folderPath = null;
+    if (folderId) {
+      const { data: folderData, error: folderError } = await supabase
+        .from('folders')
+        .select('folder_path')
+        .eq('id', folderId)
+        .single();
+      
+      if (folderError) {
+        console.error("Error fetching folder path:", folderError);
+      } else {
+        folderPath = folderData.folder_path;
+      }
+    }
+
     // Create a document record in the database
     const documentData = {
       name,
       description,
       tender_id: tenderId || null,
       milestone_id: milestoneId || null,
+      folder_id: folderId || null,
+      folder_path: folderPath,
       file_url: publicUrl,
       file_type: file.type,
       file_size: file.size,
@@ -71,10 +90,43 @@ export const uploadDocument = async (
       fileUrl: data.file_url,
       fileType: data.file_type,
       fileSize: data.file_size,
-      uploadDate: new Date(data.upload_date)
+      uploadDate: new Date(data.upload_date),
+      folderId: data.folder_id,
+      folderPath: data.folder_path
     };
   } catch (error) {
     console.error("Error uploading document:", error);
+    throw error;
+  }
+};
+
+// Fetch documents for a specific folder
+export const fetchFolderDocuments = async (folderId: string): Promise<TenderDocument[]> => {
+  try {
+    const { data, error } = await supabase
+      .from('documents')
+      .select('*')
+      .eq('folder_id', folderId)
+      .order('upload_date', { ascending: false });
+
+    if (error) {
+      console.error("Error fetching folder documents:", error);
+      throw error;
+    }
+
+    return data.map(doc => ({
+      id: doc.id,
+      name: doc.name,
+      description: doc.description || undefined,
+      fileUrl: doc.file_url,
+      fileType: doc.file_type,
+      fileSize: doc.file_size,
+      uploadDate: new Date(doc.upload_date),
+      folderId: doc.folder_id,
+      folderPath: doc.folder_path
+    }));
+  } catch (error) {
+    console.error("Error fetching folder documents:", error);
     throw error;
   }
 };
@@ -100,7 +152,9 @@ export const fetchTenderDocuments = async (tenderId: string): Promise<TenderDocu
       fileUrl: doc.file_url,
       fileType: doc.file_type,
       fileSize: doc.file_size,
-      uploadDate: new Date(doc.upload_date)
+      uploadDate: new Date(doc.upload_date),
+      folderId: doc.folder_id,
+      folderPath: doc.folder_path
     }));
   } catch (error) {
     console.error("Error fetching tender documents:", error);
@@ -129,10 +183,46 @@ export const fetchMilestoneDocuments = async (milestoneId: string): Promise<Tend
       fileUrl: doc.file_url,
       fileType: doc.file_type,
       fileSize: doc.file_size,
-      uploadDate: new Date(doc.upload_date)
+      uploadDate: new Date(doc.upload_date),
+      folderId: doc.folder_id,
+      folderPath: doc.folder_path
     }));
   } catch (error) {
     console.error("Error fetching milestone documents:", error);
+    throw error;
+  }
+};
+
+// Move a document to a different folder
+export const moveDocument = async (documentId: string, newFolderId: string): Promise<void> => {
+  try {
+    // First get the folder path
+    const { data: folderData, error: folderError } = await supabase
+      .from('folders')
+      .select('folder_path')
+      .eq('id', newFolderId)
+      .single();
+    
+    if (folderError) {
+      console.error("Error fetching folder path:", folderError);
+      throw folderError;
+    }
+    
+    // Update the document with the new folder
+    const { error } = await supabase
+      .from('documents')
+      .update({ 
+        folder_id: newFolderId,
+        folder_path: folderData.folder_path
+      })
+      .eq('id', documentId);
+
+    if (error) {
+      console.error("Error moving document:", error);
+      throw error;
+    }
+  } catch (error) {
+    console.error("Error in moveDocument:", error);
     throw error;
   }
 };

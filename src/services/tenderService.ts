@@ -1,6 +1,7 @@
 import { supabase } from "@/integrations/supabase/client";
-import { Tender, TenderStatus, Milestone, MilestoneStatus } from "@/types/tender";
+import { Tender, TenderStatus, Milestone, MilestoneStatus, Folder } from "@/types/tender";
 import { format } from "date-fns";
+import { fetchFolders } from "./folderService";
 
 // Convert a Supabase tender row to our application Tender type
 const mapTenderFromDB = (tender: any, milestones: any[] = []): Tender => {
@@ -140,7 +141,7 @@ export const fetchTenders = async (): Promise<Tender[]> => {
   );
 };
 
-// Fetch a single tender by ID
+// Fetch a single tender by ID with folders
 export const fetchTenderById = async (id: string): Promise<Tender | null> => {
   // Fetch the tender
   const { data: tenderData, error: tenderError } = await supabase
@@ -170,7 +171,18 @@ export const fetchTenderById = async (id: string): Promise<Tender | null> => {
     // Continue without milestones rather than failing completely
   }
 
-  return mapTenderFromDB(tenderData, milestoneData || []);
+  const tender = mapTenderFromDB(tenderData, milestoneData || []);
+
+  // Fetch folders for the tender
+  try {
+    const folders = await fetchFolders(id);
+    tender.folders = folders;
+  } catch (error) {
+    console.error('Error fetching folders:', error);
+    // Continue without folders rather than failing completely
+  }
+
+  return tender;
 };
 
 // Create a new tender

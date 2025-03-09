@@ -15,6 +15,17 @@ export type MilestoneStatus =
   | 'completed'
   | 'skipped';
 
+export interface Folder {
+  id: string;
+  name: string;
+  parentId: string | null;
+  tenderId: string;
+  folderOrder: number;
+  folderPath: string;
+  isDefault: boolean;
+  children?: Folder[];
+}
+
 export interface Milestone {
   id: string;
   title: string;
@@ -36,6 +47,8 @@ export interface TenderDocument {
   fileUrl?: string;
   fileType: string;
   fileSize?: number;
+  folderId?: string;
+  folderPath?: string;
 }
 
 export interface Tender {
@@ -56,5 +69,6 @@ export interface Tender {
   contactPhone?: string;
   milestones: Milestone[];
   documents?: TenderDocument[];
+  folders?: Folder[];
   notes?: string;
 }

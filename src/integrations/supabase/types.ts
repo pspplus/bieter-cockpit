@@ -51,6 +51,8 @@ export type Database = {
           file_size: number | null
           file_type: string
           file_url: string | null
+          folder_id: string | null
+          folder_path: string | null
           id: string
           milestone_id: string | null
           name: string
@@ -63,6 +65,8 @@ export type Database = {
           file_size?: number | null
           file_type: string
           file_url?: string | null
+          folder_id?: string | null
+          folder_path?: string | null
           id?: string
           milestone_id?: string | null
           name: string
@@ -75,6 +79,8 @@ export type Database = {
           file_size?: number | null
           file_type?: string
           file_url?: string | null
+          folder_id?: string | null
+          folder_path?: string | null
           id?: string
           milestone_id?: string | null
           name?: string
@@ -84,6 +90,13 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "documents_folder_id_fkey"
+            columns: ["folder_id"]
+            isOneToOne: false
+            referencedRelation: "folders"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "documents_milestone_id_fkey"
             columns: ["milestone_id"]
             isOneToOne: false
@@ -92,6 +105,57 @@ export type Database = {
           },
           {
             foreignKeyName: "documents_tender_id_fkey"
+            columns: ["tender_id"]
+            isOneToOne: false
+            referencedRelation: "tenders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      folders: {
+        Row: {
+          created_at: string
+          folder_order: number
+          folder_path: string
+          id: string
+          is_default: boolean
+          name: string
+          parent_id: string | null
+          tender_id: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          folder_order?: number
+          folder_path: string
+          id?: string
+          is_default?: boolean
+          name: string
+          parent_id?: string | null
+          tender_id?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          folder_order?: number
+          folder_path?: string
+          id?: string
+          is_default?: boolean
+          name?: string
+          parent_id?: string | null
+          tender_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "folders_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "folders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "folders_tender_id_fkey"
             columns: ["tender_id"]
             isOneToOne: false
             referencedRelation: "tenders"
@@ -214,7 +278,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      create_folders_for_existing_tenders: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never
