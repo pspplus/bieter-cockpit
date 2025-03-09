@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -42,7 +43,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
       <div className="flex h-16 items-center border-b border-tender-100 dark:border-tender-800 px-6">
         <Link to="/" className="flex items-center justify-center">
           <img 
-            src="/lovable-uploads/4ad70f59-6fd4-4e3e-9697-a48b2eb8680b.png" 
+            src="/lovable-uploads/67014d21-d261-48c8-94e3-06a85e6b7dac.png" 
             alt="Bieter.Coach" 
             className="h-20" 
           />

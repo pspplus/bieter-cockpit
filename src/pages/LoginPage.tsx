@@ -47,7 +47,7 @@ export default function LoginPage() {
           
           <Link to="/" className="inline-flex items-center gap-2">
             <img 
-              src="/lovable-uploads/4ad70f59-6fd4-4e3e-9697-a48b2eb8680b.png" 
+              src="/lovable-uploads/67014d21-d261-48c8-94e3-06a85e6b7dac.png" 
               alt="Bieter.Coach" 
               className="h-24" 
             />

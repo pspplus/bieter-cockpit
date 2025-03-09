@@ -1,3 +1,4 @@
+
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ChevronRight, FileText, CheckCircle } from "lucide-react";
@@ -16,7 +17,7 @@ export default function Index() {
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center gap-2">
             <img 
-              src="/lovable-uploads/4ad70f59-6fd4-4e3e-9697-a48b2eb8680b.png" 
+              src="/lovable-uploads/67014d21-d261-48c8-94e3-06a85e6b7dac.png" 
               alt="Bieter Cockpit" 
               className="h-20"
             />
@@ -137,7 +138,7 @@ export default function Index() {
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center gap-2 mb-4 md:mb-0">
               <img 
-                src="/lovable-uploads/4ad70f59-6fd4-4e3e-9697-a48b2eb8680b.png" 
+                src="/lovable-uploads/67014d21-d261-48c8-94e3-06a85e6b7dac.png" 
                 alt="Bieter Cockpit" 
                 className="h-20"
               />
