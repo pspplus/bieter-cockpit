@@ -37,7 +37,7 @@ export const getStatusColors = (status: TenderStatus): { bg: string; text: strin
 
 // Status groups for filtering
 export const statusGroups = {
-  active: ["in-bearbeitung"] as TenderStatus[],
+  active: ["in-bearbeitung", "in-pruefung"] as TenderStatus[],
   draft: ["entwurf"] as TenderStatus[],
   submitted: ["abgegeben", "aufklaerung"] as TenderStatus[],
   completed: ["gewonnen", "verloren", "abgeschlossen"] as TenderStatus[],
