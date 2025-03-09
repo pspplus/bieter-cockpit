@@ -1,3 +1,4 @@
+
 import React, { createContext, useState, useEffect } from "react";
 import { Tender, Milestone, MilestoneStatus } from "@/types/tender";
 import { useAuth } from "@/context/AuthContext";
@@ -76,9 +77,10 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
       
       if (partialMilestones.length > 0) {
         await Promise.all(
-          partialMilestones.map(milestone => 
+          partialMilestones.map((milestone, index) => 
             createMilestoneService({ 
               ...milestone,
+              sequenceNumber: milestone.sequenceNumber || index + 1,
               tenderId: newTender.id 
             })
           )
@@ -205,7 +207,7 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
       
       const updatedMilestone = {
         ...milestone,
-        sequenceNumber: milestone.sequenceNumber
+        sequenceNumber: milestone.sequenceNumber || 0
       };
       
       await updateMilestoneService(updatedMilestone);
