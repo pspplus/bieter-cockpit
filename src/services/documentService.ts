@@ -19,6 +19,34 @@ const mapDocumentFromDB = (document: any): TenderDocument => {
   };
 };
 
+// Helper to determine if a file is viewable in browser
+export const isViewableInBrowser = (fileType: string): boolean => {
+  const viewableTypes = [
+    // Images
+    'image/jpeg', 'image/png', 'image/gif', 'image/svg+xml', 'image/webp', 'image/bmp',
+    // PDFs
+    'application/pdf',
+    // Text files
+    'text/plain', 'text/html', 'text/css', 'text/javascript',
+    // Video files
+    'video/mp4', 'video/webm', 'video/ogg',
+    // Audio files
+    'audio/mpeg', 'audio/ogg', 'audio/wav'
+  ];
+  
+  return viewableTypes.includes(fileType);
+};
+
+// Helper to get file category for UI display
+export const getFileCategory = (fileType: string): 'image' | 'pdf' | 'video' | 'audio' | 'text' | 'other' => {
+  if (fileType.startsWith('image/')) return 'image';
+  if (fileType === 'application/pdf') return 'pdf';
+  if (fileType.startsWith('video/')) return 'video';
+  if (fileType.startsWith('audio/')) return 'audio';
+  if (fileType.startsWith('text/')) return 'text';
+  return 'other';
+};
+
 // Fetch documents for a tender
 export const fetchTenderDocuments = async (tenderId: string): Promise<TenderDocument[]> => {
   const { data, error } = await supabase
