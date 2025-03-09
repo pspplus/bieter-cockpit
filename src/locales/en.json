@@ -198,5 +198,24 @@
   },
   "toasts": {
     "tenderCreated": "Tender created successfully"
+  },
+  "milestones": {
+    "milestones": "Milestones",
+    "noMilestonesYet": "No milestones for this tender yet.",
+    "inProgress": "In Progress",
+    "dueDate": "Due Date",
+    "completionDate": "Completion Date",
+    "markAsCompleted": "Mark as completed",
+    "cannotComplete": "Milestone must be in progress first",
+    "markAsInProgress": "Mark as in progress",
+    "markAsSkipped": "Mark as skipped",
+    "cannotSkip": "Only milestones with 'pending' status can be skipped",
+    "markAsPending": "Reset to pending"
+  },
+  "milestoneActions": {
+    "complete": "Complete",
+    "start": "Start",
+    "skip": "Skip",
+    "reset": "Reset"
   }
 }

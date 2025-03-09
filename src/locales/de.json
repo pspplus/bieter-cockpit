@@ -198,5 +198,24 @@
   },
   "toasts": {
     "tenderCreated": "Ausschreibung erfolgreich erstellt"
+  },
+  "milestones": {
+    "milestones": "Meilensteine",
+    "noMilestonesYet": "Noch keine Meilensteine für dieses Angebot vorhanden.",
+    "inProgress": "In Bearbeitung",
+    "dueDate": "Fälligkeitsdatum",
+    "completionDate": "Abschlussdatum",
+    "markAsCompleted": "Als abgeschlossen markieren",
+    "cannotComplete": "Meilenstein muss zuerst in Bearbeitung sein",
+    "markAsInProgress": "Als in Bearbeitung markieren",
+    "markAsSkipped": "Als übersprungen markieren",
+    "cannotSkip": "Nur Meilensteine mit Status 'ausstehend' können übersprungen werden",
+    "markAsPending": "Auf ausstehend zurücksetzen"
+  },
+  "milestoneActions": {
+    "complete": "Abschließen",
+    "start": "Starten",
+    "skip": "Überspringen",
+    "reset": "Zurücksetzen"
   }
 }
