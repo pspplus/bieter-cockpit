@@ -24,7 +24,7 @@ export default function SubmissionsPage() {
   
   // Filter tenders that are in submitted status or beyond (won, lost)
   const submittedTenders = tenders.filter(tender => 
-    ["submitted", "clarification", "won", "lost"].includes(tender.status)
+    ["abgegeben", "aufklaerung", "gewonnen", "verloren"].includes(tender.status)
   );
   
   // Apply additional filter if selected
@@ -39,13 +39,13 @@ export default function SubmissionsPage() {
 
   const getStatusBadgeStyles = (status: TenderStatus) => {
     switch (status) {
-      case "submitted":
+      case "abgegeben":
         return "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400";
-      case "clarification":
+      case "aufklaerung":
         return "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400";
-      case "won":
+      case "gewonnen":
         return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400";
-      case "lost":
+      case "verloren":
         return "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400";
       default:
         return "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-400";
@@ -78,17 +78,17 @@ export default function SubmissionsPage() {
                 <DropdownMenuRadioItem value="all">
                   {t('submissions.allSubmissions')}
                 </DropdownMenuRadioItem>
-                <DropdownMenuRadioItem value="submitted">
-                  {t('tenders.submitted')}
+                <DropdownMenuRadioItem value="abgegeben">
+                  {t('tenders.abgegeben')}
                 </DropdownMenuRadioItem>
-                <DropdownMenuRadioItem value="clarification">
-                  {t('tenders.inClarification')}
+                <DropdownMenuRadioItem value="aufklaerung">
+                  {t('tenders.aufklaerung')}
                 </DropdownMenuRadioItem>
-                <DropdownMenuRadioItem value="won">
-                  {t('tenders.won')}
+                <DropdownMenuRadioItem value="gewonnen">
+                  {t('tenders.gewonnen')}
                 </DropdownMenuRadioItem>
-                <DropdownMenuRadioItem value="lost">
-                  {t('tenders.lost')}
+                <DropdownMenuRadioItem value="verloren">
+                  {t('tenders.verloren')}
                 </DropdownMenuRadioItem>
               </DropdownMenuRadioGroup>
             </DropdownMenuContent>

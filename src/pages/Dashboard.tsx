@@ -1,3 +1,4 @@
+
 import { Layout } from "@/components/layout/Layout";
 import { useTender } from "@/hooks/useTender";
 import { toast } from "sonner";
@@ -12,19 +13,19 @@ export default function Dashboard() {
   const { t } = useTranslation();
   
   // Filter tenders by status
-  const activeTenders = tenders.filter(t => t.status === "active");
-  const draftTenders = tenders.filter(t => t.status === "draft");
-  const submittedTenders = tenders.filter(t => ["submitted", "clarification"].includes(t.status));
-  const completedTenders = tenders.filter(t => ["won", "lost", "completed"].includes(t.status));
+  const activeTenders = tenders.filter(t => t.status === "in-bearbeitung");
+  const draftTenders = tenders.filter(t => t.status === "entwurf");
+  const submittedTenders = tenders.filter(t => ["abgegeben", "aufklaerung"].includes(t.status));
+  const completedTenders = tenders.filter(t => ["gewonnen", "verloren", "abgeschlossen"].includes(t.status));
   
   // Calculate statistics
   const totalTenders = tenders.length;
   const tendersInProgress = activeTenders.length;
   const tendersSubmitted = submittedTenders.length;
-  const tendersWon = tenders.filter(t => t.status === "won").length;
+  const tendersWon = tenders.filter(t => t.status === "gewonnen").length;
   
   // Calculate success rate (Zuschlagsquote)
-  const allSubmittedTenders = tenders.filter(t => ["submitted", "clarification", "won", "lost", "completed"].includes(t.status)).length;
+  const allSubmittedTenders = tenders.filter(t => ["abgegeben", "aufklaerung", "gewonnen", "verloren", "abgeschlossen"].includes(t.status)).length;
   const successRate = allSubmittedTenders > 0 ? Math.round((tendersWon / allSubmittedTenders) * 100) : 0;
   
   // Find upcoming deadlines (due in the next 7 days)
@@ -35,7 +36,7 @@ export default function Dashboard() {
   const upcomingDeadlines = tenders
     .filter(t => {
       const dueDate = new Date(t.dueDate);
-      return dueDate > now && dueDate <= oneWeekFromNow && t.status === "active";
+      return dueDate > now && dueDate <= oneWeekFromNow && t.status === "in-bearbeitung";
     })
     .sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime());
 
