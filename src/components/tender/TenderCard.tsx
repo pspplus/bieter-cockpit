@@ -1,7 +1,7 @@
 
 import { Tender } from "@/types/tender";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Clock, User, MapPin, FileText } from "lucide-react";
+import { Calendar, Clock, User, MapPin, FileText, Lock } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
@@ -15,7 +15,7 @@ interface TenderCardProps {
 
 export function TenderCard({ tender, isActive = false }: TenderCardProps) {
   const { t } = useTranslation();
-  const { id, title, internalReference, externalReference, client, status, dueDate, location } = tender;
+  const { id, title, internalReference, externalReference, client, status, dueDate, location, bindingPeriodDate } = tender;
   
   const statusColor = getStatusColors(status);
   const dueDateFormatted = format(new Date(dueDate), "MMM d, yyyy");
@@ -59,6 +59,12 @@ export function TenderCard({ tender, isActive = false }: TenderCardProps) {
             <Calendar className="h-4 w-4 text-tender-400" />
             <span>{dueDateFormatted}</span>
           </div>
+          {bindingPeriodDate && (
+            <div className="flex items-center gap-1.5">
+              <Lock className="h-4 w-4 text-tender-400" />
+              <span>{t('tender.bindingPeriodDate')}: {format(new Date(bindingPeriodDate), "MMM d, yyyy")}</span>
+            </div>
+          )}
           {location && (
             <div className="flex items-center gap-1.5 col-span-2">
               <MapPin className="h-4 w-4 text-tender-400" />
