@@ -1,4 +1,3 @@
-
 {
   "general": {
     "loading": "Wird geladen...",
@@ -21,13 +20,17 @@
     "signUp": "Registrieren",
     "or": "oder",
     "backToHome": "Zurück zur Startseite",
+    "backToTenders": "Zurück zu Ausschreibungen",
     "settings": "Einstellungen",
     "profile": "Profil",
     "aboutApp": "Über BietKIT",
     "notifications": "Benachrichtigungen",
     "selectLanguage": "Sprache auswählen",
     "getStarted": "Loslegen",
-    "slogan": "Der smarte Weg, Ausschreibungen zu verwalten"
+    "slogan": "Der smarte Weg, Ausschreibungen zu verwalten",
+    "pageNotFound": "Seite nicht gefunden",
+    "pageNotFoundDescription": "Die gesuchte Seite existiert nicht oder wurde verschoben.",
+    "returnToHome": "Zurück zur Startseite"
   },
   "folders": {
     "folders": "Ordner",
@@ -91,7 +94,40 @@
     "yourTenders": "Ihre Ausschreibungen",
     "viewAll": "Alle anzeigen",
     "noUpcomingMilestones": "Keine bevorstehenden Meilensteine",
-    "progress": "Fortschritt"
+    "progress": "Fortschritt",
+    "cancel": "Abbrechen",
+    "backToTenders": "Zurück zu Ausschreibungen",
+    "newTender": "Neue Ausschreibung",
+    "fillTenderDetails": "Füllen Sie die Ausschreibungsdetails aus",
+    "descriptionPlaceholder": "Geben Sie eine Beschreibung für die Ausschreibung ein",
+    "selectClient": "Vergabestelle auswählen"
+  },
+  "tenderDetails": {
+    "loading": "Wird geladen...",
+    "notFound": "Nicht gefunden",
+    "tenderNotFound": "Ausschreibung nicht gefunden",
+    "tenderMayNotExist": "Ausschreibung existiert möglicherweise nicht oder wurde gelöscht.",
+    "details": "Details",
+    "documents": "Dokumente",
+    "milestones": "Meilensteine",
+    "edit": "Bearbeiten",
+    "delete": "Löschen",
+    "contactInformation": "Kontaktinformationen"
+  },
+  "tender": {
+    "title": "Titel",
+    "description": "Beschreibung",
+    "client": "Vergabestelle",
+    "location": "Ort",
+    "reference": "Referenz",
+    "externalReference": "Externe Referenznummer",
+    "externalReferenceHelp": "Die vom Kunden vergebene Referenznummer",
+    "internalReference": "Interne Referenznummer",
+    "internalReferenceHelp": "Wird beim Erstellen automatisch generiert",
+    "contactPerson": "Ansprechpartner",
+    "contactEmail": "E-Mail",
+    "contactPhone": "Telefon",
+    "budget": "Budget"
   },
   "errorMessages": {
     "couldNotLoadTenders": "Ausschreibungen konnten nicht geladen werden",
@@ -108,7 +144,8 @@
     "couldNotLoadDocuments": "Dokumente konnten nicht geladen werden",
     "couldNotUploadDocument": "Dokument konnte nicht hochgeladen werden",
     "couldNotDeleteDocument": "Dokument konnte nicht gelöscht werden",
-    "unknownError": "Ein unbekannter Fehler ist aufgetreten"
+    "unknownError": "Ein unbekannter Fehler ist aufgetreten",
+    "selectClient": "Bitte wählen Sie eine Vergabestelle aus"
   },
   "sidebar": {
     "home": "Startseite",
@@ -147,5 +184,19 @@
     "milestoneCreated": "Meilenstein erfolgreich erstellt",
     "milestoneUpdated": "Meilenstein erfolgreich aktualisiert",
     "milestoneDeleted": "Meilenstein erfolgreich gelöscht"
+  },
+  "submissions": {
+    "submissions": "Einreichungen",
+    "allSubmissions": "Alle Einreichungen",
+    "createSubmission": "Einreichung erstellen",
+    "viewSubmission": "Einreichung anzeigen",
+    "submittedDate": "Eingereicht am",
+    "noSubmissionsFound": "Keine Einreichungen gefunden",
+    "noSubmissionsCreated": "Sie haben noch keine Einreichungen erstellt.",
+    "noSubmissionsWithStatus": "Sie haben keine Einreichungen mit dem Status: {{status}}",
+    "createYourFirstSubmission": "Erstellen Sie Ihre erste Einreichung"
+  },
+  "toasts": {
+    "tenderCreated": "Ausschreibung erfolgreich erstellt"
   }
 }

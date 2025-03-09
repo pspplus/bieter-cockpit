@@ -11,7 +11,7 @@ export default function NewTenderPage() {
   const navigate = useNavigate();
 
   return (
-    <Layout title={t('tenders.createNewTender')}>
+    <Layout title={t('tenders.createTender')}>
       <div className="space-y-6">
         <Button
           variant="ghost"
@@ -20,7 +20,7 @@ export default function NewTenderPage() {
           onClick={() => navigate("/tenders")}
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
-          {t('tenders.backToTenders')}
+          {t('general.backToTenders')}
         </Button>
 
         <TenderCreationForm />

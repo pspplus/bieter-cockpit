@@ -1,4 +1,3 @@
-
 {
   "general": {
     "loading": "Loading...",
@@ -21,13 +20,17 @@
     "signUp": "Sign up",
     "or": "or",
     "backToHome": "Back to home",
+    "backToTenders": "Back to tenders",
     "settings": "Settings",
     "profile": "Profile",
     "aboutApp": "About BietKIT",
     "notifications": "Notifications",
     "selectLanguage": "Select language",
     "getStarted": "Get Started",
-    "slogan": "The smart way to manage tenders"
+    "slogan": "The smart way to manage tenders",
+    "pageNotFound": "Page Not Found",
+    "pageNotFoundDescription": "The page you are looking for doesn't exist or has been moved.",
+    "returnToHome": "Return to Home"
   },
   "folders": {
     "folders": "Folders",
@@ -91,7 +94,40 @@
     "yourTenders": "Your Tenders",
     "viewAll": "View All",
     "noUpcomingMilestones": "No upcoming milestones",
-    "progress": "Progress"
+    "progress": "Progress",
+    "cancel": "Cancel",
+    "backToTenders": "Back to Tenders",
+    "newTender": "New Tender",
+    "fillTenderDetails": "Fill in the tender details",
+    "descriptionPlaceholder": "Enter a description for the tender",
+    "selectClient": "Select client"
+  },
+  "tenderDetails": {
+    "loading": "Loading...",
+    "notFound": "Not Found",
+    "tenderNotFound": "Tender Not Found",
+    "tenderMayNotExist": "Tender may not exist or has been deleted.",
+    "details": "Details",
+    "documents": "Documents",
+    "milestones": "Milestones",
+    "edit": "Edit",
+    "delete": "Delete",
+    "contactInformation": "Contact Information"
+  },
+  "tender": {
+    "title": "Title",
+    "description": "Description",
+    "client": "Client",
+    "location": "Location",
+    "reference": "Reference",
+    "externalReference": "External Reference",
+    "externalReferenceHelp": "Reference number assigned by the client",
+    "internalReference": "Internal Reference",
+    "internalReferenceHelp": "Automatically generated when created",
+    "contactPerson": "Contact Person",
+    "contactEmail": "Email",
+    "contactPhone": "Phone",
+    "budget": "Budget"
   },
   "errorMessages": {
     "couldNotLoadTenders": "Could not load tenders",
@@ -108,7 +144,8 @@
     "couldNotLoadDocuments": "Could not load documents",
     "couldNotUploadDocument": "Could not upload document",
     "couldNotDeleteDocument": "Could not delete document",
-    "unknownError": "An unknown error occurred"
+    "unknownError": "An unknown error occurred",
+    "selectClient": "Please select a client"
   },
   "sidebar": {
     "home": "Home",
@@ -147,5 +184,19 @@
     "milestoneCreated": "Milestone created successfully",
     "milestoneUpdated": "Milestone updated successfully",
     "milestoneDeleted": "Milestone deleted successfully"
+  },
+  "submissions": {
+    "submissions": "Submissions",
+    "allSubmissions": "All Submissions",
+    "createSubmission": "Create Submission",
+    "viewSubmission": "View Submission",
+    "submittedDate": "Submitted Date",
+    "noSubmissionsFound": "No Submissions Found",
+    "noSubmissionsCreated": "You haven't created any submissions yet.",
+    "noSubmissionsWithStatus": "You don't have any submissions with status: {{status}}",
+    "createYourFirstSubmission": "Create Your First Submission"
+  },
+  "toasts": {
+    "tenderCreated": "Tender created successfully"
   }
 }

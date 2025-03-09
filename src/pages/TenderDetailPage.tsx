@@ -13,7 +13,7 @@ import { fetchTenderDocuments } from "@/services/documentService";
 import { Tender, TenderDocument } from "@/types/tender";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
-import { Trash2, File } from "lucide-react";
+import { Trash2 } from "lucide-react";
 
 export default function TenderDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -36,7 +36,7 @@ export default function TenderDetailPage() {
         setDocuments(docsData);
       } catch (error) {
         console.error("Error loading tender:", error);
-        toast.error(t('errorMessages.couldNotLoadTender', 'Could not load tender'));
+        toast.error(t('errorMessages.couldNotLoadTender'));
       } finally {
         setIsLoading(false);
       }
@@ -50,11 +50,11 @@ export default function TenderDetailPage() {
     
     try {
       await deleteTender(tender.id);
-      toast.success(t('notifications.tenderDeleted', 'Tender deleted'));
+      toast.success(t('notifications.tenderDeleted'));
       navigate("/tenders");
     } catch (error) {
       console.error("Error deleting tender:", error);
-      toast.error(t('errorMessages.couldNotDeleteTender', 'Could not delete tender'));
+      toast.error(t('errorMessages.couldNotDeleteTender'));
     }
   };
 
@@ -68,7 +68,7 @@ export default function TenderDetailPage() {
 
   if (isLoading) {
     return (
-      <Layout title={t('tenderDetails.loading', 'Loading...')}>
+      <Layout title={t('tenderDetails.loading')}>
         <div className="flex items-center justify-center h-64">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
         </div>
@@ -78,16 +78,16 @@ export default function TenderDetailPage() {
 
   if (!tender) {
     return (
-      <Layout title={t('tenderDetails.notFound', 'Not Found')}>
+      <Layout title={t('tenderDetails.notFound')}>
         <div className="text-center py-12">
-          <h2 className="text-2xl font-semibold">{t('tenderDetails.tenderNotFound', 'Tender Not Found')}</h2>
-          <p className="text-muted-foreground mt-2">{t('tenderDetails.tenderMayNotExist', 'Tender may not exist or has been deleted.')}</p>
+          <h2 className="text-2xl font-semibold">{t('tenderDetails.tenderNotFound')}</h2>
+          <p className="text-muted-foreground mt-2">{t('tenderDetails.tenderMayNotExist')}</p>
           <Button 
             onClick={() => navigate("/tenders")} 
             className="mt-4"
             variant="outline"
           >
-            {t('general.backToTenders', 'Back to Tenders')}
+            {t('general.backToTenders')}
           </Button>
         </div>
       </Layout>
@@ -101,10 +101,10 @@ export default function TenderDetailPage() {
           <div className="w-full">
             <Tabs defaultValue={activeTab} onValueChange={setActiveTab} className="w-full">
               <TabsList>
-                <TabsTrigger value="details">{t('tenderDetails.details', 'Details')}</TabsTrigger>
-                <TabsTrigger value="documents">{t('tenderDetails.documents', 'Documents')}</TabsTrigger>
-                <TabsTrigger value="milestones">{t('tenderDetails.milestones', 'Milestones')}</TabsTrigger>
-                <TabsTrigger value="edit">{t('tenderDetails.edit', 'Edit')}</TabsTrigger>
+                <TabsTrigger value="details">{t('tenderDetails.details')}</TabsTrigger>
+                <TabsTrigger value="documents">{t('tenderDetails.documents')}</TabsTrigger>
+                <TabsTrigger value="milestones">{t('tenderDetails.milestones')}</TabsTrigger>
+                <TabsTrigger value="edit">{t('tenderDetails.edit')}</TabsTrigger>
               </TabsList>
             
               <TabsContent value="details" className="mt-4">
@@ -137,7 +137,7 @@ export default function TenderDetailPage() {
             className="ml-2 flex-shrink-0"
           >
             <Trash2 className="h-4 w-4" />
-            <span className="sr-only">{t('tenderDetails.delete', 'Delete')}</span>
+            <span className="sr-only">{t('tenderDetails.delete')}</span>
           </Button>
         </div>
       </div>
