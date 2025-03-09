@@ -1,11 +1,14 @@
+
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ChevronRight, FileText, CheckCircle, Smile } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useAuth } from "@/context/AuthContext";
 
 export default function Index() {
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const { isAuthenticated } = useAuth();
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -15,9 +18,29 @@ export default function Index() {
             <Smile className="h-9 w-9 text-yellow-400" />
             <span className="text-xl font-semibold">{t('general.appName')}</span>
           </div>
-          <Button onClick={() => navigate("/dashboard")} className="rounded-full">
-            {t('general.getStarted')}
-          </Button>
+          <div className="flex items-center gap-3">
+            {isAuthenticated ? (
+              <Button onClick={() => navigate("/dashboard")} className="rounded-full">
+                {t('general.getStarted')}
+              </Button>
+            ) : (
+              <>
+                <Button 
+                  variant="outline" 
+                  onClick={() => navigate('/login')}
+                  className="rounded-full"
+                >
+                  {t('auth.login') || 'Anmelden'}
+                </Button>
+                <Button 
+                  onClick={() => navigate('/signup')}
+                  className="rounded-full"
+                >
+                  {t('auth.signup') || 'Registrieren'}
+                </Button>
+              </>
+            )}
+          </div>
         </div>
       </header>
       
@@ -34,14 +57,25 @@ export default function Index() {
               {t('landing.subheadline')}
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4 animate-slide-up" style={{ animationDelay: "200ms" }}>
-              <Button 
-                size="lg" 
-                onClick={() => navigate("/dashboard")}
-                className="rounded-full"
-              >
-                {t('general.getStarted')}
-                <ChevronRight className="h-4 w-4 ml-1" />
-              </Button>
+              {isAuthenticated ? (
+                <Button 
+                  size="lg" 
+                  onClick={() => navigate("/dashboard")}
+                  className="rounded-full"
+                >
+                  {t('general.getStarted')}
+                  <ChevronRight className="h-4 w-4 ml-1" />
+                </Button>
+              ) : (
+                <Button 
+                  size="lg" 
+                  onClick={() => navigate("/signup")}
+                  className="rounded-full"
+                >
+                  {t('auth.createAccount') || 'Konto erstellen'}
+                  <ChevronRight className="h-4 w-4 ml-1" />
+                </Button>
+              )}
               <Button 
                 size="lg" 
                 variant="outline"
@@ -57,9 +91,9 @@ export default function Index() {
         <section className="py-16 bg-tender-50">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-semibold mb-4">Comprehensive Milestone Tracking</h2>
+              <h2 className="text-3xl font-semibold mb-4">{t('landing.featureHeading')}</h2>
               <p className="text-tender-600 max-w-2xl mx-auto">
-                Follow every step of your tender process with our milestone-based project management system.
+                {t('landing.featureSubheading')}
               </p>
             </div>
             
@@ -68,9 +102,9 @@ export default function Index() {
                 <div className="rounded-full w-12 h-12 bg-blue-100 text-blue-600 flex items-center justify-center mb-4">
                   <FileText className="h-6 w-6" />
                 </div>
-                <h3 className="text-xl font-medium mb-2">Document Management</h3>
+                <h3 className="text-xl font-medium mb-2">{t('landing.feature1Title')}</h3>
                 <p className="text-tender-600">
-                  Organize and review all tender documents efficiently from initial check to final submission.
+                  {t('landing.feature1Description')}
                 </p>
               </div>
               
@@ -78,9 +112,9 @@ export default function Index() {
                 <div className="rounded-full w-12 h-12 bg-yellow-100 text-yellow-600 flex items-center justify-center mb-4">
                   <Smile className="h-6 w-6" />
                 </div>
-                <h3 className="text-xl font-medium mb-2">Strategic Planning</h3>
+                <h3 className="text-xl font-medium mb-2">{t('landing.feature2Title')}</h3>
                 <p className="text-tender-600">
-                  Develop winning strategies and comprehensive tender concepts that stand out.
+                  {t('landing.feature2Description')}
                 </p>
               </div>
               
@@ -88,9 +122,9 @@ export default function Index() {
                 <div className="rounded-full w-12 h-12 bg-green-100 text-green-600 flex items-center justify-center mb-4">
                   <CheckCircle className="h-6 w-6" />
                 </div>
-                <h3 className="text-xl font-medium mb-2">Implementation</h3>
+                <h3 className="text-xl font-medium mb-2">{t('landing.feature3Title')}</h3>
                 <p className="text-tender-600">
-                  Seamlessly transition from successful tender to project implementation.
+                  {t('landing.feature3Description')}
                 </p>
               </div>
             </div>

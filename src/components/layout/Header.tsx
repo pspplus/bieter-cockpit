@@ -16,7 +16,8 @@ import { useState } from "react";
 import { useTender } from "@/context/TenderContext";
 import { useNavigate } from "react-router-dom";
 import { LanguageSwitcher } from "./LanguageSwitcher";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
+import { useAuth } from "@/context/AuthContext";
 
 interface HeaderProps {
   toggleSidebar?: () => void;
@@ -28,6 +29,7 @@ export function Header({ toggleSidebar, title = "Tender Management" }: HeaderPro
   const [searchQuery, setSearchQuery] = useState("");
   const { createTender } = useTender();
   const navigate = useNavigate();
+  const { user, isAuthenticated, logout } = useAuth();
 
   const handleCreateTender = () => {
     const newTender = createTender({
@@ -68,46 +70,69 @@ export function Header({ toggleSidebar, title = "Tender Management" }: HeaderPro
         </div>
 
         <div className="flex items-center gap-4">
-          <Button 
-            onClick={handleCreateTender}
-            className="hidden md:flex items-center gap-1.5 rounded-full"
-          >
-            <PlusCircle className="h-4 w-4" />
-            <span>{t('general.createNewTender')}</span>
-          </Button>
-          
-          <Button
-            variant="ghost"
-            size="icon"
-            className="text-tender-500 hover:text-tender-600"
-          >
-            <Bell className="h-5 w-5" />
-            <span className="sr-only">{t('navigation.notifications')}</span>
-          </Button>
-
-          <LanguageSwitcher />
-
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
+          {isAuthenticated ? (
+            <>
+              <Button 
+                onClick={handleCreateTender}
+                className="hidden md:flex items-center gap-1.5 rounded-full"
+              >
+                <PlusCircle className="h-4 w-4" />
+                <span>{t('general.createNewTender')}</span>
+              </Button>
+              
               <Button
                 variant="ghost"
-                className="relative h-9 w-9 rounded-full"
+                size="icon"
+                className="text-tender-500 hover:text-tender-600"
               >
-                <Avatar className="h-9 w-9">
-                  <AvatarImage src="" alt="User" />
-                  <AvatarFallback className="bg-primary text-primary-foreground">JD</AvatarFallback>
-                </Avatar>
+                <Bell className="h-5 w-5" />
+                <span className="sr-only">{t('navigation.notifications')}</span>
               </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56" align="end">
-              <DropdownMenuLabel>{t('navigation.myAccount')}</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>{t('navigation.profile')}</DropdownMenuItem>
-              <DropdownMenuItem>{t('navigation.settings')}</DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>{t('navigation.logout')}</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+
+              <LanguageSwitcher />
+
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    className="relative h-9 w-9 rounded-full"
+                  >
+                    <Avatar className="h-9 w-9">
+                      <AvatarImage src="" alt={user?.name || "User"} />
+                      <AvatarFallback className="bg-primary text-primary-foreground">
+                        {user?.name ? user.name.substring(0, 2).toUpperCase() : "JD"}
+                      </AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56" align="end">
+                  <DropdownMenuLabel>{user?.name || t('navigation.myAccount')}</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem>{t('navigation.profile')}</DropdownMenuItem>
+                  <DropdownMenuItem>{t('navigation.settings')}</DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={logout}>{t('navigation.logout')}</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </>
+          ) : (
+            <>
+              <LanguageSwitcher />
+              <Button 
+                variant="outline" 
+                onClick={() => navigate('/login')}
+                className="rounded-full"
+              >
+                {t('auth.login') || 'Anmelden'}
+              </Button>
+              <Button 
+                onClick={() => navigate('/signup')}
+                className="rounded-full"
+              >
+                {t('auth.signup') || 'Registrieren'}
+              </Button>
+            </>
+          )}
         </div>
       </div>
     </header>

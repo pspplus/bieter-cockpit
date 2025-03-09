@@ -1,3 +1,4 @@
+
 {
   "general": {
     "appName": "Tender Testing",
@@ -119,5 +120,24 @@
     "milestoneInProgress": "Milestone marked as in progress",
     "milestoneCompleted": "Milestone completed",
     "milestoneSkipped": "Milestone skipped"
+  },
+  "auth": {
+    "login": "Log in",
+    "loginDescription": "Sign in to access your account",
+    "email": "Email",
+    "password": "Password",
+    "forgotPassword": "Forgot password?",
+    "loggingIn": "Logging in...",
+    "noAccount": "Don't have an account?",
+    "signup": "Sign up",
+    "signupDescription": "Create an account to get started",
+    "name": "Name",
+    "confirmPassword": "Confirm Password",
+    "passwordMismatch": "Passwords do not match",
+    "passwordTooShort": "Password must be at least 6 characters long",
+    "creatingAccount": "Creating account...",
+    "createAccount": "Create account",
+    "haveAccount": "Already have an account?",
+    "logout": "Log out"
   }
 }
