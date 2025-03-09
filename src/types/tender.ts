@@ -21,7 +21,7 @@ export interface Folder {
   parentId: string | null;
   tenderId: string;
   folderOrder: number;
-  folderPath: string;
+  folderPath?: string;
   isDefault: boolean;
   children?: Folder[];
 }
@@ -44,11 +44,13 @@ export interface TenderDocument {
   name: string;
   description?: string;
   uploadDate: Date;
-  fileUrl?: string;
+  fileUrl: string;
   fileType: string;
   fileSize?: number;
-  folderId?: string;
+  folderId?: string | null;
   folderPath?: string;
+  tenderId?: string | null;
+  milestoneId?: string | null;
 }
 
 export interface Tender {

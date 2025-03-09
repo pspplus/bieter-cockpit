@@ -67,7 +67,7 @@ export const fetchFolderDocuments = async (folderId: string): Promise<TenderDocu
   return (data || []).map(mapDocumentFromDB);
 };
 
-// Upload a document
+// Upload a single document
 export const uploadDocument = async (
   file: File,
   name: string,
@@ -131,6 +131,41 @@ export const uploadDocument = async (
   }
 
   return mapDocumentFromDB(document);
+};
+
+// Upload multiple documents at once
+export const uploadMultipleDocuments = async (
+  files: File[],
+  names: string[],
+  description: string = "",
+  tenderId?: string,
+  milestoneId?: string,
+  folderId?: string | null
+): Promise<TenderDocument[]> => {
+  const uploadedDocuments: TenderDocument[] = [];
+  
+  for (let i = 0; i < files.length; i++) {
+    // Use the file name if no custom name is provided
+    const documentName = names[i] || files[i].name.split('.')[0];
+    
+    try {
+      const document = await uploadDocument(
+        files[i],
+        documentName,
+        description,
+        tenderId,
+        milestoneId,
+        folderId
+      );
+      
+      uploadedDocuments.push(document);
+    } catch (error) {
+      console.error(`Error uploading file ${files[i].name}:`, error);
+      // Continue with other files even if one fails
+    }
+  }
+  
+  return uploadedDocuments;
 };
 
 // Delete a document

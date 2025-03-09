@@ -24,7 +24,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { format } from "date-fns";
 import { toast } from "sonner";
-import { uploadDocument, deleteDocument, fetchFolderDocuments } from "@/services/documentService";
+import { uploadDocument, uploadMultipleDocuments, deleteDocument, fetchFolderDocuments } from "@/services/documentService";
 import { FolderTree } from "@/components/folder/FolderTree";
 
 interface DocumentListProps {
@@ -46,62 +46,80 @@ export function DocumentList({
 }: DocumentListProps) {
   const { t } = useTranslation();
   const [isUploading, setIsUploading] = useState(false);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [documentName, setDocumentName] = useState("");
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [documentNames, setDocumentNames] = useState<string[]>([]);
   const [documentDescription, setDocumentDescription] = useState("");
   const [selectedFolder, setSelectedFolder] = useState<string | null>(null);
   const [currentDocuments, setCurrentDocuments] = useState<TenderDocument[]>(documents);
   const [currentFolderId, setCurrentFolderId] = useState<string | null>(null);
   
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      setSelectedFile(file);
+    if (e.target.files && e.target.files.length > 0) {
+      const filesArray = Array.from(e.target.files);
+      setSelectedFiles(filesArray);
       
-      // Use file name as document name if none is provided
-      if (!documentName) {
-        setDocumentName(file.name.split('.')[0]);
-      }
+      // Generate names from file names (removing extension)
+      const newNames = filesArray.map(file => file.name.split('.')[0]);
+      setDocumentNames(newNames);
     }
   };
   
+  const handleNameChange = (index: number, value: string) => {
+    const newNames = [...documentNames];
+    newNames[index] = value;
+    setDocumentNames(newNames);
+  };
+  
   const handleUpload = async () => {
-    if (!selectedFile) {
-      toast.error(t('errorMessages.selectFile', 'Please select a file'));
+    if (selectedFiles.length === 0) {
+      toast.error(t('errorMessages.selectFile', 'Please select at least one file'));
       return;
     }
     
-    if (!documentName.trim()) {
-      toast.error(t('errorMessages.enterDocumentName', 'Please enter a document name'));
+    // Verify all files have names
+    const emptyNameIndex = documentNames.findIndex(name => !name.trim());
+    if (emptyNameIndex !== -1) {
+      toast.error(t('errorMessages.enterDocumentName', `Please enter a name for document ${emptyNameIndex + 1}`));
       return;
     }
     
     try {
       setIsUploading(true);
-      const newDocument = await uploadDocument(
-        selectedFile,
-        documentName,
+      
+      // Upload multiple files
+      const uploadedDocuments = await uploadMultipleDocuments(
+        selectedFiles,
+        documentNames,
         documentDescription,
         tenderId,
         milestoneId,
         selectedFolder
       );
       
-      onDocumentAdded(newDocument);
-      setCurrentDocuments(prev => [newDocument, ...prev]);
-      toast.success(t('documents.uploadSuccess', 'Document uploaded successfully'));
+      // Update UI with all newly uploaded documents
+      uploadedDocuments.forEach(doc => {
+        onDocumentAdded(doc);
+      });
+      
+      setCurrentDocuments(prev => [...uploadedDocuments, ...prev]);
+      
+      const messageText = uploadedDocuments.length === 1 
+        ? t('documents.singleUploadSuccess', 'Document uploaded successfully')
+        : t('documents.multipleUploadSuccess', `${uploadedDocuments.length} documents uploaded successfully`);
+      
+      toast.success(messageText);
       
       // Reset form
-      setSelectedFile(null);
-      setDocumentName("");
+      setSelectedFiles([]);
+      setDocumentNames([]);
       setDocumentDescription("");
       
       // Close dialog by clicking the close button
       const closeButton = document.querySelector('[data-dialog-close]') as HTMLButtonElement;
       if (closeButton) closeButton.click();
     } catch (error) {
-      console.error("Error uploading document:", error);
-      toast.error(t('errorMessages.uploadFailed', 'Failed to upload document'));
+      console.error("Error uploading documents:", error);
+      toast.error(t('errorMessages.uploadFailed', 'Failed to upload documents'));
     } finally {
       setIsUploading(false);
     }
@@ -179,6 +197,7 @@ export function DocumentList({
                   id="file-upload"
                   className="hidden"
                   onChange={handleFileChange}
+                  multiple // Enable multiple file selection
                 />
                 <label
                   htmlFor="file-upload"
@@ -186,13 +205,44 @@ export function DocumentList({
                 >
                   <Upload className="w-8 h-8 text-gray-400 mb-2" />
                   <span className="text-sm font-medium text-gray-700">
-                    {selectedFile ? selectedFile.name : t('documents.clickToUpload')}
+                    {selectedFiles.length > 0 
+                      ? `${selectedFiles.length} ${selectedFiles.length === 1 ? t('documents.fileSelected', 'file selected') : t('documents.filesSelected', 'files selected')}`
+                      : t('documents.clickToUpload')}
                   </span>
                   <span className="text-xs text-gray-500 mt-1">
                     {t('documents.maxFileSize')}
                   </span>
                 </label>
               </div>
+              
+              {selectedFiles.length > 0 && (
+                <div className="space-y-3">
+                  <h4 className="text-sm font-medium">{t('documents.selectedFiles', 'Selected Files')}</h4>
+                  
+                  <div className="max-h-40 overflow-y-auto space-y-2">
+                    {selectedFiles.map((file, index) => (
+                      <div key={index} className="flex items-center space-x-2">
+                        <div className="w-8 h-8 bg-muted flex items-center justify-center rounded">
+                          <FileIcon className="w-4 h-4" />
+                        </div>
+                        
+                        <div className="flex-1">
+                          <Input
+                            value={documentNames[index] || ''}
+                            onChange={(e) => handleNameChange(index, e.target.value)}
+                            placeholder={t('documents.nameForFile', 'Name for this file')}
+                            className="text-sm"
+                          />
+                        </div>
+                        
+                        <div className="text-xs text-muted-foreground">
+                          {formatFileSize(file.size)}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
               
               {folders && folders.length > 0 && (
                 <div className="space-y-2">
@@ -204,25 +254,12 @@ export function DocumentList({
                       folders={folders} 
                       onSelectFolder={(folderId) => setSelectedFolder(folderId)}
                       selectedFolderId={selectedFolder}
-                      readOnly={false}
+                      readOnly={true}
                       tenderId={tenderId || ""}
                     />
                   </div>
                 </div>
               )}
-              
-              <div className="space-y-2">
-                <label htmlFor="document-name" className="text-sm font-medium">
-                  {t('documents.name')} *
-                </label>
-                <Input
-                  id="document-name"
-                  value={documentName}
-                  onChange={(e) => setDocumentName(e.target.value)}
-                  placeholder={t('documents.namePlaceholder')}
-                  required
-                />
-              </div>
               
               <div className="space-y-2">
                 <label htmlFor="document-description" className="text-sm font-medium">
@@ -235,6 +272,9 @@ export function DocumentList({
                   placeholder={t('documents.descriptionPlaceholder')}
                   rows={3}
                 />
+                <p className="text-xs text-muted-foreground">
+                  {t('documents.descriptionAppliedToAll', 'This description will be applied to all uploaded files')}
+                </p>
               </div>
             </div>
             
