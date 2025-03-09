@@ -4,7 +4,6 @@ import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useTranslation } from "react-i18next";
 import {
   ChevronLeft,
   FileCheck,
@@ -24,7 +23,6 @@ interface SidebarProps {
 export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const location = useLocation();
-  const { t } = useTranslation();
   
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -56,7 +54,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
             onClick={onClose}
           >
             <ChevronLeft className="h-5 w-5" />
-            <span className="sr-only">Close sidebar</span>
+            <span className="sr-only">Seitenleiste schließen</span>
           </Button>
         )}
       </div>
@@ -70,7 +68,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
             )}
           >
             <Home className="h-5 w-5" />
-            <span>{t('sidebar.home')}</span>
+            <span>Startseite</span>
           </Link>
           <Link
             to="/dashboard"
@@ -80,7 +78,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
             )}
           >
             <LayoutDashboard className="h-5 w-5" />
-            <span>{t('sidebar.dashboard')}</span>
+            <span>Dashboard</span>
           </Link>
           <Link
             to="/tenders"
@@ -91,7 +89,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
             )}
           >
             <FileText className="h-5 w-5" />
-            <span>{t('sidebar.tenders')}</span>
+            <span>Ausschreibungen</span>
           </Link>
           <Link
             to="/submissions"
@@ -101,7 +99,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
             )}
           >
             <FileCheck className="h-5 w-5" />
-            <span>{t('sidebar.submissions')}</span>
+            <span>Einreichungen</span>
           </Link>
           <Link
             to="/messages"
@@ -111,7 +109,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
             )}
           >
             <Inbox className="h-5 w-5" />
-            <span>{t('sidebar.messages')}</span>
+            <span>Nachrichten</span>
           </Link>
           <Link
             to="/clients"
@@ -122,7 +120,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
             )}
           >
             <Users className="h-5 w-5" />
-            <span>{t('sidebar.clients')}</span>
+            <span>Kunden</span>
           </Link>
         </nav>
       </ScrollArea>
@@ -135,7 +133,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
           )}
         >
           <Settings className="h-5 w-5" />
-          <span>{t('sidebar.settings')}</span>
+          <span>Einstellungen</span>
         </Link>
       </div>
     </div>
