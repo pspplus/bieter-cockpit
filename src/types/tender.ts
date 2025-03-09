@@ -20,10 +20,11 @@ export interface Milestone {
   title: string;
   description: string;
   status: MilestoneStatus;
-  dueDate?: Date;
-  completionDate?: Date;
+  dueDate: Date | null;
+  completionDate: Date | null;
   notes?: string;
   documents?: TenderDocument[];
+  tenderId?: string; // Add tenderId to match what's used in the code
 }
 
 export interface TenderDocument {

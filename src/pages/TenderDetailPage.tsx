@@ -119,11 +119,11 @@ export default function TenderDetailPage() {
         </TabsContent>
         
         <TabsContent value="milestones" className="mt-0">
-          <MilestonesList tender={tender} setTender={setTender} />
+          <MilestonesList tender={tender} />
         </TabsContent>
 
         <TabsContent value="edit" className="mt-0">
-          <TenderEditForm tender={tender} setTender={setTender} />
+          <TenderEditForm tender={tender} onCancel={() => setActiveTab("details")} />
         </TabsContent>
       </div>
     </Layout>

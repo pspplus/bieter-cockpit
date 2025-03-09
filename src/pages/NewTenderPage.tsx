@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
@@ -34,28 +33,37 @@ export default function NewTenderPage() {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Create new tender
-    const newTender = createTender({
-      title: formData.title || t('tenders.newTender'),
-      reference: formData.reference,
-      description: formData.description,
-      client: formData.client,
-      location: formData.location,
-      contactPerson: formData.contactPerson,
-      contactEmail: formData.contactEmail,
-      contactPhone: formData.contactPhone,
-    });
+    try {
+      // Create new tender
+      const newTender = await createTender({
+        title: formData.title || t('tenders.newTender'),
+        reference: formData.reference,
+        description: formData.description,
+        client: formData.client,
+        location: formData.location,
+        contactPerson: formData.contactPerson,
+        contactEmail: formData.contactEmail,
+        contactPhone: formData.contactPhone,
+      });
 
-    toast({
-      title: t('toasts.tenderCreated'),
-      description: formData.title || t('tenders.newTender'),
-    });
+      toast({
+        title: t('toasts.tenderCreated'),
+        description: formData.title || t('tenders.newTender'),
+      });
 
-    // Navigate to the new tender page
-    navigate(`/tenders/${newTender.id}`);
+      // Navigate to the new tender page
+      navigate(`/tenders/${newTender.id}`);
+    } catch (error) {
+      console.error("Error creating tender:", error);
+      toast({
+        title: t('errorMessages.createFailed'),
+        description: t('errorMessages.couldNotCreateTender'),
+        variant: "destructive",
+      });
+    }
   };
 
   return (

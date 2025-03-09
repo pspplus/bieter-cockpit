@@ -1,6 +1,5 @@
-
 import { supabase } from "@/integrations/supabase/client";
-import { Tender, TenderStatus, Milestone } from "@/types/tender";
+import { Tender, TenderStatus, Milestone, MilestoneStatus } from "@/types/tender";
 import { format } from "date-fns";
 
 // Convert a Supabase tender row to our application Tender type
@@ -29,7 +28,6 @@ const mapTenderFromDB = (tender: any, milestones: any[] = []): Tender => {
 const mapMilestoneFromDB = (milestone: any): Milestone => {
   return {
     id: milestone.id,
-    tenderId: milestone.tender_id,
     title: milestone.title,
     description: milestone.description || "",
     status: milestone.status,
@@ -43,7 +41,6 @@ const mapMilestoneFromDB = (milestone: any): Milestone => {
 const mapMilestoneForDB = (milestone: Partial<Milestone>) => {
   return {
     ...(milestone.id && { id: milestone.id }),
-    ...(milestone.tenderId && { tender_id: milestone.tenderId }),
     ...(milestone.title && { title: milestone.title }),
     ...(milestone.description !== undefined && { description: milestone.description }),
     ...(milestone.status && { status: milestone.status }),
@@ -262,7 +259,7 @@ export const createMilestone = async (milestone: Partial<Milestone>): Promise<Mi
 
   // Prepare the milestone data
   const dbMilestone = {
-    tender_id: milestone.tenderId,
+    tender_id: milestone.tenderId, // This is the tender ID, not the milestone ID
     title: milestone.title || "",
     description: milestone.description || "",
     status: milestone.status || "pending",

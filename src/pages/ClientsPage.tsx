@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Layout } from "@/components/layout/Layout";
 import { useClient } from "@/context/ClientContext";
@@ -47,18 +46,23 @@ const ClientsPage = () => {
       client.email.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleCreateClient = () => {
+  const handleCreateClient = async () => {
     if (!newClient.name) return;
-    const client = createClient(newClient);
-    setNewClient({
-      name: "",
-      contactPerson: "",
-      email: "",
-      phone: "",
-      address: "",
-    });
-    setIsCreateDialogOpen(false);
-    navigate(`/clients/${client.id}`);
+    
+    try {
+      const client = await createClient(newClient);
+      setNewClient({
+        name: "",
+        contactPerson: "",
+        email: "",
+        phone: "",
+        address: "",
+      });
+      setIsCreateDialogOpen(false);
+      navigate(`/clients/${client.id}`);
+    } catch (error) {
+      console.error("Error creating client:", error);
+    }
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {

@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Tender } from "@/types/tender";
 import { Input } from "@/components/ui/input";
@@ -19,7 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { CalendarIcon, Buildings, Users } from "lucide-react";
+import { CalendarIcon, Building, Users } from "lucide-react";
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import { useClient } from "@/context/ClientContext";
