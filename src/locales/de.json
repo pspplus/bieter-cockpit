@@ -1,6 +1,7 @@
+
 {
   "general": {
-    "appName": "TenderFlow",
+    "appName": "Bieter Cockpit",
     "createNewTender": "Neue Ausschreibung",
     "viewTenders": "Ausschreibungen anzeigen",
     "getStarted": "Loslegen",
@@ -115,7 +116,7 @@
     "headline": "Vereinfachen Sie Ihr Ausschreibungsmanagement",
     "subheadline": "Verwalten Sie Ausschreibungen, arbeiten Sie mit Kunden zusammen und bleiben Sie mit Ihrem Team auf dem Laufenden – alles an einem Ort.",
     "featureHeading": "Funktionen, die Sie lieben werden",
-    "featureSubheading": "TenderFlow wurde entwickelt, um Ihren Ausschreibungsprozess zu optimieren und Ihnen zu helfen, organisiert und effizient zu bleiben.",
+    "featureSubheading": "Bieter Cockpit wurde entwickelt, um Ihren Ausschreibungsprozess zu optimieren und Ihnen zu helfen, organisiert und effizient zu bleiben.",
     "feature1Title": "Mühelose Ausschreibungsverwaltung",
     "feature1Description": "Erstellen, verwalten und verfolgen Sie alle Ihre Ausschreibungen ganz einfach von einem zentralen Dashboard aus.",
     "feature2Title": "Nahtlose Zusammenarbeit",

@@ -1,6 +1,7 @@
+
 {
   "general": {
-    "appName": "TenderFlow",
+    "appName": "Bieter Cockpit",
     "createNewTender": "New Tender",
     "viewTenders": "View Tenders",
     "getStarted": "Get Started",
