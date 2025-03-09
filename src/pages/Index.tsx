@@ -1,7 +1,7 @@
 
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ChevronRight, FileText, CheckCircle, Smile } from "lucide-react";
+import { ChevronRight, FileText, CheckCircle } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/context/AuthContext";
 import { ThemeSwitcher } from "@/components/layout/ThemeSwitcher";
@@ -16,8 +16,12 @@ export default function Index() {
       <header className="border-b border-tender-100 dark:border-tender-800 bg-white dark:bg-tender-950">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <Smile className="h-9 w-9 text-yellow-400" />
-            <span className="text-xl font-semibold">{t('general.appName')}</span>
+            <img 
+              src="/lovable-uploads/8d9b2e36-d9ae-456f-9e6b-28d57ee1e7e1.png" 
+              alt="Bieter Cockpit" 
+              className="h-8"
+            />
+            <span className="text-xl font-semibold text-bieter-blue">Bieter Cockpit</span>
           </div>
           <div className="flex items-center gap-3">
             <ThemeSwitcher />
@@ -52,7 +56,7 @@ export default function Index() {
             <div className="inline-block px-3 py-1 bg-primary/10 text-primary rounded-full text-sm font-medium mb-6 animate-fade-in">
               {t('general.slogan')}
             </div>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight mb-6 animate-slide-up">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight mb-6 animate-slide-up text-bieter-blue">
               {t('landing.headline')}
             </h1>
             <p className="text-lg text-tender-600 dark:text-tender-300 mb-8 animate-slide-up" style={{ animationDelay: "100ms" }}>
@@ -93,7 +97,7 @@ export default function Index() {
         <section className="py-16 bg-tender-50 dark:bg-tender-900">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-semibold mb-4">{t('landing.featureHeading')}</h2>
+              <h2 className="text-3xl font-semibold mb-4 text-bieter-blue">{t('landing.featureHeading')}</h2>
               <p className="text-tender-600 dark:text-tender-300 max-w-2xl mx-auto">
                 {t('landing.featureSubheading')}
               </p>
@@ -101,30 +105,34 @@ export default function Index() {
             
             <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
               <div className="tender-card dark:bg-tender-800 dark:border-tender-700 animate-scale-in" style={{ animationDelay: "0ms" }}>
-                <div className="rounded-full w-12 h-12 bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 flex items-center justify-center mb-4">
+                <div className="rounded-full w-12 h-12 bg-bieter-blue/10 dark:bg-bieter-blue/20 text-bieter-blue flex items-center justify-center mb-4">
                   <FileText className="h-6 w-6" />
                 </div>
-                <h3 className="text-xl font-medium mb-2">{t('landing.feature1Title')}</h3>
+                <h3 className="text-xl font-medium mb-2 text-bieter-blue">{t('landing.feature1Title')}</h3>
                 <p className="text-tender-600 dark:text-tender-300">
                   {t('landing.feature1Description')}
                 </p>
               </div>
               
               <div className="tender-card dark:bg-tender-800 dark:border-tender-700 animate-scale-in" style={{ animationDelay: "100ms" }}>
-                <div className="rounded-full w-12 h-12 bg-yellow-100 dark:bg-yellow-900 text-yellow-600 dark:text-yellow-300 flex items-center justify-center mb-4">
-                  <Smile className="h-6 w-6" />
+                <div className="rounded-full w-12 h-12 bg-bieter-blue/10 dark:bg-bieter-blue/20 text-bieter-blue flex items-center justify-center mb-4">
+                  <img 
+                    src="/lovable-uploads/8d9b2e36-d9ae-456f-9e6b-28d57ee1e7e1.png" 
+                    alt="Bieter Cockpit" 
+                    className="h-6 w-6"
+                  />
                 </div>
-                <h3 className="text-xl font-medium mb-2">{t('landing.feature2Title')}</h3>
+                <h3 className="text-xl font-medium mb-2 text-bieter-blue">{t('landing.feature2Title')}</h3>
                 <p className="text-tender-600 dark:text-tender-300">
                   {t('landing.feature2Description')}
                 </p>
               </div>
               
               <div className="tender-card dark:bg-tender-800 dark:border-tender-700 animate-scale-in" style={{ animationDelay: "200ms" }}>
-                <div className="rounded-full w-12 h-12 bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-300 flex items-center justify-center mb-4">
+                <div className="rounded-full w-12 h-12 bg-bieter-blue/10 dark:bg-bieter-blue/20 text-bieter-blue flex items-center justify-center mb-4">
                   <CheckCircle className="h-6 w-6" />
                 </div>
-                <h3 className="text-xl font-medium mb-2">{t('landing.feature3Title')}</h3>
+                <h3 className="text-xl font-medium mb-2 text-bieter-blue">{t('landing.feature3Title')}</h3>
                 <p className="text-tender-600 dark:text-tender-300">
                   {t('landing.feature3Description')}
                 </p>
@@ -138,11 +146,15 @@ export default function Index() {
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center gap-2 mb-4 md:mb-0">
-              <Smile className="h-8 w-8 text-yellow-400" />
-              <span className="text-lg font-semibold">{t('general.appName')}</span>
+              <img 
+                src="/lovable-uploads/8d9b2e36-d9ae-456f-9e6b-28d57ee1e7e1.png" 
+                alt="Bieter Cockpit" 
+                className="h-8"
+              />
+              <span className="text-lg font-semibold text-bieter-blue">Bieter Cockpit</span>
             </div>
             <p className="text-tender-500 dark:text-tender-400 text-sm">
-              © 2023 {t('general.appName')}. All rights reserved.
+              © 2023 Bieter Cockpit. All rights reserved.
             </p>
           </div>
         </div>
