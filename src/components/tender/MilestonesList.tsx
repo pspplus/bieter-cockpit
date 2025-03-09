@@ -76,7 +76,7 @@ export function MilestonesList({ tender }: MilestonesListProps) {
       
       {sortedMilestones.length === 0 ? (
         <div className="p-6 text-center border border-dashed rounded-lg text-tender-500">
-          <p>{t('milestones.noMilestonesYet', 'Noch keine Meilensteine für dieses Angebot vorhanden.')}</p>
+          <p>{t('milestones.noMilestonesYet')}</p>
         </div>
       ) : (
         <div className="space-y-1">
@@ -114,13 +114,13 @@ export function MilestonesList({ tender }: MilestonesListProps) {
                         <h4 className="font-medium text-base">{milestone.title}</h4>
                         {isActive && (
                           <span className="text-xs bg-blue-100 text-blue-600 px-2 py-0.5 rounded-full">
-                            {t('milestones.inProgress', 'In Bearbeitung')}
+                            {t('milestones.inProgress')}
                           </span>
                         )}
                       </div>
                       {milestone.dueDate && (
                         <span className="text-xs text-tender-500">
-                          {t('milestones.dueDate')}: {format(new Date(milestone.dueDate), "MMM d")}
+                          {t('milestones.dueDate')}: {format(new Date(milestone.dueDate), "dd.MM.yyyy")}
                         </span>
                       )}
                     </div>
@@ -130,7 +130,7 @@ export function MilestonesList({ tender }: MilestonesListProps) {
                     
                     {milestone.completionDate && (
                       <p className="text-xs text-tender-500 mt-2">
-                        {t('milestones.completionDate')}: {format(new Date(milestone.completionDate), "MMM d, yyyy")}
+                        {t('milestones.completionDate')}: {format(new Date(milestone.completionDate), "dd.MM.yyyy")}
                       </p>
                     )}
                     
@@ -155,7 +155,7 @@ export function MilestonesList({ tender }: MilestonesListProps) {
                             <TooltipContent>
                               {canComplete 
                                 ? t('milestones.markAsCompleted')
-                                : t('milestones.cannotComplete', 'Meilenstein muss zuerst in Bearbeitung sein')}
+                                : t('milestones.cannotComplete')}
                             </TooltipContent>
                           </Tooltip>
                         )}
@@ -197,7 +197,7 @@ export function MilestonesList({ tender }: MilestonesListProps) {
                             <TooltipContent>
                               {canSkip 
                                 ? t('milestones.markAsSkipped')
-                                : t('milestones.cannotSkip', 'Nur Meilensteine mit Status "ausstehend" können übersprungen werden')}
+                                : t('milestones.cannotSkip')}
                             </TooltipContent>
                           </Tooltip>
                         )}
