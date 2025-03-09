@@ -1,6 +1,5 @@
-
 import { cn } from "@/lib/utils";
-import { Bell, ChevronDown, Menu, PlusCircle, Search } from "lucide-react";
+import { Bell, ChevronDown, Menu, PlusCircle, Search, Smile } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {

@@ -1,7 +1,6 @@
-
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ChevronRight, FileText, CheckCircle } from "lucide-react";
+import { ChevronRight, FileText, CheckCircle, Smile } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 export default function Index() {
@@ -13,11 +12,7 @@ export default function Index() {
       <header className="border-b border-tender-100 bg-white">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <img 
-              src="/lovable-uploads/8d9b2e36-d9ae-456f-9e6b-28d57ee1e7e1.png" 
-              alt="PSP Logo" 
-              className="h-9" 
-            />
+            <Smile className="h-9 w-9 text-yellow-400" />
             <span className="text-xl font-semibold">{t('general.appName')}</span>
           </div>
           <Button onClick={() => navigate("/dashboard")} className="rounded-full">
@@ -80,12 +75,8 @@ export default function Index() {
               </div>
               
               <div className="tender-card animate-scale-in" style={{ animationDelay: "100ms" }}>
-                <div className="rounded-full w-12 h-12 bg-[#004494] text-white flex items-center justify-center mb-4">
-                  <img 
-                    src="/lovable-uploads/8d9b2e36-d9ae-456f-9e6b-28d57ee1e7e1.png" 
-                    alt="PSP Logo" 
-                    className="h-6 w-6 object-contain" 
-                  />
+                <div className="rounded-full w-12 h-12 bg-yellow-100 text-yellow-600 flex items-center justify-center mb-4">
+                  <Smile className="h-6 w-6" />
                 </div>
                 <h3 className="text-xl font-medium mb-2">Strategic Planning</h3>
                 <p className="text-tender-600">
@@ -111,11 +102,7 @@ export default function Index() {
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center gap-2 mb-4 md:mb-0">
-              <img 
-                src="/lovable-uploads/8d9b2e36-d9ae-456f-9e6b-28d57ee1e7e1.png" 
-                alt="PSP Logo" 
-                className="h-8" 
-              />
+              <Smile className="h-8 w-8 text-yellow-400" />
               <span className="text-lg font-semibold">{t('general.appName')}</span>
             </div>
             <p className="text-tender-500 text-sm">
