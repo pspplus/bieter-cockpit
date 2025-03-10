@@ -71,7 +71,7 @@ export function TenderDetails({ tender, onOpenDetailsDialog, onOpenContactDialog
                 <div className="text-sm">{tender.client}</div>
               </div>
               <div>
-                <div className="text-sm font-medium">{t("tenders.status")}</div>
+                <div className="text-sm font-medium">{t("Status")}</div>
                 <div className="text-sm">
                   <Badge variant="outline">{statusDisplayMap[tender.status]}</Badge>
                 </div>
