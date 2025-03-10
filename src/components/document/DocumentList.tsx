@@ -393,7 +393,7 @@ export function DocumentList({
                           {selectedFiles.map((file, index) => (
                             <div key={index} className="flex items-center space-x-2">
                               <div className="w-8 h-8 bg-muted flex items-center justify-center rounded">
-                                <FileIcon className="w-4 h-4" />
+                                <File className="w-4 h-4" />
                               </div>
                               
                               <div className="flex-1">

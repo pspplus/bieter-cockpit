@@ -1,272 +1,157 @@
 
-import React, { useState, useEffect } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Maximize, Minimize, ZoomIn, ZoomOut, RotateCw, Download, X } from "lucide-react";
-import { getFileCategory } from "@/services/documentService";
-import { Document, Page, pdfjs } from "react-pdf";
-import "react-pdf/dist/esm/Page/AnnotationLayer.css";
-import "react-pdf/dist/esm/Page/TextLayer.css";
-
-// Initialize PDF.js worker
-pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
+import React, { useState, useEffect, useRef } from 'react';
+import { TenderDocument } from '@/types/tender';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Maximize, Minimize, Download, X } from 'lucide-react';
+import { toast } from 'sonner';
+import { isViewableInBrowser } from '@/services/documentService';
 
 interface DocumentViewerProps {
-  document: {
-    id: string;
-    name: string;
-    fileUrl: string;
-    fileType: string;
-  } | null;
+  document: TenderDocument;
   isOpen: boolean;
   onClose: () => void;
 }
 
-export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProps) {
+export const DocumentViewer: React.FC<DocumentViewerProps> = ({ document, isOpen, onClose }) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [zoom, setZoom] = useState(1);
-  const [rotation, setRotation] = useState(0);
-  const [numPages, setNumPages] = useState<number | null>(null);
-  const [pageNumber, setPageNumber] = useState(1);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const isPDF = document.fileType === 'application/pdf';
+  const isImage = document.fileType.startsWith('image/');
+  const isVideo = document.fileType.startsWith('video/');
+  const isViewable = isViewableInBrowser(document.fileType);
 
-  useEffect(() => {
-    // Reset state when document changes
-    if (document) {
-      setZoom(1);
-      setRotation(0);
-      setPageNumber(1);
-      setLoading(true);
-      setError(null);
-    }
-  }, [document]);
-
+  // Handle fullscreen changes
   useEffect(() => {
     const handleFullscreenChange = () => {
-      setIsFullscreen(!!document.fullscreenElement);
+      setIsFullscreen(!!window.document.fullscreenElement);
     };
 
-    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    window.document.addEventListener('fullscreenchange', handleFullscreenChange);
+    
     return () => {
-      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+      window.document.removeEventListener('fullscreenchange', handleFullscreenChange);
     };
   }, []);
 
-  if (!document) return null;
-
-  const handleFullscreen = () => {
-    const viewer = document.getElementById('document-viewer');
-    if (!viewer) return;
+  const toggleFullscreen = () => {
+    if (!containerRef.current) return;
 
     if (!isFullscreen) {
-      if (viewer.requestFullscreen) {
-        viewer.requestFullscreen();
-      }
+      containerRef.current.requestFullscreen().catch(err => {
+        toast.error("Fehler beim Aktivieren des Vollbildmodus");
+        console.error(err);
+      });
     } else {
-      if (document.exitFullscreen) {
-        document.exitFullscreen();
+      if (window.document.exitFullscreen) {
+        window.document.exitFullscreen().catch(err => {
+          console.error(err);
+        });
       }
     }
   };
 
-  const handleZoomIn = () => setZoom((prev) => Math.min(prev + 0.25, 3));
-  const handleZoomOut = () => setZoom((prev) => Math.max(prev - 0.25, 0.5));
-  const handleRotate = () => setRotation((prev) => (prev + 90) % 360);
-
-  const handlePrevPage = () => setPageNumber((prev) => Math.max(prev - 1, 1));
-  const handleNextPage = () => {
-    if (numPages !== null) {
-      setPageNumber((prev) => Math.min(prev + 1, numPages));
-    }
+  const downloadDocument = () => {
+    const link = document.createElement('a');
+    link.href = document.fileUrl;
+    link.download = document.name;
+    link.click();
   };
 
-  const fileCategory = document ? getFileCategory(document.fileType) : 'other';
-
-  const renderContent = () => {
-    if (loading && fileCategory === 'pdf') {
+  // Render different content based on file type
+  const renderDocumentContent = () => {
+    if (!isViewable) {
       return (
-        <div className="flex items-center justify-center h-full">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-        </div>
-      );
-    }
-
-    if (error) {
-      return (
-        <div className="flex flex-col items-center justify-center h-full text-center">
-          <div className="text-destructive text-xl mb-4">Fehler beim Laden des Dokuments</div>
-          <p className="text-muted-foreground mb-4">{error}</p>
-          <Button variant="outline" asChild>
-            <a href={document.fileUrl} target="_blank" rel="noopener noreferrer" download>
-              <Download className="mr-2 h-4 w-4" /> Herunterladen
-            </a>
+        <div className="flex flex-col items-center justify-center h-full">
+          <p className="text-lg mb-4">Dieser Dokumenttyp kann nicht direkt angezeigt werden.</p>
+          <Button onClick={downloadDocument}>
+            <Download className="mr-2 h-4 w-4" />
+            Herunterladen
           </Button>
         </div>
       );
     }
 
-    switch (fileCategory) {
-      case 'image':
-        return (
-          <div className="flex items-center justify-center h-full">
-            <img
-              src={document.fileUrl}
-              alt={document.name}
-              style={{
-                maxWidth: '100%',
-                maxHeight: '70vh',
-                transform: `scale(${zoom}) rotate(${rotation}deg)`,
-                transition: 'transform 0.3s ease'
-              }}
-              onLoad={() => setLoading(false)}
-              onError={() => {
-                setLoading(false);
-                setError('Bild konnte nicht geladen werden');
-              }}
-            />
-          </div>
-        );
-      
-      case 'pdf':
-        return (
-          <div className="flex flex-col items-center">
-            <Document
-              file={document.fileUrl}
-              onLoadSuccess={({ numPages }) => {
-                setNumPages(numPages);
-                setLoading(false);
-              }}
-              onLoadError={(error) => {
-                console.error('Error loading PDF:', error);
-                setLoading(false);
-                setError('PDF konnte nicht geladen werden');
-              }}
-            >
-              <Page
-                pageNumber={pageNumber}
-                scale={zoom}
-                rotate={rotation}
-                renderTextLayer={true}
-                renderAnnotationLayer={true}
-              />
-            </Document>
-            
-            {numPages && numPages > 1 && (
-              <div className="flex items-center justify-center space-x-4 mt-4">
-                <Button
-                  onClick={handlePrevPage}
-                  disabled={pageNumber <= 1}
-                  variant="outline"
-                  size="sm"
-                >
-                  Vorherige
-                </Button>
-                <span className="text-sm">
-                  Seite {pageNumber} von {numPages}
-                </span>
-                <Button
-                  onClick={handleNextPage}
-                  disabled={pageNumber >= numPages}
-                  variant="outline"
-                  size="sm"
-                >
-                  Nächste
-                </Button>
-              </div>
-            )}
-          </div>
-        );
-      
-      case 'video':
-        return (
-          <div className="flex items-center justify-center h-full">
-            <video
-              controls
-              style={{ maxWidth: '100%', maxHeight: '70vh' }}
-              onLoadedData={() => setLoading(false)}
-              onError={() => {
-                setLoading(false);
-                setError('Video konnte nicht geladen werden');
-              }}
-            >
-              <source src={document.fileUrl} type={document.fileType} />
-              Ihr Browser unterstützt dieses Videoformat nicht.
-            </video>
-          </div>
-        );
-      
-      case 'audio':
-        return (
-          <div className="flex items-center justify-center h-full">
-            <audio
-              controls
-              onLoadedData={() => setLoading(false)}
-              onError={() => {
-                setLoading(false);
-                setError('Audio konnte nicht geladen werden');
-              }}
-            >
-              <source src={document.fileUrl} type={document.fileType} />
-              Ihr Browser unterstützt dieses Audioformat nicht.
-            </audio>
-          </div>
-        );
-      
-      default:
-        setLoading(false);
-        return (
-          <div className="flex flex-col items-center justify-center h-64 text-center">
-            <p className="text-muted-foreground mb-4">
-              Vorschau nicht verfügbar für Dateityp: {document.fileType}
-            </p>
-            <Button variant="outline" asChild>
-              <a href={document.fileUrl} target="_blank" rel="noopener noreferrer" download>
-                <Download className="mr-2 h-4 w-4" /> Herunterladen
-              </a>
-            </Button>
-          </div>
-        );
+    if (isPDF) {
+      return (
+        <iframe 
+          ref={iframeRef}
+          src={`${document.fileUrl}#toolbar=0`} 
+          className="w-full h-full border-0"
+          title={document.name}
+        />
+      );
     }
+
+    if (isImage) {
+      return (
+        <div className="flex items-center justify-center h-full overflow-auto">
+          <img 
+            src={document.fileUrl} 
+            alt={document.name} 
+            className="max-w-full max-h-full object-contain"
+          />
+        </div>
+      );
+    }
+
+    if (isVideo) {
+      return (
+        <div className="flex items-center justify-center h-full">
+          <video 
+            src={document.fileUrl} 
+            controls 
+            className="max-w-full max-h-full"
+          >
+            Ihr Browser unterstützt das Video-Tag nicht.
+          </video>
+        </div>
+      );
+    }
+
+    // Default iframe viewer for other viewable documents
+    return (
+      <iframe 
+        ref={iframeRef}
+        src={document.fileUrl} 
+        className="w-full h-full border-0"
+        title={document.name}
+      />
+    );
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-5xl w-[90vw]" id="document-viewer">
-        <DialogHeader className="flex flex-row items-center justify-between">
-          <DialogTitle className="truncate max-w-[70%]">{document.name}</DialogTitle>
-          <div className="flex items-center space-x-2">
-            {(fileCategory === 'image' || fileCategory === 'pdf') && (
-              <>
-                <Button variant="outline" size="icon" onClick={handleZoomIn} title="Vergrößern">
-                  <ZoomIn className="h-4 w-4" />
-                </Button>
-                <Button variant="outline" size="icon" onClick={handleZoomOut} title="Verkleinern">
-                  <ZoomOut className="h-4 w-4" />
-                </Button>
-                <Button variant="outline" size="icon" onClick={handleRotate} title="Drehen">
-                  <RotateCw className="h-4 w-4" />
-                </Button>
-              </>
-            )}
-            <Button variant="outline" size="icon" onClick={handleFullscreen} title="Vollbild ein/aus">
-              {isFullscreen ? <Minimize className="h-4 w-4" /> : <Maximize className="h-4 w-4" />}
-            </Button>
-            <Button variant="outline" size="icon" asChild title="Herunterladen">
-              <a href={document.fileUrl} target="_blank" rel="noopener noreferrer" download>
+      <DialogContent className="max-w-4xl max-h-[90vh] flex flex-col p-0">
+        <DialogHeader className="p-4 border-b">
+          <div className="flex justify-between items-center">
+            <DialogTitle className="text-lg truncate max-w-[calc(100%-100px)]">
+              {document.name}
+            </DialogTitle>
+            <div className="flex items-center space-x-2">
+              <Button variant="ghost" size="icon" onClick={toggleFullscreen} title={isFullscreen ? "Vollbild beenden" : "Vollbild"}>
+                {isFullscreen ? <Minimize className="h-4 w-4" /> : <Maximize className="h-4 w-4" />}
+              </Button>
+              <Button variant="ghost" size="icon" onClick={downloadDocument} title="Herunterladen">
                 <Download className="h-4 w-4" />
-              </a>
-            </Button>
-            <Button variant="ghost" size="icon" onClick={onClose} title="Schließen">
-              <X className="h-4 w-4" />
-            </Button>
+              </Button>
+              <DialogClose asChild>
+                <Button variant="ghost" size="icon" title="Schließen">
+                  <X className="h-4 w-4" />
+                </Button>
+              </DialogClose>
+            </div>
           </div>
         </DialogHeader>
         
-        <div className="min-h-[50vh] flex items-center justify-center overflow-auto relative">
-          {renderContent()}
+        <div 
+          ref={containerRef} 
+          className="flex-1 overflow-auto bg-muted"
+        >
+          {renderDocumentContent()}
         </div>
       </DialogContent>
     </Dialog>
   );
-}
+};
