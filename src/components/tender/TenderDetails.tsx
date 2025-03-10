@@ -1,5 +1,5 @@
 
-import { Tender, TenderStatus } from "@/types/tender";
+import { Tender } from "@/types/tender";
 import { BaseInfoCard } from "./cards/BaseInfoCard";
 import { MainInfoCard } from "./cards/MainInfoCard";
 import { ObjectInfoCard } from "./cards/ObjectInfoCard";
@@ -11,25 +11,16 @@ interface TenderDetailsProps {
   tender: Tender;
   onOpenDetailsDialog?: () => void;
   onOpenContactDialog?: () => void;
-  onStatusChange?: (newStatus: TenderStatus) => void;
 }
 
-export function TenderDetails({ 
-  tender, 
-  onOpenDetailsDialog, 
-  onOpenContactDialog,
-  onStatusChange 
-}: TenderDetailsProps) {
+export function TenderDetails({ tender, onOpenDetailsDialog, onOpenContactDialog }: TenderDetailsProps) {
   return (
     <div className="space-y-6">
       {/* Information Cards in a Grid */}
       <div className="grid gap-6 md:grid-cols-2">
         {/* Base Information Card */}
-        <BaseInfoCard 
-          tender={tender} 
-          onStatusChange={onStatusChange}
-        />
-        
+        <BaseInfoCard tender={tender} />
+
         {/* Main Information Card */}
         <MainInfoCard 
           tender={tender} 

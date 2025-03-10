@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -232,8 +233,7 @@ export default function TenderDetailPage() {
                     <TenderDetails 
                       tender={tender} 
                       onOpenDetailsDialog={() => setDetailsDialogOpen(true)} 
-                      onOpenContactDialog={() => setContactDialogOpen(true)}
-                      onStatusChange={handleStatusChange}
+                      onOpenContactDialog={() => setContactDialogOpen(true)} 
                     />
 
                     {tender.milestones.length > 0 && (
@@ -378,4 +378,3 @@ export default function TenderDetailPage() {
     </Layout>
   );
 }
-
