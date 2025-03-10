@@ -72,7 +72,6 @@ export function TenderDetails({ tender }: TenderDetailsProps) {
 
   return (
     <div className="space-y-6">
-      {/* Progress Card - Keeping it unchanged at the top */}
       <Card className="min-h-[180px]">
         <CardHeader className="pb-3">
           <CardTitle>{t("milestones.progress")}</CardTitle>
@@ -82,9 +81,7 @@ export function TenderDetails({ tender }: TenderDetailsProps) {
         </CardContent>
       </Card>
 
-      {/* Information Cards in a 2x2 Grid */}
       <div className="grid gap-6 md:grid-cols-2">
-        {/* Hauptinformationen */}
         <Card className="md:col-span-1">
           <CardHeader className="pb-3">
             <div className="flex items-center gap-2">
@@ -139,7 +136,6 @@ export function TenderDetails({ tender }: TenderDetailsProps) {
           </CardContent>
         </Card>
 
-        {/* Objektinformationen Card */}
         <Card className="md:col-span-1">
           <CardHeader className="pb-3">
             <div className="flex items-center gap-2">
@@ -167,12 +163,10 @@ export function TenderDetails({ tender }: TenderDetailsProps) {
                   />
                 </div>
               </div>
-              {/* Add other object information fields with InlineEdit */}
             </div>
           </CardContent>
         </Card>
-        
-        {/* Anforderungen Card */}
+
         <Card className="md:col-span-1">
           <CardHeader className="pb-3">
             <div className="flex items-center gap-2">
@@ -192,12 +186,10 @@ export function TenderDetails({ tender }: TenderDetailsProps) {
                   />
                 </div>
               </div>
-              {/* Add other requirements fields with InlineEdit */}
             </div>
           </CardContent>
         </Card>
 
-        {/* Kontakt & Vergabe Card */}
         <Card className="md:col-span-1">
           <CardHeader className="pb-3">
             <div className="flex items-center gap-2">
@@ -234,7 +226,6 @@ export function TenderDetails({ tender }: TenderDetailsProps) {
                   />
                 </div>
               </div>
-              {/* Add other contact fields with InlineEdit */}
             </div>
           </CardContent>
         </Card>

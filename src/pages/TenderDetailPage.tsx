@@ -160,11 +160,7 @@ export default function TenderDetailPage() {
               <TabsContent value="details" className="mt-4">
                 <div className="flex justify-between">
                   <div className="flex-grow">
-                    <TenderDetails 
-                      tender={tender} 
-                      onOpenDetailsDialog={() => setDetailsDialogOpen(true)} 
-                      onOpenContactDialog={() => setContactDialogOpen(true)} 
-                    />
+                    <TenderDetails tender={tender} />
                   </div>
                   <Button
                     variant="destructive"
