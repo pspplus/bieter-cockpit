@@ -133,15 +133,15 @@ export default function TenderDetailPage() {
   };
 
   const handleStatusChange = async (newStatus: TenderStatus) => {
-    if (!tender || !id) return;
+    if (!tender) return;
     
     try {
       await contextUpdateTender(id, { status: newStatus });
       setTender(prev => prev ? { ...prev, status: newStatus } : null);
-      toast.success(t("notifications.statusUpdated", "Status aktualisiert"));
+      toast.success(t('notifications.statusUpdated', "Status aktualisiert"));
     } catch (error) {
       console.error("Error updating tender status:", error);
-      toast.error(t("errorMessages.couldNotUpdateStatus", "Fehler beim Aktualisieren des Status"));
+      toast.error(t('errorMessages.couldNotUpdateStatus', "Fehler beim Aktualisieren des Status"));
     }
   };
 
@@ -195,12 +195,11 @@ export default function TenderDetailPage() {
                       tender={tender} 
                       onOpenDetailsDialog={() => setDetailsDialogOpen(true)} 
                       onOpenContactDialog={() => setContactDialogOpen(true)} 
-                      onStatusChange={handleStatusChange}
                     />
 
                     {tender.milestones.length > 0 && (
                       <div className="mt-8">
-                        <h3 className="text-lg font-medium mb-4">{t("milestones.title", "Meilensteine")}</h3>
+                        <h3 className="text-lg font-medium">{t("milestones.title", "Meilensteine")}</h3>
                         <MilestoneProcess milestones={tender.milestones} tenderId={tender.id} />
                       </div>
                     )}

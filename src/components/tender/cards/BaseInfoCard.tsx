@@ -1,4 +1,3 @@
-
 import { format } from "date-fns";
 import { Tender, TenderStatus } from "@/types/tender";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,7 +11,7 @@ import { useState } from "react";
 
 interface BaseInfoCardProps {
   tender: Tender;
-  onStatusChange?: (status: TenderStatus) => Promise<void>;
+  onStatusChange: (status: TenderStatus) => Promise<void>;
 }
 
 export function BaseInfoCard({ tender, onStatusChange }: BaseInfoCardProps) {
@@ -29,8 +28,6 @@ export function BaseInfoCard({ tender, onStatusChange }: BaseInfoCardProps) {
   const { bg, text } = statusColors[tender.status];
 
   const handleStatusChange = async (newStatus: TenderStatus) => {
-    if (!onStatusChange) return;
-    
     setIsUpdatingStatus(true);
     try {
       await onStatusChange(newStatus);
