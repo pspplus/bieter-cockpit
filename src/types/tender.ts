@@ -15,23 +15,6 @@ export type MilestoneStatus =
   | 'completed'
   | 'skipped';
 
-export type Vertragsart = 
-  | 'werkvertrag'
-  | 'dienstleistungsvertrag'
-  | 'mischvertrag'
-  | '';
-
-export type Objektart = 
-  | 'grundschule'
-  | 'kindergarten'
-  | 'buero'
-  | '';
-
-export type Zertifikat = 
-  | 'din_iso_9001'
-  | 'din_iso_14001'
-  | 'din_iso_45001';
-
 export interface Folder {
   id: string;
   name: string;
@@ -93,20 +76,4 @@ export interface Tender {
   bindingPeriodDate?: Date | null;
   evaluationScheme?: string;
   conceptRequired?: boolean;
-  
-  // New fields for extended tender information
-  vergabeplattform?: string;
-  mindestanforderungen?: string;
-  erforderlicheZertifikate?: Zertifikat[];
-  objektbesichtigungErforderlich?: boolean;
-  objektart?: Objektart[];
-  vertragsart?: Vertragsart;
-  leistungswertvorgaben?: boolean;
-  stundenvorgaben?: string;
-  beraterVergabestelle?: string;
-  jahresreinigungsflaeche?: number;
-  waschmaschine?: boolean;
-  tariflohn?: boolean;
-  qualitaetskontrollen?: boolean;
-  raumgruppentabelle?: boolean;
 }
