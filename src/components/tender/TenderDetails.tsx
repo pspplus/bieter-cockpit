@@ -71,13 +71,13 @@ export function TenderDetails({ tender, onOpenDetailsDialog, onOpenContactDialog
                 <div className="text-sm">{tender.client}</div>
               </div>
               <div>
-                <div className="text-sm font-medium">{t("tender.status")}</div>
+                <div className="text-sm font-medium">{t("tenders.status")}</div>
                 <div className="text-sm">
                   <Badge variant="outline">{statusDisplayMap[tender.status]}</Badge>
                 </div>
               </div>
               <div>
-                <div className="text-sm font-medium">{t("tender.dueDate")}</div>
+                <div className="text-sm font-medium">{t("tenderDetails.due")}</div>
                 <div className="text-sm">{formattedDueDate}</div>
               </div>
               {formattedBindingPeriodDate && (
