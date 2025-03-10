@@ -25,139 +25,7 @@ export function TenderDetails({ tender, onOpenDetailsDialog, onOpenContactDialog
 
   return (
     <div className="space-y-6">
-      <Card>
-        <CardHeader className="pb-3 flex flex-row justify-between items-start">
-          <div>
-            <CardTitle>{t("tenderDetails.tenderInformation")}</CardTitle>
-            <CardDescription>{t("tenderDetails.created")}: {formattedCreatedAt}</CardDescription>
-          </div>
-          {onOpenDetailsDialog && (
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              onClick={onOpenDetailsDialog} 
-              className="h-8 w-8"
-              title={t("tenderDetails.editDetails", "Ausschreibungsdetails bearbeiten")}
-            >
-              <Edit className="h-4 w-4" />
-            </Button>
-          )}
-        </CardHeader>
-        <CardContent className="grid gap-4 sm:grid-cols-2">
-          <div>
-            <div className="text-sm font-medium">{t("tender.title")}</div>
-            <div className="text-sm">{tender.title}</div>
-          </div>
-          <div>
-            <div className="text-sm font-medium">{t("tender.externalReference")}</div>
-            <div className="text-sm">{tender.externalReference}</div>
-          </div>
-          <div>
-            <div className="text-sm font-medium">{t("tender.client")}</div>
-            <div className="text-sm">{tender.client}</div>
-          </div>
-          <div>
-            <div className="text-sm font-medium">{t("tender.status")}</div>
-            <div className="text-sm">
-              <Badge variant="outline">{statusDisplayMap[tender.status]}</Badge>
-            </div>
-          </div>
-          <div>
-            <div className="text-sm font-medium">{t("tender.dueDate")}</div>
-            <div className="text-sm">{formattedDueDate}</div>
-          </div>
-          {formattedBindingPeriodDate && (
-            <div>
-              <div className="text-sm font-medium">{t("tender.bindingPeriodDate")}</div>
-              <div className="text-sm">{formattedBindingPeriodDate}</div>
-            </div>
-          )}
-          {tender.budget && (
-            <div>
-              <div className="text-sm font-medium">{t("tender.budget")}</div>
-              <div className="text-sm">{tender.budget.toLocaleString()} €</div>
-            </div>
-          )}
-          {tender.location && (
-            <div>
-              <div className="text-sm font-medium">{t("tender.location")}</div>
-              <div className="text-sm">{tender.location}</div>
-            </div>
-          )}
-          {tender.evaluationScheme && (
-            <div className="sm:col-span-2">
-              <div className="text-sm font-medium">{t("tender.evaluationScheme")}</div>
-              <div className="text-sm whitespace-pre-wrap">{tender.evaluationScheme}</div>
-            </div>
-          )}
-          {tender.conceptRequired !== undefined && (
-            <div>
-              <div className="text-sm font-medium">{t("tender.conceptRequired")}</div>
-              <div className="text-sm">{tender.conceptRequired ? t("yes") : t("no")}</div>
-            </div>
-          )}
-          {tender.description && (
-            <div className="sm:col-span-2">
-              <div className="text-sm font-medium">{t("tender.description")}</div>
-              <div className="text-sm whitespace-pre-wrap">{tender.description}</div>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader className="pb-3 flex flex-row justify-between items-start">
-          <CardTitle>{t("tenderDetails.contactInformation")}</CardTitle>
-          {onOpenContactDialog && (
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              onClick={onOpenContactDialog}
-              className="h-8 w-8"
-              title={t("tenderDetails.editContact", "Kontaktinformationen bearbeiten")}
-            >
-              <Edit className="h-4 w-4" />
-            </Button>
-          )}
-        </CardHeader>
-        <CardContent>
-          {tender.contactPerson || tender.contactEmail || tender.contactPhone ? (
-            <div className="grid gap-4 sm:grid-cols-2">
-              {tender.contactPerson && (
-                <div>
-                  <div className="text-sm font-medium">{t("tender.contactPerson")}</div>
-                  <div className="text-sm">{tender.contactPerson}</div>
-                </div>
-              )}
-              {tender.contactEmail && (
-                <div>
-                  <div className="text-sm font-medium">{t("tenderDetails.email")}</div>
-                  <div className="text-sm">
-                    <a href={`mailto:${tender.contactEmail}`} className="text-primary hover:underline">
-                      {tender.contactEmail}
-                    </a>
-                  </div>
-                </div>
-              )}
-              {tender.contactPhone && (
-                <div>
-                  <div className="text-sm font-medium">{t("tenderDetails.phone")}</div>
-                  <div className="text-sm">
-                    <a href={`tel:${tender.contactPhone}`} className="text-primary hover:underline">
-                      {tender.contactPhone}
-                    </a>
-                  </div>
-                </div>
-              )}
-            </div>
-          ) : (
-            <div className="text-sm text-muted-foreground">
-              {t("tenderDetails.noContactInfo")}
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
+      {/* Progress Card - Now first */}
       <Card>
         <CardHeader className="pb-3">
           <CardTitle>{t("milestones.progress")}</CardTitle>
@@ -166,6 +34,144 @@ export function TenderDetails({ tender, onOpenDetailsDialog, onOpenContactDialog
           <MilestoneProcess milestones={tender.milestones} tenderId={tender.id} />
         </CardContent>
       </Card>
+
+      {/* Information Cards Side by Side */}
+      <div className="grid gap-6 md:grid-cols-2">
+        {/* Tender Information Card */}
+        <Card className="md:col-span-1">
+          <CardHeader className="pb-3 flex flex-row justify-between items-start">
+            <div>
+              <CardTitle>{t("tenderDetails.tenderInformation")}</CardTitle>
+              <CardDescription>{t("tenderDetails.created")}: {formattedCreatedAt}</CardDescription>
+            </div>
+            {onOpenDetailsDialog && (
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={onOpenDetailsDialog} 
+                className="h-8 w-8"
+                title={t("tenderDetails.editDetails", "Ausschreibungsdetails bearbeiten")}
+              >
+                <Edit className="h-4 w-4" />
+              </Button>
+            )}
+          </CardHeader>
+          <CardContent className="grid gap-4">
+            <div>
+              <div className="text-sm font-medium">{t("tender.title")}</div>
+              <div className="text-sm">{tender.title}</div>
+            </div>
+            <div>
+              <div className="text-sm font-medium">{t("tender.externalReference")}</div>
+              <div className="text-sm">{tender.externalReference}</div>
+            </div>
+            <div>
+              <div className="text-sm font-medium">{t("tender.client")}</div>
+              <div className="text-sm">{tender.client}</div>
+            </div>
+            <div>
+              <div className="text-sm font-medium">{t("tender.status")}</div>
+              <div className="text-sm">
+                <Badge variant="outline">{statusDisplayMap[tender.status]}</Badge>
+              </div>
+            </div>
+            <div>
+              <div className="text-sm font-medium">{t("tender.dueDate")}</div>
+              <div className="text-sm">{formattedDueDate}</div>
+            </div>
+            {formattedBindingPeriodDate && (
+              <div>
+                <div className="text-sm font-medium">{t("tender.bindingPeriodDate")}</div>
+                <div className="text-sm">{formattedBindingPeriodDate}</div>
+              </div>
+            )}
+            {tender.budget && (
+              <div>
+                <div className="text-sm font-medium">{t("tender.budget")}</div>
+                <div className="text-sm">{tender.budget.toLocaleString()} €</div>
+              </div>
+            )}
+            {tender.location && (
+              <div>
+                <div className="text-sm font-medium">{t("tender.location")}</div>
+                <div className="text-sm">{tender.location}</div>
+              </div>
+            )}
+            {tender.evaluationScheme && (
+              <div>
+                <div className="text-sm font-medium">{t("tender.evaluationScheme")}</div>
+                <div className="text-sm whitespace-pre-wrap">{tender.evaluationScheme}</div>
+              </div>
+            )}
+            {tender.conceptRequired !== undefined && (
+              <div>
+                <div className="text-sm font-medium">{t("tender.conceptRequired")}</div>
+                <div className="text-sm">{tender.conceptRequired ? t("yes") : t("no")}</div>
+              </div>
+            )}
+            {tender.description && (
+              <div>
+                <div className="text-sm font-medium">{t("tender.description")}</div>
+                <div className="text-sm whitespace-pre-wrap">{tender.description}</div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Contact Information Card */}
+        <Card className="md:col-span-1">
+          <CardHeader className="pb-3 flex flex-row justify-between items-start">
+            <CardTitle>{t("tenderDetails.contactInformation")}</CardTitle>
+            {onOpenContactDialog && (
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={onOpenContactDialog}
+                className="h-8 w-8"
+                title={t("tenderDetails.editContact", "Kontaktinformationen bearbeiten")}
+              >
+                <Edit className="h-4 w-4" />
+              </Button>
+            )}
+          </CardHeader>
+          <CardContent>
+            {tender.contactPerson || tender.contactEmail || tender.contactPhone ? (
+              <div className="grid gap-4">
+                {tender.contactPerson && (
+                  <div>
+                    <div className="text-sm font-medium">{t("tender.contactPerson")}</div>
+                    <div className="text-sm">{tender.contactPerson}</div>
+                  </div>
+                )}
+                {tender.contactEmail && (
+                  <div>
+                    <div className="text-sm font-medium">{t("tenderDetails.email")}</div>
+                    <div className="text-sm">
+                      <a href={`mailto:${tender.contactEmail}`} className="text-primary hover:underline">
+                        {tender.contactEmail}
+                      </a>
+                    </div>
+                  </div>
+                )}
+                {tender.contactPhone && (
+                  <div>
+                    <div className="text-sm font-medium">{t("tenderDetails.phone")}</div>
+                    <div className="text-sm">
+                      <a href={`tel:${tender.contactPhone}`} className="text-primary hover:underline">
+                        {tender.contactPhone}
+                      </a>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="text-sm text-muted-foreground">
+                {t("tenderDetails.noContactInfo")}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
