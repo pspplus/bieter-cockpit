@@ -1,5 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
-import { Tender, TenderStatus, Milestone, MilestoneStatus, Folder } from "@/types/tender";
+import { Tender, TenderStatus, Milestone, MilestoneStatus, Folder, Vertragsart, Objektart, Zertifikat } from "@/types/tender";
 import { format } from "date-fns";
 import { fetchFolders } from "./folderService";
 
@@ -25,6 +25,22 @@ const mapTenderFromDB = (tender: any, milestones: any[] = []): Tender => {
     bindingPeriodDate: tender.binding_period_date ? new Date(tender.binding_period_date) : null,
     evaluationScheme: tender.evaluation_scheme || "",
     conceptRequired: tender.concept_required || false,
+    
+    vergabeplattform: tender.vergabeplattform || "",
+    mindestanforderungen: tender.mindestanforderungen || "",
+    erforderlicheZertifikate: tender.erforderliche_zertifikate || [],
+    objektbesichtigungErforderlich: tender.objektbesichtigung_erforderlich || false,
+    objektart: tender.objektart || [],
+    vertragsart: tender.vertragsart as Vertragsart || "",
+    leistungswertvorgaben: tender.leistungswertvorgaben || false,
+    stundenvorgaben: tender.stundenvorgaben || "",
+    beraterVergabestelle: tender.berater_vergabestelle || "",
+    jahresreinigungsflaeche: tender.jahresreinigungsflaeche || null,
+    waschmaschine: tender.waschmaschine || false,
+    tariflohn: tender.tariflohn || false,
+    qualitaetskontrollen: tender.qualitaetskontrollen || false,
+    raumgruppentabelle: tender.raumgruppentabelle || false,
+    
     milestones: milestones.map(mapMilestoneFromDB),
   };
 };
@@ -227,6 +243,22 @@ export const createTender = async (tenderData: Partial<Tender>): Promise<Tender>
     notes: tenderData.notes || "",
     evaluation_scheme: tenderData.evaluationScheme || "",
     concept_required: tenderData.conceptRequired || false,
+    
+    vergabeplattform: tenderData.vergabeplattform || null,
+    mindestanforderungen: tenderData.mindestanforderungen || null,
+    erforderliche_zertifikate: tenderData.erforderlicheZertifikate || [],
+    objektbesichtigung_erforderlich: tenderData.objektbesichtigungErforderlich || false,
+    objektart: tenderData.objektart || [],
+    vertragsart: tenderData.vertragsart || null,
+    leistungswertvorgaben: tenderData.leistungswertvorgaben || false,
+    stundenvorgaben: tenderData.stundenvorgaben || null,
+    berater_vergabestelle: tenderData.beraterVergabestelle || null,
+    jahresreinigungsflaeche: tenderData.jahresreinigungsflaeche || null,
+    waschmaschine: tenderData.waschmaschine || false,
+    tariflohn: tenderData.tariflohn || false,
+    qualitaetskontrollen: tenderData.qualitaetskontrollen || false,
+    raumgruppentabelle: tenderData.raumgruppentabelle || false,
+    
     user_id: user.id
   };
 
@@ -294,6 +326,22 @@ export const updateTender = async (id: string, updates: Partial<Tender>): Promis
     ...(updates.notes !== undefined && { notes: updates.notes }),
     ...(updates.evaluationScheme !== undefined && { evaluation_scheme: updates.evaluationScheme }),
     ...(updates.conceptRequired !== undefined && { concept_required: updates.conceptRequired }),
+    
+    ...(updates.vergabeplattform !== undefined && { vergabeplattform: updates.vergabeplattform }),
+    ...(updates.mindestanforderungen !== undefined && { mindestanforderungen: updates.mindestanforderungen }),
+    ...(updates.erforderlicheZertifikate !== undefined && { erforderliche_zertifikate: updates.erforderlicheZertifikate }),
+    ...(updates.objektbesichtigungErforderlich !== undefined && { objektbesichtigung_erforderlich: updates.objektbesichtigungErforderlich }),
+    ...(updates.objektart !== undefined && { objektart: updates.objektart }),
+    ...(updates.vertragsart !== undefined && { vertragsart: updates.vertragsart }),
+    ...(updates.leistungswertvorgaben !== undefined && { leistungswertvorgaben: updates.leistungswertvorgaben }),
+    ...(updates.stundenvorgaben !== undefined && { stundenvorgaben: updates.stundenvorgaben }),
+    ...(updates.beraterVergabestelle !== undefined && { berater_vergabestelle: updates.beraterVergabestelle }),
+    ...(updates.jahresreinigungsflaeche !== undefined && { jahresreinigungsflaeche: updates.jahresreinigungsflaeche }),
+    ...(updates.waschmaschine !== undefined && { waschmaschine: updates.waschmaschine }),
+    ...(updates.tariflohn !== undefined && { tariflohn: updates.tariflohn }),
+    ...(updates.qualitaetskontrollen !== undefined && { qualitaetskontrollen: updates.qualitaetskontrollen }),
+    ...(updates.raumgruppentabelle !== undefined && { raumgruppentabelle: updates.raumgruppentabelle }),
+    
     updated_at: new Date().toISOString()
   };
 
@@ -432,4 +480,3 @@ export const deleteMilestone = async (id: string): Promise<void> => {
     throw error;
   }
 };
-
