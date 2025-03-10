@@ -88,15 +88,19 @@ export function MilestoneProcess({ milestones }: MilestoneProcessProps) {
                 </div>
                 
                 {/* Milestone Title */}
-                <div className="mt-2 text-center">
-                  <p className={cn("text-xs font-medium truncate max-w-20 md:max-w-28", 
+                <div className="mt-2 text-center w-full px-1">
+                  <div className={cn(
+                    "text-xs font-medium break-words hyphens-auto", 
                     milestone.status === "completed" ? "text-green-700" :
                     milestone.status === "in-progress" ? "text-blue-700" :
                     milestone.status === "skipped" ? "text-tender-600" : 
                     "text-tender-500"
                   )}>
-                    {milestone.title}
-                  </p>
+                    {/* Add tooltip for longer titles */}
+                    <span title={milestone.title} className="inline-block max-w-24 md:max-w-full">
+                      {milestone.title}
+                    </span>
+                  </div>
                   <div className="mt-1">
                     <span className={cn(
                       "text-[10px] px-1.5 py-0.5 rounded-full", 
