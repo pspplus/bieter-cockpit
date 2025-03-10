@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Layout } from "@/components/layout/Layout";
 import { TenderDetails } from "@/components/tender/TenderDetails";
-import { TenderEditForm } from "@/components/tender/TenderEditForm";
 import { DocumentList } from "@/components/document/DocumentList";
 import { fetchTenderById, deleteTender, updateTender } from "@/services/tenderService";
 import { fetchTenderDocuments } from "@/services/documentService";
@@ -30,7 +29,6 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
 } from "@/components/ui/dialog";
 import { TenderDetailsEditForm } from "@/components/tender/TenderDetailsEditForm";
 import { TenderContactEditForm } from "@/components/tender/TenderContactEditForm";
@@ -150,7 +148,6 @@ export default function TenderDetailPage() {
               <TabsList>
                 <TabsTrigger value="details">{t("tenderDetails.details")}</TabsTrigger>
                 <TabsTrigger value="documents">{t("tenderDetails.documents")}</TabsTrigger>
-                <TabsTrigger value="edit">{t("tenderDetails.edit")}</TabsTrigger>
               </TabsList>
             
               <TabsContent value="details" className="mt-4">
@@ -184,10 +181,6 @@ export default function TenderDetailPage() {
                   onDocumentDeleted={handleDocumentDeleted}
                   onPreviewDocument={handlePreviewDocument}
                 />
-              </TabsContent>
-              
-              <TabsContent value="edit" className="mt-4">
-                <TenderEditForm tender={tender} onCancel={() => setActiveTab("details")} />
               </TabsContent>
             </Tabs>
           </div>
