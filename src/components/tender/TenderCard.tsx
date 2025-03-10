@@ -1,7 +1,7 @@
 
 import { Tender } from "@/types/tender";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Clock, User, MapPin, FileText, Lock, DollarSign, AlignLeft } from "lucide-react";
+import { Calendar, Clock, User, MapPin, FileText, Lock, DollarSign } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
@@ -15,7 +15,7 @@ interface TenderCardProps {
 
 export function TenderCard({ tender, isActive = false }: TenderCardProps) {
   const { t } = useTranslation();
-  const { id, title, internalReference, externalReference, client, status, dueDate, location, bindingPeriodDate, budget, description } = tender;
+  const { id, title, internalReference, externalReference, client, status, dueDate, location, bindingPeriodDate, budget } = tender;
   
   const statusColor = getStatusColors(status);
   const dueDateFormatted = format(new Date(dueDate), "MMM d, yyyy");
@@ -31,13 +31,6 @@ export function TenderCard({ tender, isActive = false }: TenderCardProps) {
 
   // Use internal reference for display, fallback to external if needed
   const displayReference = internalReference || externalReference;
-
-  // Truncate description for preview
-  const descriptionPreview = description 
-    ? description.length > 120 
-      ? description.substring(0, 120) + "..." 
-      : description
-    : null;
 
   return (
     <Link to={`/tenders/${id}`}>
@@ -87,14 +80,6 @@ export function TenderCard({ tender, isActive = false }: TenderCardProps) {
             <div className="flex items-center gap-1.5 col-span-2">
               <DollarSign className="h-4 w-4 text-tender-400" />
               <span>{t('tender.budget')}: {budget.toLocaleString()} €</span>
-            </div>
-          )}
-          
-          {/* Description preview (new) */}
-          {descriptionPreview && (
-            <div className="flex items-start gap-1.5 col-span-2 mt-2">
-              <AlignLeft className="h-4 w-4 text-tender-400 mt-0.5" />
-              <p className="text-xs text-tender-600 line-clamp-3">{descriptionPreview}</p>
             </div>
           )}
         </div>
