@@ -26,7 +26,7 @@ export function TenderDetails({ tender, onOpenDetailsDialog, onOpenContactDialog
   return (
     <div className="space-y-6">
       {/* Progress Card - Now first */}
-      <Card>
+      <Card className="min-h-[180px]">
         <CardHeader className="pb-3">
           <CardTitle>{t("milestones.progress")}</CardTitle>
         </CardHeader>

@@ -93,7 +93,7 @@ export function MilestoneProcess({ milestones, tenderId }: MilestoneProcessProps
         ></div>
       </div>
       
-      <div className="relative w-full overflow-x-auto pb-2 md:pb-0">
+      <div className="relative w-full overflow-x-auto pb-2 md:pb-0 mt-6">
         <div className="flex w-full">
           {sortedMilestones.map((milestone, index) => (
             <Popover key={milestone.id}>
