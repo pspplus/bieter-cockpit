@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -35,6 +36,7 @@ import { TenderDetailsEditForm } from "@/components/tender/TenderDetailsEditForm
 import { TenderContactEditForm } from "@/components/tender/TenderContactEditForm";
 import { Badge } from "@/components/ui/badge";
 import { statusDisplayMap } from "@/utils/statusUtils";
+import { useTender } from "@/hooks/useTender";
 
 export default function TenderDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -300,9 +302,9 @@ export default function TenderDetailPage() {
                 Herunterladen
               </Button>
             )}
-          </DialogContent>
-        </Dialog>
-      </Layout>
-    );
-  }
+          </div>
+        </DialogContent>
+      </Dialog>
+    </Layout>
+  );
 }
