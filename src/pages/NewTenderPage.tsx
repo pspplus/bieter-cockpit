@@ -4,12 +4,14 @@ import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { TenderCreationForm } from "@/components/tender/TenderCreationForm";
+import { useTranslation } from "react-i18next";
 
 export default function NewTenderPage() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   return (
-    <Layout title="Ausschreibung erstellen">
+    <Layout title={t("tender.createNewTender")}>
       <div className="space-y-6">
         <Button
           variant="ghost"
@@ -18,7 +20,7 @@ export default function NewTenderPage() {
           onClick={() => navigate("/tenders")}
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
-          Zurück zu Ausschreibungen
+          {t("backToTenders")}
         </Button>
 
         <TenderCreationForm />

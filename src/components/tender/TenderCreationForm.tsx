@@ -119,8 +119,8 @@ export function TenderCreationForm() {
       <Card>
         <form onSubmit={handleSubmit}>
           <CardHeader>
-            <h2 className="text-2xl font-semibold">{t('tenders.createNewTender')}</h2>
-            <p className="text-muted-foreground">{t('tenders.fillTenderDetails')}</p>
+            <h2 className="text-2xl font-semibold">{t('tender.createNewTender')}</h2>
+            <p className="text-muted-foreground">{t('tender.fillTenderDetails')}</p>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
@@ -136,7 +136,7 @@ export function TenderCreationForm() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="externalReference">{t('tender.externalReference', 'Externe Referenznummer')}</Label>
+              <Label htmlFor="externalReference">{t('tender.externalReference')}</Label>
               <Input 
                 id="externalReference" 
                 name="externalReference" 
@@ -144,18 +144,18 @@ export function TenderCreationForm() {
                 onChange={handleChange} 
                 placeholder="REF-2023-001"
               />
-              <p className="text-sm text-muted-foreground">{t('tender.externalReferenceHelp', 'Die vom Kunden vergebene Referenznummer')}</p>
+              <p className="text-sm text-muted-foreground">{t('tender.externalReferenceHelp')}</p>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="internalReference">{t('tender.internalReference', 'Interne Referenznummer')}</Label>
+              <Label htmlFor="internalReference">{t('tender.internalReference')}</Label>
               <Input 
                 id="internalReference" 
                 value={new Date().getFullYear() + "-???"}
                 disabled
                 className="bg-muted"
               />
-              <p className="text-sm text-muted-foreground">{t('tender.internalReferenceHelp', 'Wird beim Erstellen automatisch generiert')}</p>
+              <p className="text-sm text-muted-foreground">{t('tender.internalReferenceHelp')}</p>
             </div>
 
             <div className="space-y-2">
@@ -180,7 +180,7 @@ export function TenderCreationForm() {
                     onValueChange={(value) => handleSelectChange("client", value)}
                   >
                     <SelectTrigger className="w-full">
-                      <SelectValue placeholder={t('tenders.selectClient', 'Vergabestelle auswählen')} />
+                      <SelectValue placeholder={t('tenders.selectClient')} />
                     </SelectTrigger>
                     <SelectContent>
                       {clients.map((client) => (
@@ -215,7 +215,7 @@ export function TenderCreationForm() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="bindingPeriodDate">{t('tender.bindingPeriodDate', 'Bindefrist')}</Label>
+              <Label htmlFor="bindingPeriodDate">{t('tender.bindingPeriodDate')}</Label>
               <Popover open={bindingPeriodDateOpen} onOpenChange={setBindingPeriodDateOpen}>
                 <PopoverTrigger asChild>
                   <Button
@@ -227,7 +227,7 @@ export function TenderCreationForm() {
                     )}
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />
-                    {formData.bindingPeriodDate ? format(formData.bindingPeriodDate, "PPP") : <span>{t('tender.selectDate', 'Datum auswählen')}</span>}
+                    {formData.bindingPeriodDate ? format(formData.bindingPeriodDate, "PPP") : <span>{t('tender.selectDate')}</span>}
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0">
@@ -239,17 +239,17 @@ export function TenderCreationForm() {
                   />
                 </PopoverContent>
               </Popover>
-              <p className="text-sm text-muted-foreground">{t('tender.bindingPeriodDateHelp', 'Die Bindefrist gibt an, wie lange wir an unser Angebot gebunden sind')}</p>
+              <p className="text-sm text-muted-foreground">{t('tender.bindingPeriodDateHelp')}</p>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="evaluationScheme">{t('tender.evaluationScheme', 'Wertungsschema')}</Label>
+              <Label htmlFor="evaluationScheme">{t('tender.evaluationScheme')}</Label>
               <Textarea 
                 id="evaluationScheme" 
                 name="evaluationScheme" 
                 value={formData.evaluationScheme} 
                 onChange={handleChange} 
-                placeholder={t('tender.evaluationSchemePlaceholder', 'Details zum Wertungsschema eintragen')}
+                placeholder={t('tender.evaluationSchemePlaceholder')}
                 rows={3}
               />
             </div>
@@ -261,7 +261,7 @@ export function TenderCreationForm() {
                 onCheckedChange={(checked) => handleBooleanChange("conceptRequired", checked)}
               />
               <Label htmlFor="conceptRequired" className="cursor-pointer">
-                {t('tender.conceptRequired', 'Konzept erforderlich')}
+                {t('tender.conceptRequired')}
               </Label>
             </div>
 

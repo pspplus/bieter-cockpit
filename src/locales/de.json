@@ -1,4 +1,3 @@
-
 {
   "tender": {
     "title": "Titel",
@@ -14,7 +13,15 @@
     "contactPhone": "Telefon",
     "bindingPeriodDate": "Bindefrist",
     "evaluationScheme": "Bewertungsschema",
-    "conceptRequired": "Konzept erforderlich"
+    "conceptRequired": "Konzept erforderlich",
+    "createNewTender": "Ausschreibung erstellen",
+    "fillTenderDetails": "Füllen Sie die Ausschreibungsdetails aus",
+    "selectDate": "Datum auswählen",
+    "bindingPeriodDateHelp": "Die Bindefrist gibt an, wie lange wir an unser Angebot gebunden sind",
+    "evaluationSchemePlaceholder": "Details zum Wertungsschema eintragen",
+    "internalReference": "Interne Referenznummer",
+    "internalReferenceHelp": "Wird beim Erstellen automatisch generiert",
+    "externalReferenceHelp": "Die vom Kunden vergebene Referenznummer"
   },
   "tenderStatus": {
     "draft": "Entwurf",
@@ -115,5 +122,12 @@
     "couldNotLoadTenders": "Fehler beim Laden der Ausschreibungen",
     "couldNotDeleteTender": "Fehler beim Löschen der Ausschreibung",
     "couldNotUpdateTender": "Fehler beim Aktualisieren der Ausschreibung"
+  },
+  "tenders": {
+    "cancel": "Abbrechen",
+    "createTender": "Ausschreibung erstellen",
+    "descriptionPlaceholder": "Geben Sie eine Beschreibung für die Ausschreibung ein",
+    "selectClient": "Vergabestelle auswählen",
+    "newTender": "Neue Ausschreibung"
   }
 }
