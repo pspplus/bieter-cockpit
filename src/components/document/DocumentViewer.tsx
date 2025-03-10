@@ -39,15 +39,11 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
         console.log('Fetching document with path:', filePath);
         
         // Get a fresh public URL for the file
-        const { data, error } = await supabase
+        // Note: getPublicUrl no longer returns an error property in newer Supabase versions
+        const { data } = await supabase
           .storage
           .from('tender_documents')
           .getPublicUrl(filePath);
-        
-        if (error) {
-          console.error('Error getting public URL:', error);
-          throw error;
-        }
         
         console.log('Retrieved public URL:', data.publicUrl);
         setFileUrl(data.publicUrl);
