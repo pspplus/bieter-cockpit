@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { TenderDocument } from "@/types/tender";
 import { v4 as uuidv4 } from "uuid";
@@ -44,6 +45,14 @@ export const getFileCategory = (fileType: string): 'image' | 'pdf' | 'video' | '
   if (fileType.startsWith('audio/')) return 'audio';
   if (fileType.startsWith('text/')) return 'text';
   return 'other';
+};
+
+// Helper to sanitize file name for storage
+const sanitizeFileName = (fileName: string): string => {
+  // Remove special characters and replace spaces with underscores
+  return fileName
+    .replace(/[^a-zA-Z0-9.-]/g, '_')
+    .replace(/_{2,}/g, '_');  // Replace multiple underscores with a single one
 };
 
 // Fetch documents for a tender
@@ -111,7 +120,11 @@ export const uploadDocument = async (
   }
 
   // Create a unique file name to prevent overwriting
-  const uniqueFileName = `${uuidv4()}-${file.name}`;
+  const uniqueId = uuidv4();
+  const sanitizedFileName = sanitizeFileName(file.name);
+  const uniqueFileName = `${uniqueId}-${sanitizedFileName}`;
+  
+  console.log(`Uploading file: ${uniqueFileName}`);
   
   // Upload file to Storage - CHANGED FROM 'documents' to 'tender_documents'
   const { data: fileData, error: uploadError } = await supabase

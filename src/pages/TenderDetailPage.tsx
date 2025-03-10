@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -57,11 +56,9 @@ export default function TenderDetailPage() {
         const tenderData = await fetchTenderById(id);
         setTender(tenderData);
 
-        // Load documents
         const docsData = await fetchTenderDocuments(id);
         setDocuments(docsData);
 
-        // Load folders separately to ensure they're available
         const foldersData = await fetchFolders(id);
         setFolders(foldersData);
       } catch (error) {
@@ -99,13 +96,11 @@ export default function TenderDetailPage() {
   const handlePreviewDocument = (document: TenderDocument) => {
     setSelectedDocument(document);
     
-    // Check if document is viewable in browser
     const canViewInBrowser = isViewableInBrowser(document.fileType);
     
     if (canViewInBrowser) {
       setDocumentViewerOpen(true);
     } else {
-      // If not viewable in browser, download it
       window.open(document.fileUrl, '_blank');
     }
   };
@@ -115,7 +110,6 @@ export default function TenderDetailPage() {
     
     try {
       await updateTender(tender.id, updates);
-      // Update the local tender state with the new values
       setTender(prev => prev ? { ...prev, ...updates } : null);
       toast.success(t("notifications.tenderUpdated", "Ausschreibung aktualisiert"));
     } catch (error) {
@@ -200,7 +194,6 @@ export default function TenderDetailPage() {
         </div>
       </div>
 
-      {/* Delete Confirmation Dialog */}
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -221,7 +214,6 @@ export default function TenderDetailPage() {
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* Tender Details Edit Dialog */}
       <Dialog open={detailsDialogOpen} onOpenChange={setDetailsDialogOpen}>
         <DialogContent className="sm:max-w-[600px]">
           <DialogHeader>
@@ -241,7 +233,6 @@ export default function TenderDetailPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Contact Information Edit Dialog */}
       <Dialog open={contactDialogOpen} onOpenChange={setContactDialogOpen}>
         <DialogContent className="sm:max-w-[600px]">
           <DialogHeader>
@@ -261,7 +252,6 @@ export default function TenderDetailPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Document Viewer Dialog */}
       <Dialog open={documentViewerOpen} onOpenChange={setDocumentViewerOpen} className="sm:max-w-5xl">
         <DialogContent className="sm:max-w-5xl max-h-[90vh]">
           <DialogHeader className="flex flex-row items-center justify-between">
@@ -282,8 +272,7 @@ export default function TenderDetailPage() {
           <div className="flex-1 overflow-hidden">
             {selectedDocument && (
               <DocumentViewer 
-                document={selectedDocument} 
-                className="w-full" 
+                document={selectedDocument}
                 style={{ height: 'calc(80vh - 160px)' }}
               />
             )}
