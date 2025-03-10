@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -6,7 +7,7 @@ import { Layout } from "@/components/layout/Layout";
 import { TenderDetails } from "@/components/tender/TenderDetails";
 import { DocumentList } from "@/components/document/DocumentList";
 import { DocumentViewer } from "@/components/document/DocumentViewer";
-import { fetchTenderById, deleteTender, updateTender } from "@/services/tenderService";
+import { fetchTenderById } from "@/services/tenderService";
 import { fetchTenderDocuments, isViewableInBrowser } from "@/services/documentService";
 import { fetchFolders } from "@/services/folderService";
 import { Tender, TenderDocument, Folder, TenderStatus } from "@/types/tender";
@@ -61,7 +62,7 @@ export default function TenderDetailPage() {
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const { updateTender: contextUpdateTender } = useTender();
+  const { updateTender: contextUpdateTender, deleteTender: contextDeleteTender } = useTender();
 
   useEffect(() => {
     const loadTender = async () => {
@@ -87,10 +88,10 @@ export default function TenderDetailPage() {
   }, [id, t]);
 
   const handleDelete = async () => {
-    if (!tender) return;
+    if (!tender || !id) return;
     
     try {
-      await deleteTender(tender.id);
+      await contextDeleteTender(id);
       toast.success(t("notifications.tenderDeleted"));
       navigate("/tenders");
     } catch (error) {
@@ -123,7 +124,7 @@ export default function TenderDetailPage() {
     if (!tender) return;
     
     try {
-      await updateTender(tender.id, updates);
+      await contextUpdateTender(tender.id, updates);
       setTender(prev => prev ? { ...prev, ...updates } : null);
       toast.success(t("notifications.tenderUpdated", "Ausschreibung aktualisiert"));
     } catch (error) {
