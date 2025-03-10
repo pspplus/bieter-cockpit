@@ -1,3 +1,4 @@
+
 import { Tender } from "@/types/tender";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,6 +9,7 @@ import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
 import { fetchTenderDocuments } from "@/services/documentService";
 import { getStatusColors } from "@/utils/statusUtils";
+import { MilestoneProcess } from "./MilestoneProcess"; // Import der neuen Komponente
 
 interface TenderDetailsProps {
   tender: Tender;
@@ -88,6 +90,16 @@ export function TenderDetails({ tender }: TenderDetailsProps) {
           </div>
         </div>
       </div>
+
+      {/* Neue Meilenstein-Prozess Visualisierung */}
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base">{t('milestones.milestones')}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <MilestoneProcess milestones={tender.milestones} />
+        </CardContent>
+      </Card>
       
       <div className="grid gap-6 md:grid-cols-2">
         <Card>
