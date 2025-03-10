@@ -1,69 +1,63 @@
-
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
+import React from 'react';
+import { ChakraProvider, extendTheme } from '@chakra-ui/react';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { TenderProvider } from "@/context/TenderContext";
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import ClientsPage from './pages/ClientsPage';
+import NewTenderPage from './pages/NewTenderPage';
+import TendersPage from './pages/TendersPage';
+import TenderDetailsPage from './pages/TenderDetailsPage';
+import ClientDetailsPage from './pages/ClientDetailsPage';
+import { AuthProvider } from './context/AuthContext';
+import { LanguageProvider } from './context/LanguageContext';
+import { ThemeProvider } from './context/ThemeContext';
+import { TenderProvider } from './context/TenderContext';
+import { Toaster } from "@/components/ui/sonner"
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
+import ProfilePage from './pages/ProfilePage';
+import HomePage from './pages/HomePage';
 import { ClientProvider } from "@/context/ClientContext";
-import { LanguageProvider } from "@/context/LanguageContext";
-import { AuthProvider } from "@/context/AuthContext";
-import { ThemeProvider } from "@/context/ThemeContext";
-import Index from "./pages/Index";
-import Dashboard from "./pages/Dashboard";
-import TendersPage from "./pages/TendersPage";
-import TenderDetailPage from "./pages/TenderDetailPage";
-import ClientsPage from "./pages/ClientsPage";
-import ClientDetailPage from "./pages/ClientDetailPage";
-import SubmissionsPage from "./pages/SubmissionsPage";
-import MessagesPage from "./pages/MessagesPage";
-import NotFound from "./pages/NotFound";
-import LoginPage from "./pages/LoginPage";
-import SignUpPage from "./pages/SignUpPage";
-import NewTenderPage from "./pages/NewTenderPage";
-import ForgotPasswordPage from "./pages/ForgotPasswordPage";
-import UpdatePasswordPage from "./pages/UpdatePasswordPage";
-import ProfilePage from "./pages/ProfilePage";
-import './i18n'; // Import i18n configuration
+
+const theme = extendTheme({
+  config: {
+    initialColorMode: 'light',
+    useSystemColorMode: false,
+  },
+});
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <ThemeProvider>
-        <LanguageProvider>
-          <BrowserRouter>
-            <AuthProvider>
-              <TenderProvider>
-                <ClientProvider>
+function App() {
+  return (
+    <ChakraProvider theme={theme}>
+      <LanguageProvider>
+        <ThemeProvider>
+          <AuthProvider>
+            <QueryClientProvider client={queryClient}>
+              <ClientProvider>
+                <TenderProvider>
                   <Toaster />
-                  <Sonner position="top-right" />
-                  <Routes>
-                    <Route path="/" element={<Index />} />
-                    <Route path="/login" element={<LoginPage />} />
-                    <Route path="/signup" element={<SignUpPage />} />
-                    <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-                    <Route path="/update-password" element={<UpdatePasswordPage />} />
-                    <Route path="/profile" element={<ProfilePage />} />
-                    <Route path="/dashboard" element={<Dashboard />} />
-                    <Route path="/tenders" element={<TendersPage />} />
-                    <Route path="/tenders/new" element={<NewTenderPage />} />
-                    <Route path="/tenders/:id" element={<TenderDetailPage />} />
-                    <Route path="/submissions" element={<SubmissionsPage />} />
-                    <Route path="/messages" element={<MessagesPage />} />
-                    <Route path="/clients" element={<ClientsPage />} />
-                    <Route path="/clients/:id" element={<ClientDetailPage />} />
-                    <Route path="*" element={<NotFound />} />
-                  </Routes>
-                </ClientProvider>
-              </TenderProvider>
-            </AuthProvider>
-          </BrowserRouter>
-        </LanguageProvider>
-      </ThemeProvider>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+                  <Router>
+                    <Routes>
+                      <Route path="/" element={<HomePage />} />
+                      <Route path="/login" element={<LoginPage />} />
+                      <Route path="/register" element={<RegisterPage />} />
+                      <Route path="/profile" element={<ProfilePage />} />
+                      <Route path="/clients" element={<ClientsPage />} />
+                      <Route path="/clients/:id" element={<ClientDetailsPage />} />
+                      <Route path="/tenders" element={<TendersPage />} />
+                      <Route path="/tenders/new" element={<NewTenderPage />} />
+                      <Route path="/tenders/:id" element={<TenderDetailsPage />} />
+                    </Routes>
+                  </Router>
+                </TenderProvider>
+              </ClientProvider>
+            </QueryClientProvider>
+          </AuthProvider>
+        </ThemeProvider>
+      </LanguageProvider>
+    </ChakraProvider>
+  );
+}
 
 export default App;

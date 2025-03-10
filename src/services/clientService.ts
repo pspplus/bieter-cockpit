@@ -17,7 +17,7 @@ const mapClientFromDB = (client: any): Client => {
 };
 
 // Helper function to retry operations
-const withRetry = async (operation: () => Promise<any>, retries = 3, delay = 1000) => {
+const withRetry = async <T>(operation: () => Promise<T>, retries = 3, delay = 1000): Promise<T> => {
   try {
     return await operation();
   } catch (error) {
