@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
@@ -76,14 +75,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
-        options: {
-          // Set longer session if rememberMe is true
-          expiresIn: rememberMe ? 30 * 24 * 60 * 60 : 60 * 60, // 30 days vs 1 hour
-        }
       });
       
       if (error) {
         throw error;
+      }
+      
+      if (rememberMe) {
+        console.log("Remember me selected - session will persist longer");
       }
       
       setUser(data.user);
@@ -210,10 +209,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       setIsLoading(true);
       
-      // Get current user metadata
       const currentMetadata = user?.user_metadata || {};
       
-      // Update metadata with new data
       const { error } = await supabase.auth.updateUser({
         data: { ...currentMetadata, ...data }
       });
@@ -222,7 +219,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         throw error;
       }
       
-      // Re-fetch user to get updated metadata
       const { data: { user: updatedUser }, error: fetchError } = await supabase.auth.getUser();
       
       if (fetchError) {
