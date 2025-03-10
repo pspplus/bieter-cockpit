@@ -1,3 +1,4 @@
+
 import React, { createContext, useState, useEffect, useCallback } from "react";
 import { Tender, Milestone, MilestoneStatus } from "@/types/tender";
 import { useAuth } from "@/context/AuthContext";
@@ -37,8 +38,19 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
   const [tenders, setTenders] = useState<Tender[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const { t } = useTranslation();
+
+  // Debug-Ausgabe beim Rendern
+  useEffect(() => {
+    console.log("TenderProvider gerendert", { 
+      isAuthenticated, 
+      userId: user?.id, 
+      tendersCount: tenders.length,
+      isLoading,
+      error: error?.message
+    });
+  }, [isAuthenticated, user, tenders, isLoading, error]);
 
   const sortMilestones = (milestones: Milestone[]): Milestone[] => {
     return [...milestones].sort((a, b) => {
@@ -49,17 +61,24 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
   };
 
   const loadTenders = useCallback(async () => {
-    if (!isAuthenticated) return;
+    if (!isAuthenticated) {
+      console.log("loadTenders: Nicht authentifiziert, überspringe Laden");
+      return;
+    }
     
+    console.log("loadTenders: Starte Laden der Ausschreibungen");
     setIsLoading(true);
     setError(null);
     
     try {
       const data = await fetchTenders();
+      console.log(`loadTenders: ${data.length} Ausschreibungen geladen`);
+      
       const tendersWithSortedMilestones = data.map(tender => ({
         ...tender,
         milestones: sortMilestones(tender.milestones)
       }));
+      
       setTenders(tendersWithSortedMilestones);
     } catch (err) {
       console.error("Error loading tenders:", err);
@@ -70,11 +89,20 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
     }
   }, [isAuthenticated, t]);
 
+  // Lade Ausschreibungen beim Start und wenn sich der Auth-Status ändert
   useEffect(() => {
     loadTenders();
   }, [loadTenders]);
 
+  // Zusätzlicher Effect für Debug-Zwecke
+  useEffect(() => {
+    if (isAuthenticated && tenders.length === 0 && !isLoading && !error) {
+      console.log("Warnung: Authentifiziert, aber keine Ausschreibungen geladen und kein Ladevorgang aktiv");
+    }
+  }, [isAuthenticated, tenders, isLoading, error]);
+
   const refetchTenders = useCallback(async () => {
+    console.log("refetchTenders aufgerufen");
     await loadTenders();
   }, [loadTenders]);
 

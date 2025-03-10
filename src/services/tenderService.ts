@@ -114,50 +114,76 @@ const generateInternalReference = async (): Promise<string> => {
 
 // Fetch all tenders for the current user
 export const fetchTenders = async (): Promise<Tender[]> => {
-  const { data: tenderData, error: tenderError } = await supabase
-    .from('tenders')
-    .select('*')
-    .order('created_at', { ascending: false });
+  console.log("fetchTenders: Starte API-Aufruf an Supabase...");
+  
+  try {
+    // Get current user to check authentication
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    
+    if (authError) {
+      console.error('Authentication error:', authError);
+      throw new Error(`Authentifizierungsfehler: ${authError.message}`);
+    }
+    
+    if (!user) {
+      console.error('No authenticated user found');
+      throw new Error('Kein authentifizierter Benutzer gefunden');
+    }
+    
+    console.log("fetchTenders: Authentifizierter Benutzer:", user.id);
+    
+    const { data: tenderData, error: tenderError } = await supabase
+      .from('tenders')
+      .select('*')
+      .order('created_at', { ascending: false });
 
-  if (tenderError) {
-    console.error('Error fetching tenders:', tenderError);
-    throw tenderError;
+    if (tenderError) {
+      console.error('Error fetching tenders:', tenderError);
+      throw tenderError;
+    }
+
+    console.log(`fetchTenders: ${tenderData?.length || 0} Ausschreibungen gefunden`);
+
+    if (!tenderData || tenderData.length === 0) {
+      return [];
+    }
+
+    // Get all tender IDs to fetch their milestones
+    const tenderIds = tenderData.map(t => t.id);
+
+    // Fetch milestones for all tenders
+    const { data: milestoneData, error: milestoneError } = await supabase
+      .from('milestones')
+      .select('*')
+      .in('tender_id', tenderIds)
+      .order('sequence_number', { ascending: true });
+
+    if (milestoneError) {
+      console.error('Error fetching milestones:', milestoneError);
+      // Continue without milestones rather than failing completely
+    } else {
+      console.log(`fetchTenders: ${milestoneData?.length || 0} Meilensteine gefunden`);
+    }
+
+    // Group milestones by tender_id
+    const milestonesByTender: Record<string, any[]> = {};
+    if (milestoneData) {
+      milestoneData.forEach(milestone => {
+        if (!milestonesByTender[milestone.tender_id]) {
+          milestonesByTender[milestone.tender_id] = [];
+        }
+        milestonesByTender[milestone.tender_id].push(milestone);
+      });
+    }
+
+    // Map tenders with their milestones
+    return tenderData.map(tender => 
+      mapTenderFromDB(tender, milestonesByTender[tender.id] || [])
+    );
+  } catch (error) {
+    console.error('Uncaught error in fetchTenders:', error);
+    throw error;
   }
-
-  if (!tenderData || tenderData.length === 0) {
-    return [];
-  }
-
-  // Get all tender IDs to fetch their milestones
-  const tenderIds = tenderData.map(t => t.id);
-
-  // Fetch milestones for all tenders
-  const { data: milestoneData, error: milestoneError } = await supabase
-    .from('milestones')
-    .select('*')
-    .in('tender_id', tenderIds)
-    .order('sequence_number', { ascending: true });
-
-  if (milestoneError) {
-    console.error('Error fetching milestones:', milestoneError);
-    // Continue without milestones rather than failing completely
-  }
-
-  // Group milestones by tender_id
-  const milestonesByTender: Record<string, any[]> = {};
-  if (milestoneData) {
-    milestoneData.forEach(milestone => {
-      if (!milestonesByTender[milestone.tender_id]) {
-        milestonesByTender[milestone.tender_id] = [];
-      }
-      milestonesByTender[milestone.tender_id].push(milestone);
-    });
-  }
-
-  // Map tenders with their milestones
-  return tenderData.map(tender => 
-    mapTenderFromDB(tender, milestonesByTender[tender.id] || [])
-  );
 };
 
 // Fetch a single tender by ID with folders
