@@ -94,17 +94,6 @@ export function MainInfoCard({ tender, onOpenDetailsDialog, onUpdateTender }: Ma
               </Button>
             </>
           )}
-          {onOpenDetailsDialog && !editing && (
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              onClick={onOpenDetailsDialog} 
-              className="h-8 w-8"
-              title={t("tenderDetails.editDetails", "Ausschreibungsdetails bearbeiten")}
-            >
-              <Edit className="h-4 w-4" />
-            </Button>
-          )}
         </div>
       </CardHeader>
       <CardContent>
@@ -157,9 +146,8 @@ export function MainInfoCard({ tender, onOpenDetailsDialog, onUpdateTender }: Ma
               <Select
                 value={vertragsart}
                 onValueChange={(value) => setVertragsart(value as Vertragsart)}
-                className="mt-1"
               >
-                <SelectTrigger className="w-full">
+                <SelectTrigger className="w-full mt-1">
                   <SelectValue placeholder={t("tender.selectVertragsart", "Vertragsart auswählen")} />
                 </SelectTrigger>
                 <SelectContent>

@@ -115,41 +115,6 @@ export function BaseInfoCard({ tender, onStatusChange, onUpdateTender }: BaseInf
               </Button>
             </>
           )}
-          
-          <Popover open={statusPopoverOpen} onOpenChange={setStatusPopoverOpen}>
-            <PopoverTrigger asChild>
-              <Badge 
-                variant="outline" 
-                className={`cursor-pointer flex items-center gap-1 ${bg} ${text}`}
-              >
-                {statusDisplayMap[tender.status]}
-                <PencilLine className="h-3 w-3" />
-              </Badge>
-            </PopoverTrigger>
-            <PopoverContent className="w-52 p-2">
-              <div className="space-y-2">
-                <h4 className="text-sm font-medium">
-                  {t("tender.changeStatus", "Status ändern")}
-                </h4>
-                <Select
-                  value={tender.status}
-                  onValueChange={(value) => handleStatusChange(value as TenderStatus)}
-                  disabled={isUpdatingStatus}
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder={t("tender.selectStatus", "Status auswählen")} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {Object.entries(statusDisplayMap).map(([key, value]) => (
-                      <SelectItem key={key} value={key}>
-                        {value}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </PopoverContent>
-          </Popover>
         </div>
       </CardHeader>
       <CardContent>
@@ -183,6 +148,45 @@ export function BaseInfoCard({ tender, onStatusChange, onUpdateTender }: BaseInf
             ) : (
               <div className="text-sm">{formattedDueDate}</div>
             )}
+          </div>
+          <div>
+            <div className="text-sm font-medium">{t("tender.status", "Status")}</div>
+            <div className="text-sm">
+              <Popover open={statusPopoverOpen} onOpenChange={setStatusPopoverOpen}>
+                <PopoverTrigger asChild>
+                  <Button 
+                    variant="outline"
+                    className={`mt-1 text-sm font-normal justify-start h-9 px-3 ${bg} ${text}`}
+                  >
+                    {statusDisplayMap[tender.status]}
+                    <PencilLine className="h-3 w-3 ml-2" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-52 p-2">
+                  <div className="space-y-2">
+                    <h4 className="text-sm font-medium">
+                      {t("tender.changeStatus", "Status ändern")}
+                    </h4>
+                    <Select
+                      value={tender.status}
+                      onValueChange={(value) => handleStatusChange(value as TenderStatus)}
+                      disabled={isUpdatingStatus}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder={t("tender.selectStatus", "Status auswählen")} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {Object.entries(statusDisplayMap).map(([key, value]) => (
+                          <SelectItem key={key} value={key}>
+                            {value}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </PopoverContent>
+              </Popover>
+            </div>
           </div>
           {formattedBindingPeriodDate && (
             <div>
