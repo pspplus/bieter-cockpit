@@ -34,6 +34,12 @@
     "verloren": "Verloren",
     "abgeschlossen": "Abgeschlossen"
   },
+  "milestoneStatus": {
+    "completed": "Abgeschlossen",
+    "in-progress": "In Bearbeitung",
+    "skipped": "Übersprungen",
+    "pending": "Ausstehend"
+  },
   "deleteConfirmation": {
     "title": "Ausschreibung löschen",
     "description": "Sind Sie sicher, dass Sie diese Ausschreibung löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",

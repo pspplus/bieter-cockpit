@@ -100,7 +100,14 @@
     "markAsInProgress": "Als in Bearbeitung markieren",
     "markAsSkipped": "Als übersprungen markieren",
     "cannotSkip": "Nur Meilensteine mit Status 'ausstehend' können übersprungen werden",
-    "markAsPending": "Auf ausstehend zurücksetzen"
+    "markAsPending": "Auf ausstehend zurücksetzen",
+    "progress": "Fortschritt"
+  },
+  "milestoneStatus": {
+    "completed": "Abgeschlossen",
+    "in-progress": "In Bearbeitung",
+    "skipped": "Übersprungen",
+    "pending": "Ausstehend"
   },
   "milestoneActions": {
     "complete": "Abschließen",
