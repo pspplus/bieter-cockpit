@@ -252,7 +252,7 @@ export default function TenderDetailPage() {
         </DialogContent>
       </Dialog>
 
-      <Dialog open={documentViewerOpen} onOpenChange={setDocumentViewerOpen} className="sm:max-w-5xl">
+      <Dialog open={documentViewerOpen} onOpenChange={setDocumentViewerOpen}>
         <DialogContent className="sm:max-w-5xl max-h-[90vh]">
           <DialogHeader className="flex flex-row items-center justify-between">
             <div>
@@ -273,7 +273,8 @@ export default function TenderDetailPage() {
             {selectedDocument && (
               <DocumentViewer 
                 document={selectedDocument}
-                style={{ height: 'calc(80vh - 160px)' }}
+                isOpen={documentViewerOpen}
+                onClose={() => setDocumentViewerOpen(false)}
               />
             )}
           </div>
