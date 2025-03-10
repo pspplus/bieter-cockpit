@@ -10,10 +10,10 @@ import { DocumentViewer } from "@/components/document/DocumentViewer";
 import { fetchTenderById, deleteTender, updateTender } from "@/services/tenderService";
 import { fetchTenderDocuments, isViewableInBrowser } from "@/services/documentService";
 import { fetchFolders } from "@/services/folderService";
-import { Tender, TenderDocument, Folder } from "@/types/tender";
+import { Tender, TenderDocument, Folder, TenderStatus } from "@/types/tender";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
-import { Trash2, X } from "lucide-react";
+import { Trash2, X, PencilLine } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -31,12 +31,20 @@ import {
   DialogHeader,
   DialogTitle,
   DialogClose,
+  DialogFooter,
 } from "@/components/ui/dialog";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { TenderDetailsEditForm } from "@/components/tender/TenderDetailsEditForm";
 import { TenderContactEditForm } from "@/components/tender/TenderContactEditForm";
 import { Badge } from "@/components/ui/badge";
-import { statusDisplayMap } from "@/utils/statusUtils";
+import { statusDisplayMap, statusColors } from "@/utils/statusUtils";
 import { useTender } from "@/hooks/useTender";
+import { MilestoneProcess } from "@/components/tender/MilestoneProcess";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export default function TenderDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -50,8 +58,11 @@ export default function TenderDetailPage() {
   const [contactDialogOpen, setContactDialogOpen] = useState(false);
   const [selectedDocument, setSelectedDocument] = useState<TenderDocument | null>(null);
   const [documentViewerOpen, setDocumentViewerOpen] = useState(false);
+  const [statusPopoverOpen, setStatusPopoverOpen] = useState(false);
+  const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const { updateTender: contextUpdateTender } = useTender();
 
   useEffect(() => {
     const loadTender = async () => {
@@ -122,6 +133,23 @@ export default function TenderDetailPage() {
     }
   };
 
+  const handleStatusChange = async (newStatus: TenderStatus) => {
+    if (!tender || !id) return;
+    
+    setIsUpdatingStatus(true);
+    try {
+      await contextUpdateTender(id, { status: newStatus });
+      setTender(prev => prev ? { ...prev, status: newStatus } : null);
+      toast.success(t("notifications.statusUpdated", "Status aktualisiert"));
+      setStatusPopoverOpen(false);
+    } catch (error) {
+      console.error("Error updating tender status:", error);
+      toast.error(t("errorMessages.couldNotUpdateStatus", "Fehler beim Aktualisieren des Status"));
+    } finally {
+      setIsUpdatingStatus(false);
+    }
+  };
+
   if (isLoading) {
     return (
       <Layout title={t("loading")}>
@@ -150,6 +178,8 @@ export default function TenderDetailPage() {
     );
   }
 
+  const { bg, text } = statusColors[tender.status];
+
   return (
     <Layout title={tender.title}>
       <div className="space-y-6">
@@ -161,7 +191,40 @@ export default function TenderDetailPage() {
                   <TabsTrigger value="details">{t("tenderDetails.details")}</TabsTrigger>
                   <TabsTrigger value="documents">{t("tenderDetails.documents")}</TabsTrigger>
                 </TabsList>
-                <Badge variant="outline" className="ml-4">{statusDisplayMap[tender.status]}</Badge>
+                <Popover open={statusPopoverOpen} onOpenChange={setStatusPopoverOpen}>
+                  <PopoverTrigger asChild>
+                    <Badge 
+                      variant="outline" 
+                      className={`cursor-pointer ml-4 flex items-center gap-1 ${bg} ${text}`}
+                    >
+                      {statusDisplayMap[tender.status]}
+                      <PencilLine className="h-3 w-3" />
+                    </Badge>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-52 p-2">
+                    <div className="space-y-2">
+                      <h4 className="text-sm font-medium">
+                        {t("tender.changeStatus", "Status ändern")}
+                      </h4>
+                      <Select
+                        value={tender.status}
+                        onValueChange={(value) => handleStatusChange(value as TenderStatus)}
+                        disabled={isUpdatingStatus}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder={t("tender.selectStatus", "Status auswählen")} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {Object.entries(statusDisplayMap).map(([key, value]) => (
+                            <SelectItem key={key} value={key}>
+                              {value}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </PopoverContent>
+                </Popover>
               </div>
             
               <TabsContent value="details" className="mt-4">
@@ -172,6 +235,13 @@ export default function TenderDetailPage() {
                       onOpenDetailsDialog={() => setDetailsDialogOpen(true)} 
                       onOpenContactDialog={() => setContactDialogOpen(true)} 
                     />
+
+                    {tender.milestones.length > 0 && (
+                      <div className="mt-8">
+                        <h3 className="text-lg font-medium mb-4">{t("milestones.title", "Meilensteine")}</h3>
+                        <MilestoneProcess milestones={tender.milestones} tenderId={tender.id} />
+                      </div>
+                    )}
                   </div>
                   <Button
                     variant="destructive"
