@@ -1,5 +1,5 @@
 
-import { supabase, checkSupabaseConnection } from "@/integrations/supabase/client";
+import { supabase } from "@/integrations/supabase/client";
 import { Client } from "@/types/client";
 import { toast } from "sonner";
 
@@ -34,29 +34,22 @@ const withRetry = async <T>(operation: () => Promise<T>, retries = 3, delay = 10
 export const fetchClients = async (): Promise<Client[]> => {
   console.log("fetchClients: Attempting to fetch clients...");
   
-  // Check connection before proceeding
-  const isConnected = await checkSupabaseConnection();
-  if (!isConnected) {
-    console.warn("Supabase connection failed, using empty clients list");
-    return [];
-  }
-  
   try {
-    const { data, error } = await withRetry(() => 
+    const response = await withRetry(() => 
       supabase
         .from('clients')
         .select('*')
         .order('name')
     );
 
-    if (error) {
-      console.error('Error fetching clients:', error);
+    if (response.error) {
+      console.error('Error fetching clients:', response.error);
       toast.error('Fehler beim Laden der Vergabestellen. Bitte versuchen Sie es später erneut.');
-      throw error;
+      throw response.error;
     }
 
-    console.log(`Successfully fetched ${data?.length || 0} clients`);
-    return data ? data.map(mapClientFromDB) : [];
+    console.log(`Successfully fetched ${response.data?.length || 0} clients`);
+    return response.data ? response.data.map(mapClientFromDB) : [];
   } catch (error: any) {
     console.error('Error fetching clients:', error);
     toast.error('Fehler beim Laden der Vergabestellen. Bitte versuchen Sie es später erneut.');
@@ -71,13 +64,9 @@ export const fetchClientById = async (id: string): Promise<Client | null> => {
       .from('clients')
       .select('*')
       .eq('id', id)
-      .single();
+      .maybeSingle();
 
     if (error) {
-      if (error.code === 'PGRST116') {
-        // No rows returned - client not found
-        return null;
-      }
       console.error('Error fetching client:', error);
       throw error;
     }

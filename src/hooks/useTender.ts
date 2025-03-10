@@ -8,10 +8,13 @@ import { TenderContext } from '@/context/TenderContext';
 export const useTender = () => {
   // Wrap in try-catch to provide better error messaging
   try {
+    // Get the context
     const context = useContext(TenderContext);
     
+    // Check if we're using the hook within a provider
     if (context === undefined) {
-      console.error("useTender: TenderContext ist undefined. Stellen Sie sicher, dass Sie den TenderProvider korrekt eingerichtet haben.");
+      const errorMessage = "useTender: TenderContext ist undefined. Stellen Sie sicher, dass Sie den TenderProvider korrekt eingerichtet haben.";
+      console.error(errorMessage);
       throw new Error("useTender must be used within a TenderProvider");
     }
     
