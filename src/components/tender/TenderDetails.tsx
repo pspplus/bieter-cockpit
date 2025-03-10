@@ -56,65 +56,71 @@ export function TenderDetails({ tender, onOpenDetailsDialog, onOpenContactDialog
               </Button>
             )}
           </CardHeader>
-          <CardContent className="grid gap-4">
-            <div>
-              <div className="text-sm font-medium">{t("tender.title")}</div>
-              <div className="text-sm">{tender.title}</div>
+          <CardContent>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <div className="text-sm font-medium">{t("tender.title")}</div>
+                <div className="text-sm">{tender.title}</div>
+              </div>
+              <div>
+                <div className="text-sm font-medium">{t("tender.externalReference")}</div>
+                <div className="text-sm">{tender.externalReference}</div>
+              </div>
+              <div>
+                <div className="text-sm font-medium">{t("tender.client")}</div>
+                <div className="text-sm">{tender.client}</div>
+              </div>
+              <div>
+                <div className="text-sm font-medium">{t("tender.status")}</div>
+                <div className="text-sm">
+                  <Badge variant="outline">{statusDisplayMap[tender.status]}</Badge>
+                </div>
+              </div>
+              <div>
+                <div className="text-sm font-medium">{t("tender.dueDate")}</div>
+                <div className="text-sm">{formattedDueDate}</div>
+              </div>
+              {formattedBindingPeriodDate && (
+                <div>
+                  <div className="text-sm font-medium">{t("tender.bindingPeriodDate")}</div>
+                  <div className="text-sm">{formattedBindingPeriodDate}</div>
+                </div>
+              )}
+              {tender.budget && (
+                <div>
+                  <div className="text-sm font-medium">{t("tender.budget")}</div>
+                  <div className="text-sm">{tender.budget.toLocaleString()} €</div>
+                </div>
+              )}
+              {tender.location && (
+                <div>
+                  <div className="text-sm font-medium">{t("tender.location")}</div>
+                  <div className="text-sm">{tender.location}</div>
+                </div>
+              )}
             </div>
-            <div>
-              <div className="text-sm font-medium">{t("tender.externalReference")}</div>
-              <div className="text-sm">{tender.externalReference}</div>
+            
+            {/* Fields that take more space stay in one column */}
+            <div className="grid grid-cols-1 gap-4 mt-4">
+              {tender.evaluationScheme && (
+                <div>
+                  <div className="text-sm font-medium">{t("tender.evaluationScheme")}</div>
+                  <div className="text-sm whitespace-pre-wrap">{tender.evaluationScheme}</div>
+                </div>
+              )}
+              {tender.conceptRequired !== undefined && (
+                <div>
+                  <div className="text-sm font-medium">{t("tender.conceptRequired")}</div>
+                  <div className="text-sm">{tender.conceptRequired ? t("yes") : t("no")}</div>
+                </div>
+              )}
+              {tender.description && (
+                <div>
+                  <div className="text-sm font-medium">{t("tender.description")}</div>
+                  <div className="text-sm whitespace-pre-wrap">{tender.description}</div>
+                </div>
+              )}
             </div>
-            <div>
-              <div className="text-sm font-medium">{t("tender.client")}</div>
-              <div className="text-sm">{tender.client}</div>
-            </div>
-            <div>
-              <div className="text-sm font-medium">{t("tender.status")}</div>
-              <div className="text-sm">
-                <Badge variant="outline">{statusDisplayMap[tender.status]}</Badge>
-              </div>
-            </div>
-            <div>
-              <div className="text-sm font-medium">{t("tender.dueDate")}</div>
-              <div className="text-sm">{formattedDueDate}</div>
-            </div>
-            {formattedBindingPeriodDate && (
-              <div>
-                <div className="text-sm font-medium">{t("tender.bindingPeriodDate")}</div>
-                <div className="text-sm">{formattedBindingPeriodDate}</div>
-              </div>
-            )}
-            {tender.budget && (
-              <div>
-                <div className="text-sm font-medium">{t("tender.budget")}</div>
-                <div className="text-sm">{tender.budget.toLocaleString()} €</div>
-              </div>
-            )}
-            {tender.location && (
-              <div>
-                <div className="text-sm font-medium">{t("tender.location")}</div>
-                <div className="text-sm">{tender.location}</div>
-              </div>
-            )}
-            {tender.evaluationScheme && (
-              <div>
-                <div className="text-sm font-medium">{t("tender.evaluationScheme")}</div>
-                <div className="text-sm whitespace-pre-wrap">{tender.evaluationScheme}</div>
-              </div>
-            )}
-            {tender.conceptRequired !== undefined && (
-              <div>
-                <div className="text-sm font-medium">{t("tender.conceptRequired")}</div>
-                <div className="text-sm">{tender.conceptRequired ? t("yes") : t("no")}</div>
-              </div>
-            )}
-            {tender.description && (
-              <div>
-                <div className="text-sm font-medium">{t("tender.description")}</div>
-                <div className="text-sm whitespace-pre-wrap">{tender.description}</div>
-              </div>
-            )}
           </CardContent>
         </Card>
 
