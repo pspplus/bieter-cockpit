@@ -21,6 +21,9 @@ import NotFound from "./pages/NotFound";
 import LoginPage from "./pages/LoginPage";
 import SignUpPage from "./pages/SignUpPage";
 import NewTenderPage from "./pages/NewTenderPage";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
+import UpdatePasswordPage from "./pages/UpdatePasswordPage";
+import ProfilePage from "./pages/ProfilePage";
 import './i18n'; // Import i18n configuration
 
 const queryClient = new QueryClient();
@@ -40,6 +43,9 @@ const App = () => (
                     <Route path="/" element={<Index />} />
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/signup" element={<SignUpPage />} />
+                    <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+                    <Route path="/update-password" element={<UpdatePasswordPage />} />
+                    <Route path="/profile" element={<ProfilePage />} />
                     <Route path="/dashboard" element={<Dashboard />} />
                     <Route path="/tenders" element={<TendersPage />} />
                     <Route path="/tenders/new" element={<NewTenderPage />} />
