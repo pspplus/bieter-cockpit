@@ -12,7 +12,7 @@ export default function Index() {
       <header className="border-b border-tender-100 dark:border-tender-800 bg-white dark:bg-tender-950">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <img src="/lovable-uploads/67014d21-d261-48c8-94e3-06a85e6b7dac.png" alt="Bieter Cockpit" className="h-20" />
+            <img src="/lovable-uploads/67014d21-d261-48c8-94e3-06a85e6b7dac.png" alt="Bieter Cockpit" className="h-15" />
           </div>
           <div className="flex items-center gap-3">
             <ThemeSwitcher />
