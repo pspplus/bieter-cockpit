@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Layout } from "@/components/layout/Layout";
 import { TenderDetails } from "@/components/tender/TenderDetails";
-import { MilestonesList } from "@/components/tender/MilestonesList";
 import { TenderEditForm } from "@/components/tender/TenderEditForm";
 import { DocumentList } from "@/components/document/DocumentList";
 import { fetchTenderById, deleteTender } from "@/services/tenderService";
@@ -125,7 +124,6 @@ export default function TenderDetailPage() {
               <TabsList>
                 <TabsTrigger value="details">{t("tenderDetails.details")}</TabsTrigger>
                 <TabsTrigger value="documents">{t("tenderDetails.documents")}</TabsTrigger>
-                <TabsTrigger value="milestones">{t("tenderDetails.milestones")}</TabsTrigger>
                 <TabsTrigger value="edit">{t("tenderDetails.edit")}</TabsTrigger>
               </TabsList>
             
@@ -156,10 +154,6 @@ export default function TenderDetailPage() {
                   onDocumentDeleted={handleDocumentDeleted}
                   onPreviewDocument={handlePreviewDocument}
                 />
-              </TabsContent>
-              
-              <TabsContent value="milestones" className="mt-4">
-                <MilestonesList tender={tender} />
               </TabsContent>
               
               <TabsContent value="edit" className="mt-4">

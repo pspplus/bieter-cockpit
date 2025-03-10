@@ -47,7 +47,22 @@
     "updateStatus": "Status aktualisieren",
     "statusUpdated": "Meilenstein-Status aktualisiert",
     "updateError": "Fehler beim Aktualisieren des Status",
-    "invalidStatusTransition": "Ungültiger Statusübergang"
+    "invalidStatusTransition": "Ungültiger Statusübergang",
+    "markAsCompleted": "Als abgeschlossen markieren",
+    "cannotComplete": "Kann nicht abgeschlossen werden",
+    "markAsInProgress": "Als in Bearbeitung markieren",
+    "markAsSkipped": "Als übersprungen markieren",
+    "markAsPending": "Als ausstehend markieren",
+    "cannotSkip": "Kann nicht übersprungen werden",
+    "inProgress": "In Bearbeitung",
+    "dueDate": "Fälligkeitsdatum",
+    "completionDate": "Abschlussdatum"
+  },
+  "milestoneActions": {
+    "complete": "Abschließen",
+    "start": "Starten",
+    "skip": "Überspringen",
+    "reset": "Zurücksetzen"
   },
   "deleteConfirmation": {
     "title": "Ausschreibung löschen",
@@ -65,5 +80,26 @@
     "home": "Startseite",
     "dashboard": "Dashboard"
   },
-  "cancel": "Abbrechen"
+  "tenderDetails": {
+    "details": "Details",
+    "documents": "Dokumente",
+    "edit": "Bearbeiten",
+    "tenderInformation": "Ausschreibungsinformationen",
+    "contactInformation": "Kontaktinformationen",
+    "created": "Erstellt am",
+    "email": "E-Mail",
+    "phone": "Telefon",
+    "noContactInfo": "Keine Kontaktinformationen verfügbar",
+    "due": "Fällig",
+    "progress": "Fortschritt",
+    "documents": "Dokumente",
+    "notFound": "Nicht gefunden",
+    "tenderNotFound": "Ausschreibung nicht gefunden",
+    "tenderMayNotExist": "Die gesuchte Ausschreibung existiert nicht oder Sie haben keinen Zugriff darauf."
+  },
+  "cancel": "Abbrechen",
+  "yes": "Ja",
+  "no": "Nein",
+  "loading": "Wird geladen...",
+  "backToTenders": "Zurück zur Übersicht"
 }
