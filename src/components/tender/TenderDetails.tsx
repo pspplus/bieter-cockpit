@@ -1,3 +1,4 @@
+
 import { Tender, TenderStatus } from "@/types/tender";
 import { BaseInfoCard } from "./cards/BaseInfoCard";
 import { MainInfoCard } from "./cards/MainInfoCard";
@@ -23,6 +24,10 @@ export function TenderDetails({
   const handleStatusChange = async (status: TenderStatus) => {
     await updateTender(tender.id, { status });
   };
+  
+  const handleUpdateTender = async (updates: Partial<Tender>) => {
+    await updateTender(tender.id, updates);
+  };
 
   return (
     <div className="space-y-6">
@@ -30,14 +35,19 @@ export function TenderDetails({
         <BaseInfoCard 
           tender={tender} 
           onStatusChange={handleStatusChange}
+          onUpdateTender={handleUpdateTender}
         />
 
         <MainInfoCard 
           tender={tender} 
-          onOpenDetailsDialog={onOpenDetailsDialog} 
+          onOpenDetailsDialog={onOpenDetailsDialog}
+          onUpdateTender={handleUpdateTender} 
         />
 
-        <ObjectInfoCard tender={tender} />
+        <ObjectInfoCard 
+          tender={tender} 
+          onUpdateTender={handleUpdateTender}
+        />
         
         <RequirementsCard tender={tender} />
 
