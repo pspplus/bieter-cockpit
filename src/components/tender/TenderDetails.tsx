@@ -49,7 +49,10 @@ export function TenderDetails({
           onUpdateTender={handleUpdateTender}
         />
         
-        <RequirementsCard tender={tender} />
+        <RequirementsCard 
+          tender={tender}
+          onUpdateTender={handleUpdateTender}
+        />
 
         <ContactCard 
           tender={tender} 
