@@ -1,3 +1,4 @@
+
 import { Tender } from "@/types/tender";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -91,7 +92,7 @@ export function TenderDetails({ tender }: TenderDetailsProps) {
           <CardTitle className="text-base">{t('milestones.milestones')}</CardTitle>
         </CardHeader>
         <CardContent>
-          <MilestoneProcess milestones={tender.milestones} />
+          <MilestoneProcess milestones={tender.milestones} tenderId={tender.id} />
         </CardContent>
       </Card>
       

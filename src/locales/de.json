@@ -40,6 +40,15 @@
     "skipped": "Übersprungen",
     "pending": "Ausstehend"
   },
+  "milestones": {
+    "progress": "Fortschritt",
+    "milestones": "Meilensteine",
+    "noMilestonesYet": "Noch keine Meilensteine vorhanden",
+    "updateStatus": "Status aktualisieren",
+    "statusUpdated": "Meilenstein-Status aktualisiert",
+    "updateError": "Fehler beim Aktualisieren des Status",
+    "invalidStatusTransition": "Ungültiger Statusübergang"
+  },
   "deleteConfirmation": {
     "title": "Ausschreibung löschen",
     "description": "Sind Sie sicher, dass Sie diese Ausschreibung löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
