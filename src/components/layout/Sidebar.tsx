@@ -128,10 +128,10 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
       </ScrollArea>
       <div className="mt-auto border-t border-tender-100 dark:border-tender-800 p-4">
         <Link
-          to="/settings"
+          to="/profile"
           className={cn(
             "tender-step dark:hover:bg-tender-800/50",
-            location.pathname === "/settings" && "tender-step-active dark:bg-tender-800/60 dark:text-primary-foreground dark:font-medium"
+            location.pathname === "/profile" && "tender-step-active dark:bg-tender-800/60 dark:text-primary-foreground dark:font-medium"
           )}
         >
           <Settings className="h-5 w-5" />
