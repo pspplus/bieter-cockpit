@@ -126,10 +126,10 @@ export const uploadDocument = async (
   
   console.log(`Uploading file: ${uniqueFileName}`);
   
-  // Upload file to Storage - CHANGED FROM 'documents' to 'tender_documents'
+  // Upload file to Storage - Using 'documents' bucket
   const { data: fileData, error: uploadError } = await supabase
     .storage
-    .from('tender_documents')
+    .from('documents')
     .upload(uniqueFileName, file);
 
   if (uploadError) {
@@ -137,10 +137,10 @@ export const uploadDocument = async (
     throw uploadError;
   }
 
-  // Get public URL for the file - CHANGED FROM 'documents' to 'tender_documents'
+  // Get public URL for the file - Using 'documents' bucket
   const { data: urlData } = await supabase
     .storage
-    .from('tender_documents')
+    .from('documents')
     .getPublicUrl(uniqueFileName);
 
   const fileUrl = urlData.publicUrl;
@@ -236,10 +236,10 @@ export const deleteDocument = async (id: string): Promise<void> => {
   const fileName = fileUrl.split('/').pop();
 
   if (fileName) {
-    // Delete the file from storage - CHANGED FROM 'documents' to 'tender_documents'
+    // Delete the file from storage - Using 'documents' bucket
     const { error: storageError } = await supabase
       .storage
-      .from('tender_documents')
+      .from('documents')
       .remove([fileName]);
 
     if (storageError) {
