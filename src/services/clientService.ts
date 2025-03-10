@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { Client } from "@/types/client";
 import { toast } from "sonner";
@@ -16,8 +15,12 @@ const mapClientFromDB = (client: any): Client => {
   };
 };
 
-// Helper function to retry operations
-const withRetry = async <T>(operation: () => Promise<T>, retries = 3, delay = 1000): Promise<T> => {
+// Helper function to retry operations with proper typing
+const withRetry = async <T>(
+  operation: () => Promise<{ data: T | null; error: any }>, 
+  retries = 3, 
+  delay = 1000
+): Promise<{ data: T | null; error: any }> => {
   try {
     return await operation();
   } catch (error) {
@@ -26,7 +29,7 @@ const withRetry = async <T>(operation: () => Promise<T>, retries = 3, delay = 10
       await new Promise(resolve => setTimeout(resolve, delay));
       return withRetry(operation, retries - 1, delay);
     }
-    throw error;
+    return { data: null, error };
   }
 };
 
