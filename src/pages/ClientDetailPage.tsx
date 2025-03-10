@@ -6,7 +6,7 @@ import { useClient } from "@/context/ClientContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { ArrowLeft, Save } from "lucide-react";
+import { ArrowLeft, Save, Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Client } from "@/types/client";
 
@@ -17,6 +17,7 @@ const ClientDetailPage = () => {
   const { clients, updateClient } = useClient();
   const [clientData, setClientData] = useState<Partial<Client>>({});
   const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -35,10 +36,17 @@ const ClientDetailPage = () => {
     setClientData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (id && clientData.name) {
-      updateClient(id, clientData);
-      navigate("/clients");
+      setIsSaving(true);
+      try {
+        await updateClient(id, clientData);
+        navigate("/clients");
+      } catch (error) {
+        console.error("Error saving client:", error);
+      } finally {
+        setIsSaving(false);
+      }
     }
   };
 
@@ -66,9 +74,18 @@ const ClientDetailPage = () => {
           <h1 className="text-2xl font-bold flex-1">
             {clientData.name || t('clients.clientDetails', 'Vergabestellendetails')}
           </h1>
-          <Button onClick={handleSave} disabled={!clientData.name}>
-            <Save className="mr-2 h-4 w-4" />
-            {t('general.save', 'Speichern')}
+          <Button onClick={handleSave} disabled={!clientData.name || isSaving}>
+            {isSaving ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                {t('general.saving', 'Speichern...')}
+              </>
+            ) : (
+              <>
+                <Save className="mr-2 h-4 w-4" />
+                {t('general.save', 'Speichern')}
+              </>
+            )}
           </Button>
         </div>
 

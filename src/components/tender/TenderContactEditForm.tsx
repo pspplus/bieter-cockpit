@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { DialogFooter } from "@/components/ui/dialog";
 import { useTranslation } from "react-i18next";
+import { Loader2 } from "lucide-react";
 
 interface TenderContactEditFormProps {
   tender: Tender;
@@ -15,6 +16,7 @@ interface TenderContactEditFormProps {
 
 export function TenderContactEditForm({ tender, onSubmit, onCancel }: TenderContactEditFormProps) {
   const { t } = useTranslation();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   const [formData, setFormData] = useState({
     contactPerson: tender.contactPerson || "",
@@ -29,6 +31,7 @@ export function TenderContactEditForm({ tender, onSubmit, onCancel }: TenderCont
   
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
     
     const updates: Partial<Tender> = {
       contactPerson: formData.contactPerson,
@@ -37,6 +40,7 @@ export function TenderContactEditForm({ tender, onSubmit, onCancel }: TenderCont
     };
     
     onSubmit(updates);
+    // Note: the setIsSubmitting(false) will be handled in the parent component after onSubmit completes
   };
   
   return (
@@ -75,11 +79,18 @@ export function TenderContactEditForm({ tender, onSubmit, onCancel }: TenderCont
       </div>
       
       <DialogFooter>
-        <Button type="button" variant="outline" onClick={onCancel}>
+        <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting}>
           {t("cancel")}
         </Button>
-        <Button type="submit">
-          {t("save", "Speichern")}
+        <Button type="submit" disabled={isSubmitting}>
+          {isSubmitting ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              {t('general.saving', 'Speichern...')}
+            </>
+          ) : (
+            t("save", "Speichern")
+          )}
         </Button>
       </DialogFooter>
     </form>

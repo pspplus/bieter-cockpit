@@ -11,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, Loader2 } from "lucide-react";
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import { useClient } from "@/context/ClientContext";
@@ -36,6 +36,7 @@ interface TenderDetailsEditFormProps {
 export function TenderDetailsEditForm({ tender, onSubmit, onCancel }: TenderDetailsEditFormProps) {
   const { clients } = useClient();
   const { t } = useTranslation();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   const [formData, setFormData] = useState({
     title: tender.title,
@@ -87,6 +88,8 @@ export function TenderDetailsEditForm({ tender, onSubmit, onCancel }: TenderDeta
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
+    setIsSubmitting(true);
+    
     const updates: Partial<Tender> = {
       title: formData.title,
       externalReference: formData.externalReference,
@@ -102,6 +105,7 @@ export function TenderDetailsEditForm({ tender, onSubmit, onCancel }: TenderDeta
     };
     
     onSubmit(updates);
+    // Note: the setIsSubmitting(false) will be handled in the parent component after onSubmit completes
   };
   
   return (
@@ -287,11 +291,18 @@ export function TenderDetailsEditForm({ tender, onSubmit, onCancel }: TenderDeta
       </div>
       
       <DialogFooter>
-        <Button type="button" variant="outline" onClick={onCancel}>
+        <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting}>
           {t("cancel")}
         </Button>
-        <Button type="submit">
-          {t("save", "Speichern")}
+        <Button type="submit" disabled={isSubmitting}>
+          {isSubmitting ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              {t('general.saving', 'Speichern...')}
+            </>
+          ) : (
+            t("save", "Speichern")
+          )}
         </Button>
       </DialogFooter>
     </form>

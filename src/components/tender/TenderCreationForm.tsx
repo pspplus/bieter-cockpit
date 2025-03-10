@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
-import { CalendarIcon, PlusCircle } from "lucide-react";
+import { CalendarIcon, PlusCircle, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Switch } from "@/components/ui/switch";
 import { Client } from "@/types/client";
@@ -37,6 +37,7 @@ export function TenderCreationForm() {
   const { createTender } = useTender();
   const { clients } = useClient();
   const navigate = useNavigate();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   const [formData, setFormData] = useState({
     title: "",
@@ -85,6 +86,8 @@ export function TenderCreationForm() {
       return;
     }
     
+    setIsSubmitting(true);
+    
     try {
       // Standard-Meilensteine laden (jetzt mit Sequenznummern)
       const defaultMilestones = getDefaultMilestones();
@@ -111,6 +114,8 @@ export function TenderCreationForm() {
     } catch (error) {
       console.error("Error creating tender:", error);
       toast.error(t('errorMessages.couldNotCreateTender'));
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -322,8 +327,18 @@ export function TenderCreationForm() {
             >
               {t('tenders.cancel')}
             </Button>
-            <Button type="submit">
-              {t('tenders.createTender')}
+            <Button 
+              type="submit"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  {t('general.saving', 'Speichern...')}
+                </>
+              ) : (
+                t('tenders.createTender')
+              )}
             </Button>
           </CardFooter>
         </form>
