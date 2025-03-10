@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Layout } from "@/components/layout/Layout";
 import { TenderCard } from "@/components/tender/TenderCard";
 import { Button } from "@/components/ui/button";
@@ -11,7 +11,7 @@ import {
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import { useTender } from "@/hooks/useTender";
-import { ChevronDown, PlusCircle, RefreshCw } from "lucide-react";
+import { ChevronDown, PlusCircle, RefreshCw, AlertCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Tender } from "@/types/tender";
 import { useTranslation } from "react-i18next";
@@ -26,6 +26,11 @@ export default function TendersPage() {
   const [filterBy, setFilterBy] = useState<FilterOption>("all");
   const navigate = useNavigate();
   const [isRefetching, setIsRefetching] = useState(false);
+  
+  useEffect(() => {
+    console.log("TendersPage rendered, tenders:", tenders);
+    console.log("TendersPage error state:", error);
+  }, [tenders, error]);
   
   const filterOptions: { value: FilterOption; label: string }[] = [
     { value: "all", label: "Alle Ausschreibungen" },
@@ -125,15 +130,21 @@ export default function TendersPage() {
             ))}
           </div>
         ) : error ? (
-          <div className="text-center py-16 space-y-4">
-            <h3 className="text-lg font-medium mb-2">Fehler beim Laden der Ausschreibungen</h3>
-            <p className="text-muted-foreground mb-6">
-              Es ist ein Fehler bei der Verbindung zur Datenbank aufgetreten. Bitte versuchen Sie es später erneut.
+          <div className="text-center border border-red-200 bg-red-50 dark:bg-red-950/20 dark:border-red-800/30 rounded-lg p-6 my-8">
+            <AlertCircle className="mx-auto h-12 w-12 text-red-500 mb-4" />
+            <h3 className="text-lg font-medium mb-2">Verbindungsfehler</h3>
+            <p className="text-muted-foreground mb-6 max-w-md mx-auto">
+              Es konnte keine Verbindung zur Datenbank hergestellt werden. Bitte überprüfen Sie Ihre Internetverbindung oder versuchen Sie es später erneut.
             </p>
-            <Button onClick={handleRefetch} className="gap-2" disabled={isRefetching}>
-              <RefreshCw className={`h-4 w-4 ${isRefetching ? 'animate-spin' : ''}`} />
-              Erneut versuchen
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <Button onClick={handleRefetch} className="gap-2" disabled={isRefetching}>
+                <RefreshCw className={`h-4 w-4 ${isRefetching ? 'animate-spin' : ''}`} />
+                Erneut versuchen
+              </Button>
+              <Button variant="outline" onClick={() => window.location.reload()}>
+                Seite neu laden
+              </Button>
+            </div>
           </div>
         ) : sortedTenders.length > 0 ? (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
