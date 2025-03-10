@@ -215,6 +215,7 @@ export type Database = {
       }
       tenders: {
         Row: {
+          berater_vergabestelle: string | null
           binding_period_date: string | null
           budget: number | null
           client: string | null
@@ -225,18 +226,32 @@ export type Database = {
           created_at: string
           description: string | null
           due_date: string
+          erforderliche_zertifikate: string[] | null
           evaluation_scheme: string | null
           external_reference: string | null
           id: string
           internal_reference: string
+          jahresreinigungsflaeche: number | null
+          leistungswertvorgaben: boolean | null
           location: string | null
+          mindestanforderungen: string | null
           notes: string | null
+          objektart: string[] | null
+          objektbesichtigung_erforderlich: boolean | null
+          qualitaetskontrollen: boolean | null
+          raumgruppentabelle: boolean | null
           status: string
+          stundenvorgaben: string | null
+          tariflohn: boolean | null
           title: string
           updated_at: string
           user_id: string
+          vergabeplattform: string | null
+          vertragsart: string | null
+          waschmaschine: boolean | null
         }
         Insert: {
+          berater_vergabestelle?: string | null
           binding_period_date?: string | null
           budget?: number | null
           client?: string | null
@@ -247,18 +262,32 @@ export type Database = {
           created_at?: string
           description?: string | null
           due_date: string
+          erforderliche_zertifikate?: string[] | null
           evaluation_scheme?: string | null
           external_reference?: string | null
           id?: string
           internal_reference: string
+          jahresreinigungsflaeche?: number | null
+          leistungswertvorgaben?: boolean | null
           location?: string | null
+          mindestanforderungen?: string | null
           notes?: string | null
+          objektart?: string[] | null
+          objektbesichtigung_erforderlich?: boolean | null
+          qualitaetskontrollen?: boolean | null
+          raumgruppentabelle?: boolean | null
           status: string
+          stundenvorgaben?: string | null
+          tariflohn?: boolean | null
           title: string
           updated_at?: string
           user_id: string
+          vergabeplattform?: string | null
+          vertragsart?: string | null
+          waschmaschine?: boolean | null
         }
         Update: {
+          berater_vergabestelle?: string | null
           binding_period_date?: string | null
           budget?: number | null
           client?: string | null
@@ -269,16 +298,29 @@ export type Database = {
           created_at?: string
           description?: string | null
           due_date?: string
+          erforderliche_zertifikate?: string[] | null
           evaluation_scheme?: string | null
           external_reference?: string | null
           id?: string
           internal_reference?: string
+          jahresreinigungsflaeche?: number | null
+          leistungswertvorgaben?: boolean | null
           location?: string | null
+          mindestanforderungen?: string | null
           notes?: string | null
+          objektart?: string[] | null
+          objektbesichtigung_erforderlich?: boolean | null
+          qualitaetskontrollen?: boolean | null
+          raumgruppentabelle?: boolean | null
           status?: string
+          stundenvorgaben?: string | null
+          tariflohn?: boolean | null
           title?: string
           updated_at?: string
           user_id?: string
+          vergabeplattform?: string | null
+          vertragsart?: string | null
+          waschmaschine?: boolean | null
         }
         Relationships: []
       }
@@ -293,7 +335,12 @@ export type Database = {
       }
     }
     Enums: {
-      [_ in never]: never
+      objektart_enum: "grundschule" | "kindergarten" | "buero"
+      vertragsart_enum:
+        | "werkvertrag"
+        | "dienstleistungsvertrag"
+        | "mischvertrag"
+      zertifikat_enum: "din_iso_9001" | "din_iso_14001" | "din_iso_45001"
     }
     CompositeTypes: {
       [_ in never]: never
