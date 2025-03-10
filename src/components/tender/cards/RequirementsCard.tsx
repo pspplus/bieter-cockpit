@@ -30,12 +30,24 @@ export function RequirementsCard({ tender, onUpdateTender }: RequirementsCardPro
   const [evaluationScheme, setEvaluationScheme] = useState(tender.evaluationScheme || "");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Reset local state when tender prop changes
+  useState(() => {
+    setZertifikate(tender.erforderlicheZertifikate || []);
+    setConceptRequired(tender.conceptRequired || false);
+    setTariflohn(tender.tariflohn || false);
+    setQualitaetskontrollen(tender.qualitaetskontrollen || false);
+    setStundenvorgaben(tender.stundenvorgaben || "");
+    setLeistungswertvorgaben(tender.leistungswertvorgaben || false);
+    setMindestanforderungen(tender.mindestanforderungen || "");
+    setEvaluationScheme(tender.evaluationScheme || "");
+  }, [tender]);
+
   const handleSave = async () => {
     if (!onUpdateTender) return;
     
     setIsSubmitting(true);
     try {
-      await onUpdateTender({
+      const updates = {
         erforderlicheZertifikate: zertifikate,
         conceptRequired,
         tariflohn,
@@ -44,7 +56,9 @@ export function RequirementsCard({ tender, onUpdateTender }: RequirementsCardPro
         leistungswertvorgaben,
         mindestanforderungen,
         evaluationScheme
-      });
+      };
+      
+      await onUpdateTender(updates);
       setEditing(false);
       toast.success(t("notifications.tenderUpdated", "Änderungen gespeichert"));
     } catch (error) {
