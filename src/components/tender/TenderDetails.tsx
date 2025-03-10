@@ -1,4 +1,3 @@
-
 import { format } from "date-fns";
 import { Tender, Vertragsart, Zertifikat } from "@/types/tender";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -109,12 +108,6 @@ export function TenderDetails({ tender, onOpenDetailsDialog, onOpenContactDialog
               <div>
                 <div className="text-sm font-medium">{t("tender.client")}</div>
                 <div className="text-sm">{tender.client}</div>
-              </div>
-              <div>
-                <div className="text-sm font-medium">{t("Status")}</div>
-                <div className="text-sm">
-                  <Badge variant="outline">{statusDisplayMap[tender.status]}</Badge>
-                </div>
               </div>
               <div>
                 <div className="text-sm font-medium">{t("tenderDetails.due")}</div>

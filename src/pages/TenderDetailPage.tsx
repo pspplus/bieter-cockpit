@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -33,6 +34,8 @@ import {
 } from "@/components/ui/dialog";
 import { TenderDetailsEditForm } from "@/components/tender/TenderDetailsEditForm";
 import { TenderContactEditForm } from "@/components/tender/TenderContactEditForm";
+import { Badge } from "@/components/ui/badge";
+import { statusDisplayMap } from "@/utils/statusUtils";
 
 export default function TenderDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -152,10 +155,13 @@ export default function TenderDetailPage() {
         <div className="flex justify-between items-center">
           <div className="w-full">
             <Tabs defaultValue={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList>
-                <TabsTrigger value="details">{t("tenderDetails.details")}</TabsTrigger>
-                <TabsTrigger value="documents">{t("tenderDetails.documents")}</TabsTrigger>
-              </TabsList>
+              <div className="flex items-center justify-between">
+                <TabsList>
+                  <TabsTrigger value="details">{t("tenderDetails.details")}</TabsTrigger>
+                  <TabsTrigger value="documents">{t("tenderDetails.documents")}</TabsTrigger>
+                </TabsList>
+                <Badge variant="outline" className="ml-4">{statusDisplayMap[tender.status]}</Badge>
+              </div>
             
               <TabsContent value="details" className="mt-4">
                 <div className="flex justify-between">
