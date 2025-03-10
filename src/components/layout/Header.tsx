@@ -1,3 +1,4 @@
+
 import { cn } from "@/lib/utils";
 import { Bell, ChevronDown, Menu, PlusCircle, Search, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -99,8 +100,8 @@ export function Header({ toggleSidebar, title = "Tender Management" }: HeaderPro
                 <DropdownMenuContent className="w-56" align="end">
                   <DropdownMenuLabel>{getUserName() || "Mein Konto"}</DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => navigate('/profile')}>Profil</DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate('/profile')}>Einstellungen</DropdownMenuItem>
+                  <DropdownMenuItem>Profil</DropdownMenuItem>
+                  <DropdownMenuItem>Einstellungen</DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={logout}>Abmelden</DropdownMenuItem>
                 </DropdownMenuContent>

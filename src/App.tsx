@@ -1,57 +1,69 @@
 
-import React from 'react';
+import { Toaster } from "@/components/ui/toaster";
+import { Toaster as Sonner } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import ClientsPage from './pages/ClientsPage';
-import NewTenderPage from './pages/NewTenderPage';
-import TendersPage from './pages/TendersPage';
-import { AuthProvider } from './context/AuthContext';
-import { LanguageProvider } from './context/LanguageContext';
-import { ThemeProvider } from './context/ThemeContext';
-import { TenderProvider } from './context/TenderContext';
-import { Toaster } from "@/components/ui/sonner";
-import LoginPage from './pages/LoginPage';
-import ProfilePage from './pages/ProfilePage';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { TenderProvider } from "@/context/TenderContext";
 import { ClientProvider } from "@/context/ClientContext";
-import Dashboard from './pages/Dashboard';
+import { LanguageProvider } from "@/context/LanguageContext";
+import { AuthProvider } from "@/context/AuthContext";
+import { ThemeProvider } from "@/context/ThemeContext";
+import Index from "./pages/Index";
+import Dashboard from "./pages/Dashboard";
+import TendersPage from "./pages/TendersPage";
+import TenderDetailPage from "./pages/TenderDetailPage";
+import ClientsPage from "./pages/ClientsPage";
+import ClientDetailPage from "./pages/ClientDetailPage";
+import SubmissionsPage from "./pages/SubmissionsPage";
+import MessagesPage from "./pages/MessagesPage";
+import NotFound from "./pages/NotFound";
+import LoginPage from "./pages/LoginPage";
+import SignUpPage from "./pages/SignUpPage";
+import NewTenderPage from "./pages/NewTenderPage";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
+import UpdatePasswordPage from "./pages/UpdatePasswordPage";
+import ProfilePage from "./pages/ProfilePage";
+import './i18n'; // Import i18n configuration
 
-// Create a new client for React Query
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: 2,
-      staleTime: 5 * 60 * 1000, // 5 minutes
-    },
-  },
-});
+const queryClient = new QueryClient();
 
-function App() {
-  return (
-    <LanguageProvider>
+const App = () => (
+  <QueryClientProvider client={queryClient}>
+    <TooltipProvider>
       <ThemeProvider>
-        <AuthProvider>
-          <QueryClientProvider client={queryClient}>
-            <ClientProvider>
+        <LanguageProvider>
+          <BrowserRouter>
+            <AuthProvider>
               <TenderProvider>
-                <Toaster />
-                <Router>
+                <ClientProvider>
+                  <Toaster />
+                  <Sonner position="top-right" />
                   <Routes>
-                    <Route path="/" element={<LoginPage />} />
+                    <Route path="/" element={<Index />} />
                     <Route path="/login" element={<LoginPage />} />
+                    <Route path="/signup" element={<SignUpPage />} />
+                    <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+                    <Route path="/update-password" element={<UpdatePasswordPage />} />
                     <Route path="/profile" element={<ProfilePage />} />
-                    <Route path="/clients" element={<ClientsPage />} />
+                    <Route path="/dashboard" element={<Dashboard />} />
                     <Route path="/tenders" element={<TendersPage />} />
                     <Route path="/tenders/new" element={<NewTenderPage />} />
-                    <Route path="/dashboard" element={<Dashboard />} />
+                    <Route path="/tenders/:id" element={<TenderDetailPage />} />
+                    <Route path="/submissions" element={<SubmissionsPage />} />
+                    <Route path="/messages" element={<MessagesPage />} />
+                    <Route path="/clients" element={<ClientsPage />} />
+                    <Route path="/clients/:id" element={<ClientDetailPage />} />
+                    <Route path="*" element={<NotFound />} />
                   </Routes>
-                </Router>
+                </ClientProvider>
               </TenderProvider>
-            </ClientProvider>
-          </QueryClientProvider>
-        </AuthProvider>
+            </AuthProvider>
+          </BrowserRouter>
+        </LanguageProvider>
       </ThemeProvider>
-    </LanguageProvider>
-  );
-}
+    </TooltipProvider>
+  </QueryClientProvider>
+);
 
 export default App;

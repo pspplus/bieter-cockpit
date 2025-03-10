@@ -1,5 +1,4 @@
-
-import React, { createContext, useState, useEffect, useCallback } from "react";
+import React, { createContext, useState, useEffect } from "react";
 import { Tender, Milestone, MilestoneStatus } from "@/types/tender";
 import { useAuth } from "@/context/AuthContext";
 import { 
@@ -17,8 +16,6 @@ import { useTranslation } from "react-i18next";
 type TenderContextType = {
   tenders: Tender[];
   isLoading: boolean;
-  error: Error | null;
-  refetchTenders: () => Promise<void>;
   createTender: (tenderData: Partial<Tender>) => Promise<Tender>;
   updateTender: (id: string, updates: Partial<Tender>) => Promise<void>;
   deleteTender: (id: string) => Promise<void>;
@@ -37,20 +34,8 @@ export const TenderContext = createContext<TenderContextType | undefined>(undefi
 export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
   const [tenders, setTenders] = useState<Tender[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated } = useAuth();
   const { t } = useTranslation();
-
-  // Debug-Ausgabe beim Rendern
-  useEffect(() => {
-    console.log("TenderProvider gerendert", { 
-      isAuthenticated, 
-      userId: user?.id, 
-      tendersCount: tenders.length,
-      isLoading,
-      error: error?.message
-    });
-  }, [isAuthenticated, user, tenders, isLoading, error]);
 
   const sortMilestones = (milestones: Milestone[]): Milestone[] => {
     return [...milestones].sort((a, b) => {
@@ -60,51 +45,26 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
     });
   };
 
-  const loadTenders = useCallback(async () => {
-    if (!isAuthenticated) {
-      console.log("loadTenders: Nicht authentifiziert, überspringe Laden");
-      return;
-    }
-    
-    console.log("loadTenders: Starte Laden der Ausschreibungen");
-    setIsLoading(true);
-    setError(null);
-    
-    try {
-      const data = await fetchTenders();
-      console.log(`loadTenders: ${data.length} Ausschreibungen geladen`);
-      
-      const tendersWithSortedMilestones = data.map(tender => ({
-        ...tender,
-        milestones: sortMilestones(tender.milestones)
-      }));
-      
-      setTenders(tendersWithSortedMilestones);
-    } catch (err) {
-      console.error("Error loading tenders:", err);
-      setError(err instanceof Error ? err : new Error("Failed to load tenders"));
-      toast.error(t('errorMessages.couldNotLoadTenders', "Fehler beim Laden der Ausschreibungen"));
-    } finally {
-      setIsLoading(false);
+  useEffect(() => {
+    if (isAuthenticated) {
+      setIsLoading(true);
+      fetchTenders()
+        .then((data) => {
+          const tendersWithSortedMilestones = data.map(tender => ({
+            ...tender,
+            milestones: sortMilestones(tender.milestones)
+          }));
+          setTenders(tendersWithSortedMilestones);
+        })
+        .catch((error) => {
+          console.error("Error loading tenders:", error);
+          toast.error(t('errorMessages.couldNotLoadTenders'));
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
     }
   }, [isAuthenticated, t]);
-
-  // Lade Ausschreibungen beim Start und wenn sich der Auth-Status ändert
-  useEffect(() => {
-    loadTenders();
-  }, [loadTenders]);
-
-  // Zusätzlicher Effect für Debug-Zwecke
-  useEffect(() => {
-    if (isAuthenticated && tenders.length === 0 && !isLoading && !error) {
-      console.log("Warnung: Authentifiziert, aber keine Ausschreibungen geladen und kein Ladevorgang aktiv");
-    }
-  }, [isAuthenticated, tenders, isLoading, error]);
-
-  const refetchTenders = useCallback(async () => {
-    console.log("refetchTenders aufgerufen");
-    await loadTenders();
-  }, [loadTenders]);
 
   const createTender = async (tenderData: Partial<Tender>): Promise<Tender> => {
     try {
@@ -297,9 +257,7 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
   return (
     <TenderContext.Provider value={{ 
       tenders, 
-      isLoading,
-      error, 
-      refetchTenders,
+      isLoading, 
       createTender, 
       updateTender, 
       deleteTender, 
