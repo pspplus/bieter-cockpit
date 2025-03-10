@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect } from "react";
+import React, { createContext, useState, useEffect, useCallback } from "react";
 import { Tender, Milestone, MilestoneStatus } from "@/types/tender";
 import { useAuth } from "@/context/AuthContext";
 import { 
@@ -16,6 +16,8 @@ import { useTranslation } from "react-i18next";
 type TenderContextType = {
   tenders: Tender[];
   isLoading: boolean;
+  error: Error | null;
+  refetchTenders: () => Promise<void>;
   createTender: (tenderData: Partial<Tender>) => Promise<Tender>;
   updateTender: (id: string, updates: Partial<Tender>) => Promise<void>;
   deleteTender: (id: string) => Promise<void>;
@@ -34,6 +36,7 @@ export const TenderContext = createContext<TenderContextType | undefined>(undefi
 export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
   const [tenders, setTenders] = useState<Tender[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
   const { isAuthenticated } = useAuth();
   const { t } = useTranslation();
 
@@ -45,26 +48,35 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
     });
   };
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      setIsLoading(true);
-      fetchTenders()
-        .then((data) => {
-          const tendersWithSortedMilestones = data.map(tender => ({
-            ...tender,
-            milestones: sortMilestones(tender.milestones)
-          }));
-          setTenders(tendersWithSortedMilestones);
-        })
-        .catch((error) => {
-          console.error("Error loading tenders:", error);
-          toast.error(t('errorMessages.couldNotLoadTenders'));
-        })
-        .finally(() => {
-          setIsLoading(false);
-        });
+  const loadTenders = useCallback(async () => {
+    if (!isAuthenticated) return;
+    
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      const data = await fetchTenders();
+      const tendersWithSortedMilestones = data.map(tender => ({
+        ...tender,
+        milestones: sortMilestones(tender.milestones)
+      }));
+      setTenders(tendersWithSortedMilestones);
+    } catch (err) {
+      console.error("Error loading tenders:", err);
+      setError(err instanceof Error ? err : new Error("Failed to load tenders"));
+      toast.error(t('errorMessages.couldNotLoadTenders', "Fehler beim Laden der Ausschreibungen"));
+    } finally {
+      setIsLoading(false);
     }
   }, [isAuthenticated, t]);
+
+  useEffect(() => {
+    loadTenders();
+  }, [loadTenders]);
+
+  const refetchTenders = useCallback(async () => {
+    await loadTenders();
+  }, [loadTenders]);
 
   const createTender = async (tenderData: Partial<Tender>): Promise<Tender> => {
     try {
@@ -257,7 +269,9 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
   return (
     <TenderContext.Provider value={{ 
       tenders, 
-      isLoading, 
+      isLoading,
+      error, 
+      refetchTenders,
       createTender, 
       updateTender, 
       deleteTender, 

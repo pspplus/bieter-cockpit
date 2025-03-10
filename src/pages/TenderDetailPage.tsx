@@ -13,7 +13,7 @@ import { fetchFolders } from "@/services/folderService";
 import { Tender, TenderDocument, Folder } from "@/types/tender";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
-import { Trash2, X } from "lucide-react";
+import { RefreshCw, Trash2, X } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -43,6 +43,8 @@ export default function TenderDetailPage() {
   const [documents, setDocuments] = useState<TenderDocument[]>([]);
   const [folders, setFolders] = useState<Folder[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isRefetching, setIsRefetching] = useState(false);
+  const [loadError, setLoadError] = useState<Error | null>(null);
   const [activeTab, setActiveTab] = useState("details");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [detailsDialogOpen, setDetailsDialogOpen] = useState(false);
@@ -52,39 +54,50 @@ export default function TenderDetailPage() {
   const navigate = useNavigate();
   const { t } = useTranslation();
 
+  const loadTender = async () => {
+    if (!id) return;
+    
+    setIsLoading(true);
+    setLoadError(null);
+    
+    try {
+      const tenderData = await fetchTenderById(id);
+      setTender(tenderData);
+
+      const docsData = await fetchTenderDocuments(id);
+      setDocuments(docsData);
+
+      const foldersData = await fetchFolders(id);
+      setFolders(foldersData);
+    } catch (error) {
+      console.error("Error loading tender:", error);
+      setLoadError(error instanceof Error ? error : new Error("Failed to load tender"));
+      toast.error(t("errorMessages.couldNotLoadTenders", "Fehler beim Laden der Ausschreibung"));
+    } finally {
+      setIsLoading(false);
+      setIsRefetching(false);
+    }
+  };
+
   useEffect(() => {
-    const loadTender = async () => {
-      try {
-        if (!id) return;
-        const tenderData = await fetchTenderById(id);
-        setTender(tenderData);
-
-        const docsData = await fetchTenderDocuments(id);
-        setDocuments(docsData);
-
-        const foldersData = await fetchFolders(id);
-        setFolders(foldersData);
-      } catch (error) {
-        console.error("Error loading tender:", error);
-        toast.error(t("errorMessages.couldNotLoadTenders"));
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     loadTender();
   }, [id, t]);
+
+  const handleRefetch = async () => {
+    setIsRefetching(true);
+    await loadTender();
+  };
 
   const handleDelete = async () => {
     if (!tender) return;
     
     try {
       await deleteTender(tender.id);
-      toast.success(t("notifications.tenderDeleted"));
+      toast.success(t("notifications.tenderDeleted", "Ausschreibung gelöscht"));
       navigate("/tenders");
     } catch (error) {
       console.error("Error deleting tender:", error);
-      toast.error(t("errorMessages.couldNotDeleteTender"));
+      toast.error(t("errorMessages.couldNotDeleteTender", "Fehler beim Löschen der Ausschreibung"));
     }
   };
 
@@ -123,7 +136,7 @@ export default function TenderDetailPage() {
 
   if (isLoading) {
     return (
-      <Layout title={t("loading")}>
+      <Layout title={t("loading", "Laden...")}>
         <div className="flex items-center justify-center h-64">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
         </div>
@@ -131,18 +144,45 @@ export default function TenderDetailPage() {
     );
   }
 
+  if (loadError) {
+    return (
+      <Layout title={t("tenderDetails.error", "Fehler")}>
+        <div className="text-center py-12 space-y-4">
+          <h2 className="text-2xl font-semibold">{t("tenderDetails.loadError", "Fehler beim Laden der Ausschreibung")}</h2>
+          <p className="text-muted-foreground mt-2">{loadError.message}</p>
+          <div className="flex gap-4 justify-center mt-4">
+            <Button 
+              onClick={() => navigate("/tenders")} 
+              variant="outline"
+            >
+              {t("backToTenders", "Zurück zur Übersicht")}
+            </Button>
+            <Button 
+              onClick={handleRefetch}
+              disabled={isRefetching}
+              className="gap-2"
+            >
+              <RefreshCw className={`h-4 w-4 ${isRefetching ? 'animate-spin' : ''}`} />
+              {t("retry", "Erneut versuchen")}
+            </Button>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
   if (!tender) {
     return (
-      <Layout title={t("tenderDetails.notFound")}>
+      <Layout title={t("tenderDetails.notFound", "Nicht gefunden")}>
         <div className="text-center py-12">
-          <h2 className="text-2xl font-semibold">{t("tenderDetails.tenderNotFound")}</h2>
-          <p className="text-muted-foreground mt-2">{t("tenderDetails.tenderMayNotExist")}</p>
+          <h2 className="text-2xl font-semibold">{t("tenderDetails.tenderNotFound", "Ausschreibung nicht gefunden")}</h2>
+          <p className="text-muted-foreground mt-2">{t("tenderDetails.tenderMayNotExist", "Die gesuchte Ausschreibung existiert möglicherweise nicht oder wurde gelöscht.")}</p>
           <Button 
             onClick={() => navigate("/tenders")} 
             className="mt-4"
             variant="outline"
           >
-            {t("backToTenders")}
+            {t("backToTenders", "Zurück zur Übersicht")}
           </Button>
         </div>
       </Layout>
@@ -157,8 +197,8 @@ export default function TenderDetailPage() {
             <Tabs defaultValue={activeTab} onValueChange={setActiveTab} className="w-full">
               <div className="flex items-center justify-between">
                 <TabsList>
-                  <TabsTrigger value="details">{t("tenderDetails.details")}</TabsTrigger>
-                  <TabsTrigger value="documents">{t("tenderDetails.documents")}</TabsTrigger>
+                  <TabsTrigger value="details">{t("tenderDetails.details", "Details")}</TabsTrigger>
+                  <TabsTrigger value="documents">{t("tenderDetails.documents", "Dokumente")}</TabsTrigger>
                 </TabsList>
                 <Badge variant="outline" className="ml-4">{statusDisplayMap[tender.status]}</Badge>
               </div>
@@ -177,10 +217,10 @@ export default function TenderDetailPage() {
                     size="icon"
                     onClick={() => setDeleteDialogOpen(true)}
                     className="ml-2 flex-shrink-0 h-10"
-                    aria-label={t("delete")}
+                    aria-label={t("delete", "Löschen")}
                   >
                     <Trash2 className="h-4 w-4" />
-                    <span className="sr-only">{t("delete")}</span>
+                    <span className="sr-only">{t("delete", "Löschen")}</span>
                   </Button>
                 </div>
               </TabsContent>
