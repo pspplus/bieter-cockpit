@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { TenderDocument, Folder } from "@/types/tender";
 import { Button } from "@/components/ui/button";
@@ -14,7 +13,7 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 import { 
-  FileIcon, 
+  FileText, 
   Trash2, 
   Download, 
   File, 
@@ -23,7 +22,14 @@ import {
   CheckSquare,
   Square,
   Eye,
-  MoreHorizontal
+  MoreHorizontal,
+  FileImage,
+  FileVideo,
+  FileAudio,
+  FileSpreadsheet,
+  FileCode,
+  FilePenLine,
+  ArchiveIcon
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { format } from "date-fns";
@@ -65,7 +71,6 @@ export function DocumentList({
   const [currentDocuments, setCurrentDocuments] = useState<TenderDocument[]>(documents);
   const [currentFolderId, setCurrentFolderId] = useState<string | null>(null);
   
-  // Neue State-Variablen für Mehrfachauswahl
   const [selectedDocuments, setSelectedDocuments] = useState<string[]>([]);
   const [isSelectionMode, setIsSelectionMode] = useState(false);
   
@@ -74,7 +79,6 @@ export function DocumentList({
       const filesArray = Array.from(e.target.files);
       setSelectedFiles(filesArray);
       
-      // Generate names from file names (removing extension)
       const newNames = filesArray.map(file => file.name.split('.')[0]);
       setDocumentNames(newNames);
     }
@@ -92,7 +96,6 @@ export function DocumentList({
       return;
     }
     
-    // Verify all files have names
     const emptyNameIndex = documentNames.findIndex(name => !name.trim());
     if (emptyNameIndex !== -1) {
       toast.error(`Bitte geben Sie einen Namen für Dokument ${emptyNameIndex + 1} ein`);
@@ -102,7 +105,6 @@ export function DocumentList({
     try {
       setIsUploading(true);
       
-      // Upload multiple files
       const uploadedDocuments = await uploadMultipleDocuments(
         selectedFiles,
         documentNames,
@@ -112,7 +114,6 @@ export function DocumentList({
         selectedFolder
       );
       
-      // Update UI with all newly uploaded documents
       uploadedDocuments.forEach(doc => {
         onDocumentAdded(doc);
       });
@@ -125,12 +126,10 @@ export function DocumentList({
       
       toast.success(messageText);
       
-      // Reset form
       setSelectedFiles([]);
       setDocumentNames([]);
       setDocumentDescription("");
       
-      // Close dialog by clicking the close button
       const closeButton = document.querySelector('[data-dialog-close]') as HTMLButtonElement;
       if (closeButton) closeButton.click();
     } catch (error) {
@@ -141,7 +140,6 @@ export function DocumentList({
     }
   };
   
-  // Ein einzelnes Dokument löschen
   const handleDelete = async (documentId: string) => {
     try {
       await deleteDocument(documentId);
@@ -154,20 +152,16 @@ export function DocumentList({
     }
   };
 
-  // Mehrere Dokumente löschen
   const handleBulkDelete = async () => {
     if (selectedDocuments.length === 0) return;
     
     try {
-      // Löschbestätigung
       if (window.confirm(`Möchten Sie wirklich ${selectedDocuments.length} Dokumente löschen?`)) {
-        // Jedes ausgewählte Dokument der Reihe nach löschen
         for (const docId of selectedDocuments) {
           await deleteDocument(docId);
           onDocumentDeleted(docId);
         }
         
-        // UI aktualisieren
         setCurrentDocuments(prev => prev.filter(doc => !selectedDocuments.includes(doc.id)));
         
         toast.success(`${selectedDocuments.length} Dokumente erfolgreich gelöscht`);
@@ -180,12 +174,10 @@ export function DocumentList({
     }
   };
 
-  // Massendownload von Dokumenten
   const handleBulkDownload = async () => {
     if (selectedDocuments.length === 0) return;
     
     try {
-      // Für jedes ausgewählte Dokument einen unsichtbaren Download-Link erstellen und klicken
       selectedDocuments.forEach(docId => {
         const doc = currentDocuments.find(d => d.id === docId);
         if (doc) {
@@ -206,7 +198,6 @@ export function DocumentList({
     }
   };
 
-  // Toggle Auswahl eines Dokuments
   const toggleDocumentSelection = (documentId: string) => {
     setSelectedDocuments(prev => {
       if (prev.includes(documentId)) {
@@ -217,7 +208,6 @@ export function DocumentList({
     });
   };
 
-  // Alle Dokumente auswählen/abwählen
   const toggleSelectAll = () => {
     if (selectedDocuments.length === currentDocuments.length) {
       setSelectedDocuments([]);
@@ -226,7 +216,6 @@ export function DocumentList({
     }
   };
   
-  // Function to format file size
   const formatFileSize = (bytes?: number) => {
     if (!bytes) return 'Unbekannte Größe';
     
@@ -235,22 +224,49 @@ export function DocumentList({
     else return (bytes / 1048576).toFixed(1) + ' MB';
   };
   
-  // Function to get icon for file type
-  const getFileTypeIcon = (fileType: string) => {
-    if (fileType.includes('pdf')) return <FileIcon className="text-red-500" />;
-    if (fileType.includes('image')) return <FileIcon className="text-blue-500" />;
-    if (fileType.includes('word') || fileType.includes('document')) return <FileIcon className="text-indigo-500" />;
-    if (fileType.includes('excel') || fileType.includes('sheet')) return <FileIcon className="text-green-500" />;
-    return <File />;
+  const getFileTypeIcon = (fileType: string, fileName: string = '') => {
+    const extension = fileName.split('.').pop()?.toLowerCase();
+    
+    if (fileType.includes('pdf') || extension === 'pdf') {
+      return <FileText className="text-red-500" />;
+    }
+    
+    if (fileType.includes('image') || ['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp', 'bmp'].includes(extension || '')) {
+      return <FileImage className="text-blue-500" />;
+    }
+    
+    if (fileType.includes('video') || ['mp4', 'avi', 'mov', 'wmv', 'mkv', 'webm'].includes(extension || '')) {
+      return <FileVideo className="text-purple-500" />;
+    }
+    
+    if (fileType.includes('audio') || ['mp3', 'wav', 'ogg', 'flac', 'm4a'].includes(extension || '')) {
+      return <FileAudio className="text-yellow-500" />;
+    }
+    
+    if (fileType.includes('word') || fileType.includes('document') || ['doc', 'docx', 'rtf'].includes(extension || '')) {
+      return <FilePenLine className="text-blue-700" />;
+    }
+    
+    if (fileType.includes('excel') || fileType.includes('sheet') || ['xls', 'xlsx', 'csv'].includes(extension || '')) {
+      return <FileSpreadsheet className="text-green-600" />;
+    }
+    
+    if (['js', 'ts', 'html', 'css', 'java', 'py', 'c', 'cpp', 'php', 'rb', 'json', 'xml'].includes(extension || '')) {
+      return <FileCode className="text-indigo-500" />;
+    }
+    
+    if (['zip', 'rar', '7z', 'tar', 'gz', 'bz2'].includes(extension || '')) {
+      return <ArchiveIcon className="text-orange-500" />;
+    }
+    
+    return <File className="text-gray-500" />;
   };
 
-  // New function to handle folder selection
   const handleFolderSelect = async (folder: Folder) => {
     try {
       setCurrentFolderId(folder.id);
       const folderDocuments = await fetchFolderDocuments(folder.id);
       setCurrentDocuments(folderDocuments);
-      // Reset selection when changing folder
       setSelectedDocuments([]);
       setIsSelectionMode(false);
     } catch (error) {
@@ -259,11 +275,9 @@ export function DocumentList({
     }
   };
 
-  // Function to reset to all documents view
   const handleResetView = () => {
     setCurrentFolderId(null);
     setCurrentDocuments(documents);
-    // Reset selection when changing view
     setSelectedDocuments([]);
     setIsSelectionMode(false);
   };
@@ -353,7 +367,7 @@ export function DocumentList({
                         id="file-upload"
                         className="hidden"
                         onChange={handleFileChange}
-                        multiple // Enable multiple file selection
+                        multiple
                       />
                       <label
                         htmlFor="file-upload"
@@ -524,7 +538,7 @@ export function DocumentList({
                       </button>
                     ) : (
                       <div className="p-2 bg-muted rounded">
-                        {getFileTypeIcon(document.fileType)}
+                        {getFileTypeIcon(document.fileType, document.name)}
                       </div>
                     )}
                     
@@ -536,6 +550,8 @@ export function DocumentList({
                         <span>{formatFileSize(document.fileSize)}</span>
                         <span>•</span>
                         <span>{format(new Date(document.uploadDate), 'PPP')}</span>
+                        <span>•</span>
+                        <span className="uppercase">{document.name.split('.').pop()}</span>
                       </div>
                       {document.description && (
                         <p className="text-sm text-muted-foreground mt-1">
