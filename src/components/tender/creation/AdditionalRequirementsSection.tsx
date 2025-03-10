@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
 
 interface AdditionalRequirementsSectionProps {
   formData: {
@@ -13,6 +14,10 @@ interface AdditionalRequirementsSectionProps {
     tariflohn: boolean;
     qualitaetskontrollen: boolean;
     raumgruppentabelle: boolean;
+    notes: string;
+    evaluationScheme: string;
+    conceptRequired: boolean;
+    bindingPeriodDate: Date | null;
   };
   setFormData: (data: any) => void;
 }
@@ -85,6 +90,33 @@ export function AdditionalRequirementsSection({ formData, setFormData }: Additio
           onCheckedChange={(checked) => setFormData(prev => ({ ...prev, raumgruppentabelle: checked }))}
         />
         <Label>Raumgruppentabelle</Label>
+      </div>
+
+      <div className="flex items-center space-x-2">
+        <Switch
+          checked={formData.conceptRequired}
+          onCheckedChange={(checked) => setFormData(prev => ({ ...prev, conceptRequired: checked }))}
+        />
+        <Label>Konzept erforderlich</Label>
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="evaluationScheme">Bewertungsschema</Label>
+        <Input 
+          id="evaluationScheme" 
+          value={formData.evaluationScheme} 
+          onChange={e => setFormData(prev => ({ ...prev, evaluationScheme: e.target.value }))}
+        />
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="notes">Notizen</Label>
+        <Textarea 
+          id="notes" 
+          value={formData.notes} 
+          onChange={e => setFormData(prev => ({ ...prev, notes: e.target.value }))}
+          rows={3}
+        />
       </div>
     </div>
   );
