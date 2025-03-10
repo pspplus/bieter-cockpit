@@ -27,6 +27,30 @@
   "pageNotFound": "Seite nicht gefunden",
   "pageNotFoundDescription": "Die gesuchte Seite existiert nicht oder wurde verschoben.",
   "returnToHome": "Zurück zur Startseite",
+  "errorMessages": {
+    "couldNotLoadTenders": "Ausschreibungen konnten nicht geladen werden. Bitte überprüfen Sie Ihre Internetverbindung und Anmeldestatus.",
+    "couldNotCreateTender": "Ausschreibung konnte nicht erstellt werden.",
+    "couldNotUpdateTender": "Ausschreibung konnte nicht aktualisiert werden.",
+    "couldNotDeleteTender": "Ausschreibung konnte nicht gelöscht werden.",
+    "couldNotCreateMilestone": "Meilenstein konnte nicht erstellt werden.",
+    "couldNotUpdateMilestone": "Meilenstein konnte nicht aktualisiert werden.",
+    "couldNotDeleteMilestone": "Meilenstein konnte nicht gelöscht werden.",
+    "invalidMilestoneTransition": "Ungültiger Statusübergang für den Meilenstein.",
+    "authenticationRequired": "Bitte melden Sie sich an, um diese Funktion zu nutzen."
+  },
+  "notifications": {
+    "tenderUpdated": "Ausschreibung erfolgreich aktualisiert.",
+    "tenderDeleted": "Ausschreibung erfolgreich gelöscht.",
+    "milestoneCreated": "Meilenstein erfolgreich erstellt.",
+    "milestoneUpdated": "Meilenstein erfolgreich aktualisiert.",
+    "milestoneDeleted": "Meilenstein erfolgreich gelöscht."
+  },
+  "auth": {
+    "login": "Anmelden",
+    "signup": "Registrieren",
+    "logout": "Abmelden",
+    "loginToView": "Bitte melden Sie sich an, um Ihre Ausschreibungen zu sehen"
+  },
   "tenders": {
     "active": "Aktiv",
     "review": "In Prüfung",

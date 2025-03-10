@@ -1,35 +1,56 @@
-
 import { Layout } from "@/components/layout/Layout";
 import { useTender } from "@/hooks/useTender";
+import { useAuth } from "@/context/AuthContext";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { TenderCard } from "@/components/tender/TenderCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowRight, FileCheck, FileText, Flag, Clock, AlertCircle, BarChart } from "lucide-react";
-import { Link } from "react-router-dom";
+import { ArrowRight, FileCheck, FileText, Flag, Clock, AlertCircle, BarChart, LogIn } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 import { statusGroups } from "@/utils/statusUtils";
+import { Button } from "@/components/ui/button";
+import { useEffect } from "react";
 
 export default function Dashboard() {
-  const { tenders } = useTender();
+  const { tenders, isLoading } = useTender();
+  const { isAuthenticated } = useAuth();
   const { t } = useTranslation();
+  const navigate = useNavigate();
   
-  // Filter tenders by status
+  useEffect(() => {
+    if (!isAuthenticated) {
+      toast.error(t('general:errorMessages.authenticationRequired'));
+      navigate('/login');
+    }
+  }, [isAuthenticated, navigate, t]);
+
+  if (!isAuthenticated) {
+    return (
+      <Layout title="Dashboard">
+        <div className="flex flex-col items-center justify-center py-12">
+          <LogIn className="h-16 w-16 text-gray-400 mb-4" />
+          <h2 className="text-xl font-semibold mb-2">{t('general:auth.loginToView')}</h2>
+          <Button onClick={() => navigate('/login')} className="mt-4">
+            {t('general:auth.login')}
+          </Button>
+        </div>
+      </Layout>
+    );
+  }
+  
   const activeTenders = tenders.filter(t => statusGroups.active.includes(t.status));
   const draftTenders = tenders.filter(t => statusGroups.draft.includes(t.status));
   const submittedTenders = tenders.filter(t => statusGroups.submitted.includes(t.status));
   const completedTenders = tenders.filter(t => statusGroups.completed.includes(t.status));
   
-  // Calculate statistics
   const totalTenders = tenders.length;
   const tendersInProgress = activeTenders.length;
   const tendersSubmitted = submittedTenders.length;
   const tendersWon = tenders.filter(t => t.status === "gewonnen").length;
   
-  // Calculate success rate (Zuschlagsquote)
   const allSubmittedTenders = tenders.filter(t => statusGroups.allSubmitted.includes(t.status)).length;
   const successRate = allSubmittedTenders > 0 ? Math.round((tendersWon / allSubmittedTenders) * 100) : 0;
   
-  // Find upcoming deadlines (due in the next 7 days)
   const now = new Date();
   const oneWeekFromNow = new Date();
   oneWeekFromNow.setDate(oneWeekFromNow.getDate() + 7);
