@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { TenderDocument, Folder } from "@/types/tender";
 import { Button } from "@/components/ui/button";
@@ -18,13 +19,23 @@ import {
   Download, 
   File, 
   Upload,
-  FolderClosed 
+  FolderClosed,
+  CheckSquare,
+  Square,
+  Eye,
+  MoreHorizontal
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { format } from "date-fns";
 import { toast } from "sonner";
 import { uploadDocument, uploadMultipleDocuments, deleteDocument, fetchFolderDocuments } from "@/services/documentService";
 import { FolderTree } from "@/components/folder/FolderTree";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface DocumentListProps {
   documents: TenderDocument[];
@@ -33,6 +44,7 @@ interface DocumentListProps {
   folders?: Folder[];
   onDocumentAdded: (document: TenderDocument) => void;
   onDocumentDeleted: (documentId: string) => void;
+  onPreviewDocument?: (document: TenderDocument) => void;
 }
 
 export function DocumentList({
@@ -41,7 +53,8 @@ export function DocumentList({
   milestoneId,
   folders = [], // Default to empty array if not provided
   onDocumentAdded,
-  onDocumentDeleted
+  onDocumentDeleted,
+  onPreviewDocument
 }: DocumentListProps) {
   const { t } = useTranslation();
   const [isUploading, setIsUploading] = useState(false);
@@ -51,6 +64,10 @@ export function DocumentList({
   const [selectedFolder, setSelectedFolder] = useState<string | null>(null);
   const [currentDocuments, setCurrentDocuments] = useState<TenderDocument[]>(documents);
   const [currentFolderId, setCurrentFolderId] = useState<string | null>(null);
+  
+  // Neue State-Variablen für Mehrfachauswahl
+  const [selectedDocuments, setSelectedDocuments] = useState<string[]>([]);
+  const [isSelectionMode, setIsSelectionMode] = useState(false);
   
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -124,6 +141,7 @@ export function DocumentList({
     }
   };
   
+  // Ein einzelnes Dokument löschen
   const handleDelete = async (documentId: string) => {
     try {
       await deleteDocument(documentId);
@@ -133,6 +151,78 @@ export function DocumentList({
     } catch (error) {
       console.error("Error deleting document:", error);
       toast.error("Fehler beim Löschen des Dokuments");
+    }
+  };
+
+  // Mehrere Dokumente löschen
+  const handleBulkDelete = async () => {
+    if (selectedDocuments.length === 0) return;
+    
+    try {
+      // Löschbestätigung
+      if (window.confirm(`Möchten Sie wirklich ${selectedDocuments.length} Dokumente löschen?`)) {
+        // Jedes ausgewählte Dokument der Reihe nach löschen
+        for (const docId of selectedDocuments) {
+          await deleteDocument(docId);
+          onDocumentDeleted(docId);
+        }
+        
+        // UI aktualisieren
+        setCurrentDocuments(prev => prev.filter(doc => !selectedDocuments.includes(doc.id)));
+        
+        toast.success(`${selectedDocuments.length} Dokumente erfolgreich gelöscht`);
+        setSelectedDocuments([]);
+        setIsSelectionMode(false);
+      }
+    } catch (error) {
+      console.error("Error deleting documents:", error);
+      toast.error("Fehler beim Löschen der Dokumente");
+    }
+  };
+
+  // Massendownload von Dokumenten
+  const handleBulkDownload = async () => {
+    if (selectedDocuments.length === 0) return;
+    
+    try {
+      // Für jedes ausgewählte Dokument einen unsichtbaren Download-Link erstellen und klicken
+      selectedDocuments.forEach(docId => {
+        const doc = currentDocuments.find(d => d.id === docId);
+        if (doc) {
+          const link = document.createElement('a');
+          link.href = doc.fileUrl;
+          link.download = doc.name;
+          link.style.display = 'none';
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        }
+      });
+      
+      toast.success(`${selectedDocuments.length} Dokumente werden heruntergeladen`);
+    } catch (error) {
+      console.error("Error downloading documents:", error);
+      toast.error("Fehler beim Herunterladen der Dokumente");
+    }
+  };
+
+  // Toggle Auswahl eines Dokuments
+  const toggleDocumentSelection = (documentId: string) => {
+    setSelectedDocuments(prev => {
+      if (prev.includes(documentId)) {
+        return prev.filter(id => id !== documentId);
+      } else {
+        return [...prev, documentId];
+      }
+    });
+  };
+
+  // Alle Dokumente auswählen/abwählen
+  const toggleSelectAll = () => {
+    if (selectedDocuments.length === currentDocuments.length) {
+      setSelectedDocuments([]);
+    } else {
+      setSelectedDocuments(currentDocuments.map(doc => doc.id));
     }
   };
   
@@ -160,6 +250,9 @@ export function DocumentList({
       setCurrentFolderId(folder.id);
       const folderDocuments = await fetchFolderDocuments(folder.id);
       setCurrentDocuments(folderDocuments);
+      // Reset selection when changing folder
+      setSelectedDocuments([]);
+      setIsSelectionMode(false);
     } catch (error) {
       console.error("Error fetching folder documents:", error);
       toast.error("Fehler beim Laden der Ordnerdokumente");
@@ -170,6 +263,9 @@ export function DocumentList({
   const handleResetView = () => {
     setCurrentFolderId(null);
     setCurrentDocuments(documents);
+    // Reset selection when changing view
+    setSelectedDocuments([]);
+    setIsSelectionMode(false);
   };
   
   return (
@@ -177,121 +273,185 @@ export function DocumentList({
       <div className="flex justify-between items-center">
         <h3 className="text-lg font-medium">Dokumente</h3>
         
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button size="sm">
-              <Upload className="w-4 h-4 mr-1" />
-              Hochladen
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-lg">
-            <DialogHeader>
-              <DialogTitle>Dokument hochladen</DialogTitle>
-            </DialogHeader>
-            
-            <div className="space-y-4 mt-4">
-              <div className="border-2 border-dashed border-gray-300 rounded-md p-6 text-center">
-                <input
-                  type="file"
-                  id="file-upload"
-                  className="hidden"
-                  onChange={handleFileChange}
-                  multiple // Enable multiple file selection
-                />
-                <label
-                  htmlFor="file-upload"
-                  className="cursor-pointer flex flex-col items-center justify-center"
-                >
-                  <Upload className="w-8 h-8 text-gray-400 mb-2" />
-                  <span className="text-sm font-medium text-gray-700">
-                    {selectedFiles.length > 0 
-                      ? `${selectedFiles.length} ${selectedFiles.length === 1 ? "Datei ausgewählt" : "Dateien ausgewählt"}`
-                      : "Klicken Sie zum Hochladen"}
-                  </span>
-                  <span className="text-xs text-gray-500 mt-1">
-                    Maximale Dateigröße: 10MB
-                  </span>
-                </label>
-              </div>
+        <div className="flex space-x-2">
+          {isSelectionMode && (
+            <>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={toggleSelectAll}
+                className="flex items-center gap-1"
+              >
+                {selectedDocuments.length === currentDocuments.length ? 
+                  <CheckSquare className="w-4 h-4" /> : 
+                  <Square className="w-4 h-4" />
+                }
+                {selectedDocuments.length === currentDocuments.length ? "Alle abwählen" : "Alle auswählen"}
+              </Button>
               
-              {selectedFiles.length > 0 && (
-                <div className="space-y-3">
-                  <h4 className="text-sm font-medium">Ausgewählte Dateien</h4>
+              <Button 
+                variant="outline"
+                size="sm"
+                onClick={handleBulkDownload}
+                disabled={selectedDocuments.length === 0}
+                className="flex items-center gap-1"
+              >
+                <Download className="w-4 h-4" />
+                Herunterladen ({selectedDocuments.length})
+              </Button>
+              
+              <Button 
+                variant="outline"
+                size="sm"
+                onClick={handleBulkDelete}
+                disabled={selectedDocuments.length === 0}
+                className="flex items-center gap-1 text-destructive hover:text-destructive"
+              >
+                <Trash2 className="w-4 h-4" />
+                Löschen ({selectedDocuments.length})
+              </Button>
+              
+              <Button 
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setIsSelectionMode(false);
+                  setSelectedDocuments([]);
+                }}
+              >
+                Abbrechen
+              </Button>
+            </>
+          )}
+          
+          {!isSelectionMode && (
+            <>
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => setIsSelectionMode(true)}
+              >
+                Auswahl
+              </Button>
+            
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button size="sm">
+                    <Upload className="w-4 h-4 mr-1" />
+                    Hochladen
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-lg">
+                  <DialogHeader>
+                    <DialogTitle>Dokument hochladen</DialogTitle>
+                  </DialogHeader>
                   
-                  <div className="max-h-40 overflow-y-auto space-y-2">
-                    {selectedFiles.map((file, index) => (
-                      <div key={index} className="flex items-center space-x-2">
-                        <div className="w-8 h-8 bg-muted flex items-center justify-center rounded">
-                          <FileIcon className="w-4 h-4" />
-                        </div>
+                  <div className="space-y-4 mt-4">
+                    <div className="border-2 border-dashed border-gray-300 rounded-md p-6 text-center">
+                      <input
+                        type="file"
+                        id="file-upload"
+                        className="hidden"
+                        onChange={handleFileChange}
+                        multiple // Enable multiple file selection
+                      />
+                      <label
+                        htmlFor="file-upload"
+                        className="cursor-pointer flex flex-col items-center justify-center"
+                      >
+                        <Upload className="w-8 h-8 text-gray-400 mb-2" />
+                        <span className="text-sm font-medium text-gray-700">
+                          {selectedFiles.length > 0 
+                            ? `${selectedFiles.length} ${selectedFiles.length === 1 ? "Datei ausgewählt" : "Dateien ausgewählt"}`
+                            : "Klicken Sie zum Hochladen"}
+                        </span>
+                        <span className="text-xs text-gray-500 mt-1">
+                          Maximale Dateigröße: 10MB
+                        </span>
+                      </label>
+                    </div>
+                    
+                    {selectedFiles.length > 0 && (
+                      <div className="space-y-3">
+                        <h4 className="text-sm font-medium">Ausgewählte Dateien</h4>
                         
-                        <div className="flex-1">
-                          <Input
-                            value={documentNames[index] || ''}
-                            onChange={(e) => handleNameChange(index, e.target.value)}
-                            placeholder="Name für diese Datei"
-                            className="text-sm"
-                          />
-                        </div>
-                        
-                        <div className="text-xs text-muted-foreground">
-                          {formatFileSize(file.size)}
+                        <div className="max-h-40 overflow-y-auto space-y-2">
+                          {selectedFiles.map((file, index) => (
+                            <div key={index} className="flex items-center space-x-2">
+                              <div className="w-8 h-8 bg-muted flex items-center justify-center rounded">
+                                <FileIcon className="w-4 h-4" />
+                              </div>
+                              
+                              <div className="flex-1">
+                                <Input
+                                  value={documentNames[index] || ''}
+                                  onChange={(e) => handleNameChange(index, e.target.value)}
+                                  placeholder="Name für diese Datei"
+                                  className="text-sm"
+                                />
+                              </div>
+                              
+                              <div className="text-xs text-muted-foreground">
+                                {formatFileSize(file.size)}
+                              </div>
+                            </div>
+                          ))}
                         </div>
                       </div>
-                    ))}
+                    )}
+                    
+                    {folders && folders.length > 0 && (
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium">
+                          Ordner auswählen
+                        </label>
+                        <div className="border rounded-md p-4 max-h-48 overflow-y-auto">
+                          <FolderTree 
+                            folders={folders} 
+                            onSelectFolder={(folderId) => setSelectedFolder(folderId)}
+                            selectedFolderId={selectedFolder}
+                            readOnly={true}
+                            tenderId={tenderId || ""}
+                          />
+                        </div>
+                      </div>
+                    )}
+                    
+                    <div className="space-y-2">
+                      <label htmlFor="document-description" className="text-sm font-medium">
+                        Beschreibung
+                      </label>
+                      <Textarea
+                        id="document-description"
+                        value={documentDescription}
+                        onChange={(e) => setDocumentDescription(e.target.value)}
+                        placeholder="Optionale Beschreibung für die Dokumente"
+                        rows={3}
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Diese Beschreibung wird auf alle hochgeladenen Dateien angewendet
+                      </p>
+                    </div>
                   </div>
-                </div>
-              )}
-              
-              {folders && folders.length > 0 && (
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">
-                    Ordner auswählen
-                  </label>
-                  <div className="border rounded-md p-4 max-h-48 overflow-y-auto">
-                    <FolderTree 
-                      folders={folders} 
-                      onSelectFolder={(folderId) => setSelectedFolder(folderId)}
-                      selectedFolderId={selectedFolder}
-                      readOnly={true}
-                      tenderId={tenderId || ""}
-                    />
-                  </div>
-                </div>
-              )}
-              
-              <div className="space-y-2">
-                <label htmlFor="document-description" className="text-sm font-medium">
-                  Beschreibung
-                </label>
-                <Textarea
-                  id="document-description"
-                  value={documentDescription}
-                  onChange={(e) => setDocumentDescription(e.target.value)}
-                  placeholder="Optionale Beschreibung für die Dokumente"
-                  rows={3}
-                />
-                <p className="text-xs text-muted-foreground">
-                  Diese Beschreibung wird auf alle hochgeladenen Dateien angewendet
-                </p>
-              </div>
-            </div>
-            
-            <DialogFooter>
-              <DialogClose asChild>
-                <Button variant="outline" data-dialog-close>
-                  Abbrechen
-                </Button>
-              </DialogClose>
-              <Button 
-                onClick={handleUpload}
-                disabled={isUploading}
-              >
-                {isUploading ? "Wird hochgeladen..." : "Hochladen"}
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+                  
+                  <DialogFooter>
+                    <DialogClose asChild>
+                      <Button variant="outline" data-dialog-close>
+                        Abbrechen
+                      </Button>
+                    </DialogClose>
+                    <Button 
+                      onClick={handleUpload}
+                      disabled={isUploading}
+                    >
+                      {isUploading ? "Wird hochgeladen..." : "Hochladen"}
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+            </>
+          )}
+        </div>
       </div>
       
       <div className="flex space-x-4">
@@ -344,12 +504,29 @@ export function DocumentList({
               {currentDocuments.map((document) => (
                 <div 
                   key={document.id} 
-                  className="flex items-center justify-between p-3 hover:bg-muted/50"
+                  className={`flex items-center justify-between p-3 ${
+                    isSelectionMode && selectedDocuments.includes(document.id) 
+                      ? 'bg-primary/10' 
+                      : 'hover:bg-muted/50'
+                  }`}
                 >
                   <div className="flex items-center space-x-3">
-                    <div className="p-2 bg-muted rounded">
-                      {getFileTypeIcon(document.fileType)}
-                    </div>
+                    {isSelectionMode ? (
+                      <button
+                        onClick={() => toggleDocumentSelection(document.id)}
+                        className="p-1 focus:outline-none"
+                      >
+                        {selectedDocuments.includes(document.id) ? (
+                          <CheckSquare className="w-5 h-5 text-primary" />
+                        ) : (
+                          <Square className="w-5 h-5 text-muted-foreground" />
+                        )}
+                      </button>
+                    ) : (
+                      <div className="p-2 bg-muted rounded">
+                        {getFileTypeIcon(document.fileType)}
+                      </div>
+                    )}
                     
                     <div>
                       <h4 className="font-medium">
@@ -368,28 +545,45 @@ export function DocumentList({
                     </div>
                   </div>
                   
-                  <div className="flex space-x-2">
-                    <Button 
-                      variant="ghost" 
-                      size="icon"
-                      asChild
-                    >
-                      <a href={document.fileUrl} target="_blank" rel="noopener noreferrer" download>
-                        <Download className="w-4 h-4" />
-                        <span className="sr-only">Herunterladen</span>
-                      </a>
-                    </Button>
-                    
-                    <Button 
-                      variant="ghost" 
-                      size="icon"
-                      className="text-destructive hover:text-destructive"
-                      onClick={() => handleDelete(document.id)}
-                    >
-                      <Trash2 className="w-4 h-4" />
-                      <span className="sr-only">Löschen</span>
-                    </Button>
-                  </div>
+                  {!isSelectionMode && (
+                    <div className="flex space-x-2">
+                      {onPreviewDocument && (
+                        <Button 
+                          variant="ghost" 
+                          size="icon"
+                          onClick={() => onPreviewDocument(document)}
+                          title="Vorschau anzeigen"
+                        >
+                          <Eye className="w-4 h-4" />
+                          <span className="sr-only">Vorschau</span>
+                        </Button>
+                      )}
+                      
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon">
+                            <MoreHorizontal className="w-4 h-4" />
+                            <span className="sr-only">Aktionen</span>
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem asChild>
+                            <a href={document.fileUrl} target="_blank" rel="noopener noreferrer" download>
+                              <Download className="w-4 h-4 mr-2" />
+                              Herunterladen
+                            </a>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem 
+                            onClick={() => handleDelete(document.id)}
+                            className="text-destructive"
+                          >
+                            <Trash2 className="w-4 h-4 mr-2" />
+                            Löschen
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>

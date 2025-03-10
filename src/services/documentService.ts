@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { TenderDocument } from "@/types/tender";
 import { v4 as uuidv4 } from "uuid";
@@ -194,6 +193,15 @@ export const uploadMultipleDocuments = async (
   }
   
   return uploadedDocuments;
+};
+
+// Delete multiple documents
+export const deleteMultipleDocuments = async (ids: string[]): Promise<void> => {
+  if (ids.length === 0) return;
+
+  for (const id of ids) {
+    await deleteDocument(id);
+  }
 };
 
 // Delete a document

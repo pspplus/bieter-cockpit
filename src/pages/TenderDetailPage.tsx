@@ -34,6 +34,7 @@ export default function TenderDetailPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("details");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [selectedDocument, setSelectedDocument] = useState<TenderDocument | null>(null);
   const navigate = useNavigate();
   const { t } = useTranslation();
 
@@ -81,6 +82,10 @@ export default function TenderDetailPage() {
 
   const handleDocumentDeleted = (documentId: string) => {
     setDocuments(prev => prev.filter(doc => doc.id !== documentId));
+  };
+
+  const handlePreviewDocument = (document: TenderDocument) => {
+    setSelectedDocument(document);
   };
 
   if (isLoading) {
@@ -149,6 +154,7 @@ export default function TenderDetailPage() {
                   folders={folders}
                   onDocumentAdded={handleDocumentAdded}
                   onDocumentDeleted={handleDocumentDeleted}
+                  onPreviewDocument={handlePreviewDocument}
                 />
               </TabsContent>
               
