@@ -11,4 +11,36 @@ const SUPABASE_PUBLISHABLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiO
 
 console.log("Supabase Client initialisiert mit URL:", SUPABASE_URL);
 
-export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+// Create client with additional options for better error handling
+export const supabase = createClient<Database>(
+  SUPABASE_URL, 
+  SUPABASE_PUBLISHABLE_KEY,
+  {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+    },
+    global: {
+      fetch: (...args) => {
+        console.log("Supabase fetch request:", args[0]);
+        return fetch(...args);
+      },
+    },
+  }
+);
+
+// Add a helper function to check connection status
+export const checkSupabaseConnection = async () => {
+  try {
+    const { error } = await supabase.from('clients').select('count');
+    if (error) {
+      console.error("Supabase connection test failed:", error);
+      return false;
+    }
+    console.log("Supabase connection test successful");
+    return true;
+  } catch (err) {
+    console.error("Supabase connection test error:", err);
+    return false;
+  }
+};
