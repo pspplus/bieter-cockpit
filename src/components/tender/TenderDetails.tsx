@@ -1,4 +1,3 @@
-
 import { Tender } from "@/types/tender";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,7 +8,7 @@ import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
 import { fetchTenderDocuments } from "@/services/documentService";
 import { getStatusColors } from "@/utils/statusUtils";
-import { MilestoneProcess } from "./MilestoneProcess"; // Import der neuen Komponente
+import { MilestoneProcess } from "./MilestoneProcess";
 
 interface TenderDetailsProps {
   tender: Tender;
@@ -33,7 +32,6 @@ export function TenderDetails({ tender }: TenderDetailsProps) {
     loadDocuments();
   }, [tender.id]);
   
-  // Calculate progress
   const completedMilestones = tender.milestones.filter(
     (m) => m.status === "completed"
   ).length;
@@ -42,17 +40,14 @@ export function TenderDetails({ tender }: TenderDetailsProps) {
     ? Math.round((completedMilestones / totalMilestones) * 100) 
     : 0;
 
-  // Format dates
   const createdAtFormatted = format(new Date(tender.createdAt), "d. MMMM yyyy");
   const dueDateFormatted = format(new Date(tender.dueDate), "d. MMMM yyyy");
   const bindingPeriodDateFormatted = tender.bindingPeriodDate 
     ? format(new Date(tender.bindingPeriodDate), "d. MMMM yyyy") 
     : null;
   
-  // Check if the due date is in the past
   const isDueDatePast = new Date(tender.dueDate) < new Date();
 
-  // Use the internal reference as primary, and external as secondary if available
   const displayReference = tender.internalReference;
   const externalReferenceDisplay = tender.externalReference ? `${t('tender.externalReference')}: ${tender.externalReference}` : '';
 
@@ -91,7 +86,6 @@ export function TenderDetails({ tender }: TenderDetailsProps) {
         </div>
       </div>
 
-      {/* Neue Meilenstein-Prozess Visualisierung */}
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="text-base">{t('milestones.milestones')}</CardTitle>
@@ -115,7 +109,10 @@ export function TenderDetails({ tender }: TenderDetailsProps) {
               </dd>
               
               <dt className="text-tender-500">{t('tenderDetails.created')}</dt>
-              <dd>{createdAtFormatted}</dd>
+              <dd className="flex items-center gap-1.5">
+                <Calendar className="h-4 w-4 text-tender-400" />
+                {createdAtFormatted}
+              </dd>
               
               {bindingPeriodDateFormatted && (
                 <>
