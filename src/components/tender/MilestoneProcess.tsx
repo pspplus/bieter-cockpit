@@ -34,19 +34,6 @@ export function MilestoneProcess({ milestones }: MilestoneProcessProps) {
     }
   };
   
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "completed":
-        return "bg-green-500";
-      case "in-progress":
-        return "bg-blue-500";
-      case "skipped":
-        return "bg-tender-400";
-      default:
-        return "bg-tender-200";
-    }
-  };
-  
   if (sortedMilestones.length === 0) {
     return (
       <div className="text-sm text-tender-500 italic">
@@ -73,19 +60,22 @@ export function MilestoneProcess({ milestones }: MilestoneProcessProps) {
         ></div>
       </div>
       
-      <div className="flex items-start overflow-x-auto pb-2 md:pb-0">
-        <div className="flex items-start min-w-max">
+      <div className="relative w-full overflow-x-auto pb-2 md:pb-0">
+        <div className="flex w-full">
           {sortedMilestones.map((milestone, index) => (
-            <div key={milestone.id} className="flex flex-col items-center relative">
+            <div 
+              key={milestone.id} 
+              className="flex flex-col items-center relative flex-1"
+            >
               {/* Connector line */}
               {index < sortedMilestones.length - 1 && (
                 <div className={cn(
-                  "absolute top-4 h-0.5 w-full left-0 -translate-y-1/2 z-0",
-                  index < completedCount ? "bg-primary" : "bg-tender-200"
+                  "absolute top-4 h-0.5 w-full left-1/2 -translate-y-1/2 z-0",
+                  milestone.status === "completed" ? "bg-primary" : "bg-tender-200"
                 )}></div>
               )}
               
-              <div className="flex flex-col items-center relative z-10 px-4 md:px-6">
+              <div className="flex flex-col items-center relative z-10">
                 {/* Status Icon */}
                 <div className={cn(
                   "rounded-full p-1 bg-white border-2",
@@ -99,7 +89,7 @@ export function MilestoneProcess({ milestones }: MilestoneProcessProps) {
                 
                 {/* Milestone Title */}
                 <div className="mt-2 text-center">
-                  <p className={cn("text-xs font-medium truncate max-w-24 md:max-w-32", 
+                  <p className={cn("text-xs font-medium truncate max-w-20 md:max-w-28", 
                     milestone.status === "completed" ? "text-green-700" :
                     milestone.status === "in-progress" ? "text-blue-700" :
                     milestone.status === "skipped" ? "text-tender-600" : 
