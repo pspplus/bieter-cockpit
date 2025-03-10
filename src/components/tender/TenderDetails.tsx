@@ -3,7 +3,6 @@ import { format } from "date-fns";
 import { Tender, Vertragsart, Zertifikat } from "@/types/tender";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MilestoneProcess } from "@/components/tender/MilestoneProcess";
 import { Edit, FileText, User, Building, ClipboardCheck, CreditCard, BriefcaseBusiness, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
@@ -62,16 +61,6 @@ export function TenderDetails({ tender, onOpenDetailsDialog, onOpenContactDialog
 
   return (
     <div className="space-y-6">
-      {/* Progress Card - Now first */}
-      <Card className="min-h-[180px]">
-        <CardHeader className="pb-3">
-          <CardTitle>{t("milestones.progress")}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <MilestoneProcess milestones={tender.milestones} tenderId={tender.id} />
-        </CardContent>
-      </Card>
-
       {/* Information Cards in a Grid */}
       <div className="grid gap-6 md:grid-cols-2">
         {/* Basisinformationen */}
