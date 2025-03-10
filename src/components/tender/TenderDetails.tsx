@@ -4,7 +4,7 @@ import { Tender } from "@/types/tender";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { MilestoneProcess } from "@/components/tender/MilestoneProcess";
-import { Edit } from "lucide-react";
+import { Edit, FileText, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 import { statusDisplayMap } from "@/utils/statusUtils";
@@ -40,9 +40,12 @@ export function TenderDetails({ tender, onOpenDetailsDialog, onOpenContactDialog
         {/* Tender Information Card */}
         <Card className="md:col-span-1">
           <CardHeader className="pb-3 flex flex-row justify-between items-start">
-            <div>
-              <CardTitle>{t("tenderDetails.tenderInformation")}</CardTitle>
-              <CardDescription>{t("tenderDetails.created")}: {formattedCreatedAt}</CardDescription>
+            <div className="flex items-center gap-2">
+              <FileText className="h-5 w-5 text-primary" />
+              <div>
+                <CardTitle>{t("tenderDetails.tenderInformation")}</CardTitle>
+                <CardDescription>{t("tenderDetails.created")}: {formattedCreatedAt}</CardDescription>
+              </div>
             </div>
             {onOpenDetailsDialog && (
               <Button 
@@ -127,7 +130,10 @@ export function TenderDetails({ tender, onOpenDetailsDialog, onOpenContactDialog
         {/* Contact Information Card */}
         <Card className="md:col-span-1">
           <CardHeader className="pb-3 flex flex-row justify-between items-start">
-            <CardTitle>{t("tenderDetails.contactInformation")}</CardTitle>
+            <div className="flex items-center gap-2">
+              <User className="h-5 w-5 text-primary" />
+              <CardTitle>{t("tenderDetails.contactInformation")}</CardTitle>
+            </div>
             {onOpenContactDialog && (
               <Button 
                 variant="ghost" 
