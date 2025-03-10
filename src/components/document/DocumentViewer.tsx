@@ -13,14 +13,14 @@ interface DocumentViewerProps {
   onClose: () => void;
 }
 
-export const DocumentViewer: React.FC<DocumentViewerProps> = ({ document, isOpen, onClose }) => {
+export const DocumentViewer: React.FC<DocumentViewerProps> = ({ document: fileDocument, isOpen, onClose }) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
-  const isPDF = document.fileType === 'application/pdf';
-  const isImage = document.fileType.startsWith('image/');
-  const isVideo = document.fileType.startsWith('video/');
-  const isViewable = isViewableInBrowser(document.fileType);
+  const isPDF = fileDocument.fileType === 'application/pdf';
+  const isImage = fileDocument.fileType.startsWith('image/');
+  const isVideo = fileDocument.fileType.startsWith('video/');
+  const isViewable = isViewableInBrowser(fileDocument.fileType);
 
   // Handle fullscreen changes
   useEffect(() => {
@@ -53,9 +53,9 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({ document, isOpen
   };
 
   const downloadDocument = () => {
-    const link = document.createElement('a');
-    link.href = document.fileUrl;
-    link.download = document.name;
+    const link = window.document.createElement('a');
+    link.href = fileDocument.fileUrl;
+    link.download = fileDocument.name;
     link.click();
   };
 
@@ -77,9 +77,9 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({ document, isOpen
       return (
         <iframe 
           ref={iframeRef}
-          src={`${document.fileUrl}#toolbar=0`} 
+          src={`${fileDocument.fileUrl}#toolbar=0`} 
           className="w-full h-full border-0"
-          title={document.name}
+          title={fileDocument.name}
         />
       );
     }
@@ -88,8 +88,8 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({ document, isOpen
       return (
         <div className="flex items-center justify-center h-full overflow-auto">
           <img 
-            src={document.fileUrl} 
-            alt={document.name} 
+            src={fileDocument.fileUrl} 
+            alt={fileDocument.name} 
             className="max-w-full max-h-full object-contain"
           />
         </div>
@@ -100,7 +100,7 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({ document, isOpen
       return (
         <div className="flex items-center justify-center h-full">
           <video 
-            src={document.fileUrl} 
+            src={fileDocument.fileUrl} 
             controls 
             className="max-w-full max-h-full"
           >
@@ -114,9 +114,9 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({ document, isOpen
     return (
       <iframe 
         ref={iframeRef}
-        src={document.fileUrl} 
+        src={fileDocument.fileUrl} 
         className="w-full h-full border-0"
-        title={document.name}
+        title={fileDocument.name}
       />
     );
   };
@@ -127,7 +127,7 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({ document, isOpen
         <DialogHeader className="p-4 border-b">
           <div className="flex justify-between items-center">
             <DialogTitle className="text-lg truncate max-w-[calc(100%-100px)]">
-              {document.name}
+              {fileDocument.name}
             </DialogTitle>
             <div className="flex items-center space-x-2">
               <Button variant="ghost" size="icon" onClick={toggleFullscreen} title={isFullscreen ? "Vollbild beenden" : "Vollbild"}>
