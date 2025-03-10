@@ -6,13 +6,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Layout } from "@/components/layout/Layout";
 import { TenderDetails } from "@/components/tender/TenderDetails";
 import { DocumentList } from "@/components/document/DocumentList";
+import { DocumentViewer } from "@/components/document/DocumentViewer";
 import { fetchTenderById, deleteTender, updateTender } from "@/services/tenderService";
-import { fetchTenderDocuments } from "@/services/documentService";
+import { fetchTenderDocuments, isViewableInBrowser } from "@/services/documentService";
 import { fetchFolders } from "@/services/folderService";
 import { Tender, TenderDocument, Folder } from "@/types/tender";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
-import { Trash2 } from "lucide-react";
+import { Trash2, X } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -29,6 +30,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
+  DialogClose,
 } from "@/components/ui/dialog";
 import { TenderDetailsEditForm } from "@/components/tender/TenderDetailsEditForm";
 import { TenderContactEditForm } from "@/components/tender/TenderContactEditForm";
@@ -44,6 +46,7 @@ export default function TenderDetailPage() {
   const [detailsDialogOpen, setDetailsDialogOpen] = useState(false);
   const [contactDialogOpen, setContactDialogOpen] = useState(false);
   const [selectedDocument, setSelectedDocument] = useState<TenderDocument | null>(null);
+  const [documentViewerOpen, setDocumentViewerOpen] = useState(false);
   const navigate = useNavigate();
   const { t } = useTranslation();
 
@@ -95,6 +98,16 @@ export default function TenderDetailPage() {
 
   const handlePreviewDocument = (document: TenderDocument) => {
     setSelectedDocument(document);
+    
+    // Check if document is viewable in browser
+    const canViewInBrowser = isViewableInBrowser(document.fileType);
+    
+    if (canViewInBrowser) {
+      setDocumentViewerOpen(true);
+    } else {
+      // If not viewable in browser, download it
+      window.open(document.fileUrl, '_blank');
+    }
   };
 
   const handleTenderUpdate = async (updates: Partial<Tender>) => {
@@ -245,6 +258,54 @@ export default function TenderDetailPage() {
             }}
             onCancel={() => setContactDialogOpen(false)}
           />
+        </DialogContent>
+      </Dialog>
+
+      {/* Document Viewer Dialog */}
+      <Dialog open={documentViewerOpen} onOpenChange={setDocumentViewerOpen} className="sm:max-w-5xl">
+        <DialogContent className="sm:max-w-5xl max-h-[90vh]">
+          <DialogHeader className="flex flex-row items-center justify-between">
+            <div>
+              <DialogTitle className="pr-8">
+                {selectedDocument?.name}
+              </DialogTitle>
+              <DialogDescription>
+                {selectedDocument?.description}
+              </DialogDescription>
+            </div>
+            <DialogClose className="absolute right-4 top-4 opacity-70 ring-offset-background transition-opacity hover:opacity-100">
+              <X className="h-4 w-4" />
+              <span className="sr-only">Schließen</span>
+            </DialogClose>
+          </DialogHeader>
+          
+          <div className="flex-1 overflow-hidden">
+            {selectedDocument && (
+              <DocumentViewer 
+                document={selectedDocument} 
+                className="w-full" 
+                style={{ height: 'calc(80vh - 160px)' }}
+              />
+            )}
+          </div>
+          
+          <div className="flex justify-end space-x-2 mt-4">
+            <Button variant="outline" onClick={() => setDocumentViewerOpen(false)}>
+              Schließen
+            </Button>
+            {selectedDocument && (
+              <Button 
+                variant="default"
+                onClick={() => {
+                  if (selectedDocument) {
+                    window.open(selectedDocument.fileUrl, '_blank');
+                  }
+                }}
+              >
+                Herunterladen
+              </Button>
+            )}
+          </div>
         </DialogContent>
       </Dialog>
     </Layout>
