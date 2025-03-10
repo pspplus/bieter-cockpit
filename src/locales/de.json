@@ -95,11 +95,25 @@
     "documents": "Dokumente",
     "notFound": "Nicht gefunden",
     "tenderNotFound": "Ausschreibung nicht gefunden",
-    "tenderMayNotExist": "Die gesuchte Ausschreibung existiert nicht oder Sie haben keinen Zugriff darauf."
+    "tenderMayNotExist": "Die gesuchte Ausschreibung existiert nicht oder Sie haben keinen Zugriff darauf.",
+    "editDetails": "Ausschreibungsdetails bearbeiten",
+    "editDetailsDescription": "Aktualisieren Sie die grundlegenden Informationen dieser Ausschreibung.",
+    "editContact": "Kontaktinformationen bearbeiten",
+    "editContactDescription": "Aktualisieren Sie die Kontaktinformationen dieser Ausschreibung."
   },
   "cancel": "Abbrechen",
   "yes": "Ja",
   "no": "Nein",
   "loading": "Wird geladen...",
-  "backToTenders": "Zurück zur Übersicht"
+  "backToTenders": "Zurück zur Übersicht",
+  "save": "Speichern",
+  "notifications": {
+    "tenderDeleted": "Ausschreibung wurde gelöscht",
+    "tenderUpdated": "Ausschreibung wurde aktualisiert"
+  },
+  "errorMessages": {
+    "couldNotLoadTenders": "Fehler beim Laden der Ausschreibungen",
+    "couldNotDeleteTender": "Fehler beim Löschen der Ausschreibung",
+    "couldNotUpdateTender": "Fehler beim Aktualisieren der Ausschreibung"
+  }
 }

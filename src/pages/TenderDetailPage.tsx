@@ -7,7 +7,7 @@ import { Layout } from "@/components/layout/Layout";
 import { TenderDetails } from "@/components/tender/TenderDetails";
 import { TenderEditForm } from "@/components/tender/TenderEditForm";
 import { DocumentList } from "@/components/document/DocumentList";
-import { fetchTenderById, deleteTender } from "@/services/tenderService";
+import { fetchTenderById, deleteTender, updateTender } from "@/services/tenderService";
 import { fetchTenderDocuments } from "@/services/documentService";
 import { fetchFolders } from "@/services/folderService";
 import { Tender, TenderDocument, Folder } from "@/types/tender";
@@ -24,6 +24,16 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { TenderDetailsEditForm } from "@/components/tender/TenderDetailsEditForm";
+import { TenderContactEditForm } from "@/components/tender/TenderContactEditForm";
 
 export default function TenderDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -33,6 +43,8 @@ export default function TenderDetailPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("details");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [detailsDialogOpen, setDetailsDialogOpen] = useState(false);
+  const [contactDialogOpen, setContactDialogOpen] = useState(false);
   const [selectedDocument, setSelectedDocument] = useState<TenderDocument | null>(null);
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -87,6 +99,20 @@ export default function TenderDetailPage() {
     setSelectedDocument(document);
   };
 
+  const handleTenderUpdate = async (updates: Partial<Tender>) => {
+    if (!tender) return;
+    
+    try {
+      await updateTender(tender.id, updates);
+      // Update the local tender state with the new values
+      setTender(prev => prev ? { ...prev, ...updates } : null);
+      toast.success(t("notifications.tenderUpdated", "Ausschreibung aktualisiert"));
+    } catch (error) {
+      console.error("Error updating tender:", error);
+      toast.error(t("errorMessages.couldNotUpdateTender", "Fehler beim Aktualisieren der Ausschreibung"));
+    }
+  };
+
   if (isLoading) {
     return (
       <Layout title={t("loading")}>
@@ -130,7 +156,11 @@ export default function TenderDetailPage() {
               <TabsContent value="details" className="mt-4">
                 <div className="flex justify-between">
                   <div className="flex-grow">
-                    <TenderDetails tender={tender} />
+                    <TenderDetails 
+                      tender={tender} 
+                      onOpenDetailsDialog={() => setDetailsDialogOpen(true)} 
+                      onOpenContactDialog={() => setContactDialogOpen(true)} 
+                    />
                   </div>
                   <Button
                     variant="destructive"
@@ -164,6 +194,7 @@ export default function TenderDetailPage() {
         </div>
       </div>
 
+      {/* Delete Confirmation Dialog */}
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -183,6 +214,46 @@ export default function TenderDetailPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Tender Details Edit Dialog */}
+      <Dialog open={detailsDialogOpen} onOpenChange={setDetailsDialogOpen}>
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle>{t("tenderDetails.editDetails", "Ausschreibungsdetails bearbeiten")}</DialogTitle>
+            <DialogDescription>
+              {t("tenderDetails.editDetailsDescription", "Aktualisieren Sie die grundlegenden Informationen dieser Ausschreibung.")}
+            </DialogDescription>
+          </DialogHeader>
+          <TenderDetailsEditForm 
+            tender={tender} 
+            onSubmit={(updates) => {
+              handleTenderUpdate(updates);
+              setDetailsDialogOpen(false);
+            }}
+            onCancel={() => setDetailsDialogOpen(false)}
+          />
+        </DialogContent>
+      </Dialog>
+
+      {/* Contact Information Edit Dialog */}
+      <Dialog open={contactDialogOpen} onOpenChange={setContactDialogOpen}>
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle>{t("tenderDetails.editContact", "Kontaktinformationen bearbeiten")}</DialogTitle>
+            <DialogDescription>
+              {t("tenderDetails.editContactDescription", "Aktualisieren Sie die Kontaktinformationen dieser Ausschreibung.")}
+            </DialogDescription>
+          </DialogHeader>
+          <TenderContactEditForm 
+            tender={tender} 
+            onSubmit={(updates) => {
+              handleTenderUpdate(updates);
+              setContactDialogOpen(false);
+            }}
+            onCancel={() => setContactDialogOpen(false)}
+          />
+        </DialogContent>
+      </Dialog>
     </Layout>
   );
 }
