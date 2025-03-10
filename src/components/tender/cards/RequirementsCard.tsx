@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ClipboardCheck, Edit, Save, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { displayZertifikate } from "../utils/DisplayFormatters";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
@@ -20,7 +20,7 @@ interface RequirementsCardProps {
 export function RequirementsCard({ tender, onUpdateTender }: RequirementsCardProps) {
   const { t } = useTranslation();
   const [editing, setEditing] = useState(false);
-  const [zertifikate, setZertifikate] = useState<string[]>(tender.erforderlicheZertifikate || []);
+  const [zertifikate, setZertifikate] = useState<Zertifikat[]>(tender.erforderlicheZertifikate || []);
   const [conceptRequired, setConceptRequired] = useState(tender.conceptRequired || false);
   const [tariflohn, setTariflohn] = useState(tender.tariflohn || false);
   const [qualitaetskontrollen, setQualitaetskontrollen] = useState(tender.qualitaetskontrollen || false);
@@ -31,7 +31,7 @@ export function RequirementsCard({ tender, onUpdateTender }: RequirementsCardPro
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Reset local state when tender prop changes
-  useState(() => {
+  useEffect(() => {
     setZertifikate(tender.erforderlicheZertifikate || []);
     setConceptRequired(tender.conceptRequired || false);
     setTariflohn(tender.tariflohn || false);
@@ -47,7 +47,7 @@ export function RequirementsCard({ tender, onUpdateTender }: RequirementsCardPro
     
     setIsSubmitting(true);
     try {
-      const updates = {
+      const updates: Partial<Tender> = {
         erforderlicheZertifikate: zertifikate,
         conceptRequired,
         tariflohn,
@@ -141,24 +141,24 @@ export function RequirementsCard({ tender, onUpdateTender }: RequirementsCardPro
                 <div className="flex items-center space-x-2">
                   <Checkbox 
                     id="iso9001" 
-                    checked={zertifikate.includes("iso9001")}
-                    onCheckedChange={() => toggleZertifikat("iso9001")}
+                    checked={zertifikate.includes("din_iso_9001")}
+                    onCheckedChange={() => toggleZertifikat("din_iso_9001")}
                   />
                   <Label htmlFor="iso9001">ISO 9001</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Checkbox 
                     id="iso14001" 
-                    checked={zertifikate.includes("iso14001")}
-                    onCheckedChange={() => toggleZertifikat("iso14001")}
+                    checked={zertifikate.includes("din_iso_14001")}
+                    onCheckedChange={() => toggleZertifikat("din_iso_14001")}
                   />
                   <Label htmlFor="iso14001">ISO 14001</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Checkbox 
                     id="dinspec" 
-                    checked={zertifikate.includes("dinspec")}
-                    onCheckedChange={() => toggleZertifikat("dinspec")}
+                    checked={zertifikate.includes("din_iso_45001")}
+                    onCheckedChange={() => toggleZertifikat("din_iso_45001")}
                   />
                   <Label htmlFor="dinspec">DIN SPEC</Label>
                 </div>

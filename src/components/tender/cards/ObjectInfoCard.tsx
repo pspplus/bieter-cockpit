@@ -1,10 +1,9 @@
-
 import { Tender, Objektart } from "@/types/tender";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Building, Edit, Save, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { displayObjektarten } from "../utils/DisplayFormatters";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
@@ -21,11 +20,19 @@ export function ObjectInfoCard({ tender, onUpdateTender }: ObjectInfoCardProps) 
   const { t } = useTranslation();
   const [editing, setEditing] = useState(false);
   const [location, setLocation] = useState(tender.location || "");
-  const [objektarten, setObjektarten] = useState<string[]>(tender.objektart || []);
+  const [objektarten, setObjektarten] = useState<Objektart[]>(tender.objektart || []);
   const [objektbesichtigungErforderlich, setObjektbesichtigungErforderlich] = useState(tender.objektbesichtigungErforderlich || false);
   const [raumgruppentabelle, setRaumgruppentabelle] = useState(tender.raumgruppentabelle || false);
   const [waschmaschine, setWaschmaschine] = useState(tender.waschmaschine || false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    setLocation(tender.location || "");
+    setObjektarten(tender.objektart || []);
+    setObjektbesichtigungErforderlich(tender.objektbesichtigungErforderlich || false);
+    setRaumgruppentabelle(tender.raumgruppentabelle || false);
+    setWaschmaschine(tender.waschmaschine || false);
+  }, [tender]);
 
   const handleSave = async () => {
     setIsSubmitting(true);
