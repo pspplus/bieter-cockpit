@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -301,9 +300,9 @@ export default function TenderDetailPage() {
                 Herunterladen
               </Button>
             )}
-          </div>
-        </DialogContent>
-      </Dialog>
-    </Layout>
-  );
+          </DialogContent>
+        </Dialog>
+      </Layout>
+    );
+  }
 }
