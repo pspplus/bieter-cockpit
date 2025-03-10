@@ -123,41 +123,58 @@ export function TenderCreationForm() {
             <p className="text-muted-foreground">{t('tender.fillTenderDetails')}</p>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="title">{t('tender.title')} *</Label>
-              <Input 
-                id="title" 
-                name="title" 
-                value={formData.title} 
-                onChange={handleChange} 
-                placeholder={t('tenders.newTender')}
-                required
-              />
+            {/* Basic Information - 2 columns */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="title">{t('tender.title')} *</Label>
+                <Input 
+                  id="title" 
+                  name="title" 
+                  value={formData.title} 
+                  onChange={handleChange} 
+                  placeholder={t('tenders.newTender')}
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="externalReference">{t('tender.externalReference')}</Label>
+                <Input 
+                  id="externalReference" 
+                  name="externalReference" 
+                  value={formData.externalReference} 
+                  onChange={handleChange} 
+                  placeholder="REF-2023-001"
+                />
+                <p className="text-xs text-muted-foreground">{t('tender.externalReferenceHelp')}</p>
+              </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="externalReference">{t('tender.externalReference')}</Label>
-              <Input 
-                id="externalReference" 
-                name="externalReference" 
-                value={formData.externalReference} 
-                onChange={handleChange} 
-                placeholder="REF-2023-001"
-              />
-              <p className="text-sm text-muted-foreground">{t('tender.externalReferenceHelp')}</p>
+            {/* Internal Reference and Location - 2 columns */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="internalReference">{t('tender.internalReference')}</Label>
+                <Input 
+                  id="internalReference" 
+                  value={new Date().getFullYear() + "-???"}
+                  disabled
+                  className="bg-muted"
+                />
+                <p className="text-xs text-muted-foreground">{t('tender.internalReferenceHelp')}</p>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="location">{t('tender.location')}</Label>
+                <Input 
+                  id="location" 
+                  name="location" 
+                  value={formData.location} 
+                  onChange={handleChange} 
+                />
+              </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="internalReference">{t('tender.internalReference')}</Label>
-              <Input 
-                id="internalReference" 
-                value={new Date().getFullYear() + "-???"}
-                disabled
-                className="bg-muted"
-              />
-              <p className="text-sm text-muted-foreground">{t('tender.internalReferenceHelp')}</p>
-            </div>
-
+            {/* Description */}
             <div className="space-y-2">
               <Label htmlFor="description">{t('tender.description')}</Label>
               <Textarea 
@@ -166,11 +183,12 @@ export function TenderCreationForm() {
                 value={formData.description} 
                 onChange={handleChange} 
                 placeholder={t('tenders.descriptionPlaceholder')}
-                rows={4}
+                rows={3}
               />
             </div>
 
-            <div className="grid md:grid-cols-2 gap-4">
+            {/* Client and Binding Period - 2 columns */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="client">{t('tender.client')} *</Label>
                 <div className="flex space-x-2">
@@ -203,71 +221,68 @@ export function TenderCreationForm() {
                   </Select>
                 </div>
               </div>
+
               <div className="space-y-2">
-                <Label htmlFor="location">{t('tender.location')}</Label>
-                <Input 
-                  id="location" 
-                  name="location" 
-                  value={formData.location} 
+                <Label htmlFor="bindingPeriodDate">{t('tender.bindingPeriodDate')}</Label>
+                <Popover open={bindingPeriodDateOpen} onOpenChange={setBindingPeriodDateOpen}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      id="bindingPeriodDate"
+                      variant="outline"
+                      className={cn(
+                        "w-full justify-start text-left font-normal",
+                        !formData.bindingPeriodDate && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {formData.bindingPeriodDate ? format(formData.bindingPeriodDate, "PPP") : <span>{t('tender.selectDate')}</span>}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0">
+                    <Calendar
+                      mode="single"
+                      selected={formData.bindingPeriodDate || undefined}
+                      onSelect={handleBindingPeriodDateChange}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+                <p className="text-xs text-muted-foreground">{t('tender.bindingPeriodDateHelp')}</p>
+              </div>
+            </div>
+            
+            {/* Evaluation Scheme and Concept Required in same row */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="space-y-2 md:col-span-2">
+                <Label htmlFor="evaluationScheme">{t('tender.evaluationScheme')}</Label>
+                <Textarea 
+                  id="evaluationScheme" 
+                  name="evaluationScheme" 
+                  value={formData.evaluationScheme} 
                   onChange={handleChange} 
+                  placeholder={t('tender.evaluationSchemePlaceholder')}
+                  rows={3}
                 />
+              </div>
+              
+              <div className="flex items-start md:items-center h-full md:mt-8">
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    id="conceptRequired"
+                    checked={formData.conceptRequired}
+                    onCheckedChange={(checked) => handleBooleanChange("conceptRequired", checked)}
+                  />
+                  <Label htmlFor="conceptRequired" className="cursor-pointer">
+                    {t('tender.conceptRequired')}
+                  </Label>
+                </div>
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="bindingPeriodDate">{t('tender.bindingPeriodDate')}</Label>
-              <Popover open={bindingPeriodDateOpen} onOpenChange={setBindingPeriodDateOpen}>
-                <PopoverTrigger asChild>
-                  <Button
-                    id="bindingPeriodDate"
-                    variant="outline"
-                    className={cn(
-                      "w-full justify-start text-left font-normal",
-                      !formData.bindingPeriodDate && "text-muted-foreground"
-                    )}
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {formData.bindingPeriodDate ? format(formData.bindingPeriodDate, "PPP") : <span>{t('tender.selectDate')}</span>}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0">
-                  <Calendar
-                    mode="single"
-                    selected={formData.bindingPeriodDate || undefined}
-                    onSelect={handleBindingPeriodDateChange}
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
-              <p className="text-sm text-muted-foreground">{t('tender.bindingPeriodDateHelp')}</p>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="evaluationScheme">{t('tender.evaluationScheme')}</Label>
-              <Textarea 
-                id="evaluationScheme" 
-                name="evaluationScheme" 
-                value={formData.evaluationScheme} 
-                onChange={handleChange} 
-                placeholder={t('tender.evaluationSchemePlaceholder')}
-                rows={3}
-              />
-            </div>
-
-            <div className="flex items-center space-x-2">
-              <Switch
-                id="conceptRequired"
-                checked={formData.conceptRequired}
-                onCheckedChange={(checked) => handleBooleanChange("conceptRequired", checked)}
-              />
-              <Label htmlFor="conceptRequired" className="cursor-pointer">
-                {t('tender.conceptRequired')}
-              </Label>
-            </div>
-
+            {/* Contact Information - 3 columns */}
             <div className="space-y-2">
               <h3 className="text-base font-medium">{t('tenderDetails.contactInformation')}</h3>
-              <div className="grid md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="contactPerson">{t('tender.contactPerson')}</Label>
                   <Input 
