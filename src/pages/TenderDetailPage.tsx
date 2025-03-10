@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -136,17 +135,13 @@ export default function TenderDetailPage() {
   const handleStatusChange = async (newStatus: TenderStatus) => {
     if (!tender || !id) return;
     
-    setIsUpdatingStatus(true);
     try {
       await contextUpdateTender(id, { status: newStatus });
       setTender(prev => prev ? { ...prev, status: newStatus } : null);
       toast.success(t("notifications.statusUpdated", "Status aktualisiert"));
-      setStatusPopoverOpen(false);
     } catch (error) {
       console.error("Error updating tender status:", error);
       toast.error(t("errorMessages.couldNotUpdateStatus", "Fehler beim Aktualisieren des Status"));
-    } finally {
-      setIsUpdatingStatus(false);
     }
   };
 
@@ -191,40 +186,6 @@ export default function TenderDetailPage() {
                   <TabsTrigger value="details">{t("tenderDetails.details")}</TabsTrigger>
                   <TabsTrigger value="documents">{t("tenderDetails.documents")}</TabsTrigger>
                 </TabsList>
-                <Popover open={statusPopoverOpen} onOpenChange={setStatusPopoverOpen}>
-                  <PopoverTrigger asChild>
-                    <Badge 
-                      variant="outline" 
-                      className={`cursor-pointer ml-4 flex items-center gap-1 ${bg} ${text}`}
-                    >
-                      {statusDisplayMap[tender.status]}
-                      <PencilLine className="h-3 w-3" />
-                    </Badge>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-52 p-2">
-                    <div className="space-y-2">
-                      <h4 className="text-sm font-medium">
-                        {t("tender.changeStatus", "Status ändern")}
-                      </h4>
-                      <Select
-                        value={tender.status}
-                        onValueChange={(value) => handleStatusChange(value as TenderStatus)}
-                        disabled={isUpdatingStatus}
-                      >
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder={t("tender.selectStatus", "Status auswählen")} />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {Object.entries(statusDisplayMap).map(([key, value]) => (
-                            <SelectItem key={key} value={key}>
-                              {value}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </PopoverContent>
-                </Popover>
               </div>
             
               <TabsContent value="details" className="mt-4">
@@ -234,6 +195,7 @@ export default function TenderDetailPage() {
                       tender={tender} 
                       onOpenDetailsDialog={() => setDetailsDialogOpen(true)} 
                       onOpenContactDialog={() => setContactDialogOpen(true)} 
+                      onStatusChange={handleStatusChange}
                     />
 
                     {tender.milestones.length > 0 && (
