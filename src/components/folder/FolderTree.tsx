@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Folder as FolderIcon, ChevronRight, ChevronDown, File, Plus, MoreVertical, Edit, Trash2 } from 'lucide-react';
 import { Folder, TenderDocument } from '@/types/tender';
 import { cn } from '@/lib/utils';
@@ -44,12 +44,32 @@ export function FolderTree({
   onSelectFolder
 }: FolderTreeProps) {
   const { t } = useTranslation();
+  // Initialize with empty Set
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set());
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [folderToDelete, setFolderToDelete] = useState<string | null>(null);
   const [newFolderDialogOpen, setNewFolderDialogOpen] = useState(false);
   const [newFolderParentId, setNewFolderParentId] = useState<string | null>(null);
   const [newFolderName, setNewFolderName] = useState('');
+
+  // Use useEffect to ensure all folders are expanded when the component mounts
+  // or when the folders array changes
+  useEffect(() => {
+    const allFolderIds = new Set<string>();
+    
+    // Recursive function to collect all folder IDs
+    const collectFolderIds = (folderList: Folder[]) => {
+      folderList.forEach(folder => {
+        allFolderIds.add(folder.id);
+        if (folder.children && folder.children.length > 0) {
+          collectFolderIds(folder.children);
+        }
+      });
+    };
+    
+    collectFolderIds(folders);
+    setExpandedFolders(allFolderIds);
+  }, [folders]);
 
   const toggleFolder = (folderId: string, e: React.MouseEvent) => {
     e.stopPropagation();
