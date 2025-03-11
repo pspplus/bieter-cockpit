@@ -129,7 +129,7 @@ export const updateMilestoneStatus = async (id: string, status: MilestoneStatus)
     updates.completion_date = new Date().toISOString();
   }
   // Wenn von "completed" zurückgesetzt, Abschlussdatum entfernen
-  else if (status !== 'completed') {
+  else {
     updates.completion_date = null;
   }
 
@@ -184,3 +184,4 @@ export const fetchAllMilestones = async (): Promise<(Milestone & { tenderTitle?:
     tenderTitle: milestone.tenders?.title
   }));
 };
+
