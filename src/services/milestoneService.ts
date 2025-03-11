@@ -1,7 +1,7 @@
 
 import { supabase } from "@/integrations/supabase/client";
 import { Milestone, MilestoneStatus } from "@/types/tender";
-import { defaultMilestones } from "@/data/defaultMilestones";
+import { getDefaultMilestones } from "@/data/defaultMilestones";
 
 // Helper function to map milestone data from database to frontend model
 const mapMilestoneFromDB = (milestone: any): Milestone => {
@@ -107,12 +107,12 @@ export const updateMilestoneStatus = async (id: string, status: MilestoneStatus)
     status
   };
 
-  // Wenn "completed", Abschlussdatum setzen
+  // If new status is "completed", set completion date
   if (status === 'completed') {
     updates.completion_date = new Date().toISOString();
   }
-  // Wenn von "completed" zurückgesetzt, Abschlussdatum entfernen
-  else if (status !== 'completed') {
+  // If new status is not "completed", clear completion date
+  else {
     updates.completion_date = null;
   }
 
@@ -134,7 +134,7 @@ export const updateMilestoneStatus = async (id: string, status: MilestoneStatus)
 // Create default milestones for a new tender
 export const createDefaultMilestones = async (tenderId: string): Promise<Milestone[]> => {
   // Map the default milestones to the actual milestone objects
-  const milestones = defaultMilestones.map((milestone, index) => ({
+  const milestones = getDefaultMilestones().map((milestone, index) => ({
     title: milestone.title,
     description: milestone.description,
     status: 'pending' as MilestoneStatus,
