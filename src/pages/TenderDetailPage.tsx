@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -7,6 +6,7 @@ import { Layout } from "@/components/layout/Layout";
 import { TenderDetails } from "@/components/tender/TenderDetails";
 import { DocumentList } from "@/components/document/DocumentList";
 import { DocumentViewer } from "@/components/document/DocumentViewer";
+import { DocumentAIAnalysis } from "@/components/document/DocumentAIAnalysis";
 import { fetchTenderById } from "@/services/tenderService";
 import { fetchTenderDocuments, isViewableInBrowser } from "@/services/documentService";
 import { fetchFolders } from "@/services/folderService";
@@ -63,6 +63,8 @@ export default function TenderDetailPage() {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const { updateTender: contextUpdateTender, deleteTender: contextDeleteTender } = useTender();
+
+  const [aiTab, setAiTab] = useState(false);
 
   useEffect(() => {
     const loadTender = async () => {
@@ -146,6 +148,25 @@ export default function TenderDetailPage() {
     }
   };
 
+  const handleAIAnalysisComplete = async (analysisResult: string) => {
+    if (!tender || !id) return;
+    
+    // Update the tender notes with the AI analysis result
+    try {
+      // Combine existing notes with the analysis result
+      const updatedNotes = tender.notes 
+        ? `${tender.notes}\n\n--- KI-ANALYSE (${new Date().toLocaleDateString()}) ---\n${analysisResult}`
+        : `--- KI-ANALYSE (${new Date().toLocaleDateString()}) ---\n${analysisResult}`;
+      
+      // Update the tender
+      await handleTenderUpdate({ notes: updatedNotes });
+      toast.success(t("AI analysis added to tender notes"));
+    } catch (error) {
+      console.error("Error updating tender with AI analysis:", error);
+      toast.error(t("errorMessages.couldNotUpdateTender"));
+    }
+  };
+
   if (isLoading) {
     return (
       <Layout title={t("loading")}>
@@ -186,6 +207,7 @@ export default function TenderDetailPage() {
                 <TabsList>
                   <TabsTrigger value="details">{t("tenderDetails.details")}</TabsTrigger>
                   <TabsTrigger value="documents">{t("tenderDetails.documents")}</TabsTrigger>
+                  <TabsTrigger value="ai-analysis">KI-Analyse</TabsTrigger>
                 </TabsList>
               </div>
             
@@ -227,6 +249,33 @@ export default function TenderDetailPage() {
                   onDocumentDeleted={handleDocumentDeleted}
                   onPreviewDocument={handlePreviewDocument}
                 />
+              </TabsContent>
+
+              <TabsContent value="ai-analysis" className="mt-4">
+                <div className="grid gap-6 md:grid-cols-2">
+                  <DocumentAIAnalysis 
+                    tenderId={tender.id}
+                    folders={folders}
+                    onAnalysisComplete={handleAIAnalysisComplete}
+                  />
+                  
+                  <div className="space-y-4">
+                    <div className="bg-muted rounded-lg p-4">
+                      <h3 className="text-lg font-medium mb-2">Über die KI-Analyse</h3>
+                      <p className="text-sm text-muted-foreground">
+                        Diese Funktion analysiert PDF-, Word- und Excel-Dokumente in den folgenden Ordnern:
+                      </p>
+                      <ul className="mt-2 space-y-1 text-sm">
+                        <li>• 01 Dateien für Angebot</li>
+                        <li>• 02 Leistungsverzeichnis</li>
+                        <li>• 03 Zusätzliche Informationen</li>
+                      </ul>
+                      <p className="mt-4 text-sm text-muted-foreground">
+                        Die Ergebnisse der Analyse werden zu den Notizen der Ausschreibung hinzugefügt.
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </TabsContent>
             </Tabs>
           </div>
