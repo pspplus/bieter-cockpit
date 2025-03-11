@@ -1,197 +1,167 @@
 
-import { supabase } from "@/integrations/supabase/client";
-import { Milestone, MilestoneStatus } from "@/types/tender";
+import { Milestone } from "@/types/tender";
+import { v4 as uuidv4 } from "uuid";
 import { getDefaultMilestones } from "@/data/defaultMilestones";
 
-// Helper function to map milestone data from database to frontend model
-const mapMilestoneFromDB = (milestone: any): Milestone => {
-  return {
-    id: milestone.id,
-    title: milestone.title,
-    description: milestone.description,
-    status: milestone.status as MilestoneStatus,
-    sequenceNumber: milestone.sequence_number,
-    dueDate: milestone.due_date ? new Date(milestone.due_date) : null,
-    completionDate: milestone.completion_date ? new Date(milestone.completion_date) : null,
-    notes: milestone.notes || "",
-    tenderId: milestone.tender_id
-  };
+// Interne Speicherung für Mock-Daten
+const milestonesStore: Record<string, Milestone[]> = {};
+
+// Holt alle Meilensteine aller Ausschreibungen
+export const fetchMilestones = async (): Promise<Milestone[]> => {
+  // Simuliert einen API-Aufruf
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      const allMilestones: Milestone[] = [];
+      Object.values(milestonesStore).forEach(tenderMilestones => {
+        allMilestones.push(...tenderMilestones);
+      });
+      resolve(allMilestones);
+    }, 300);
+  });
 };
 
-// Fetch milestones for a tender
-export const fetchMilestones = async (tenderId: string): Promise<Milestone[]> => {
-  const { data, error } = await supabase
-    .from('milestones')
-    .select('*')
-    .eq('tender_id', tenderId)
-    .order('sequence_number', { ascending: true });
-
-  if (error) {
-    console.error('Error fetching milestones:', error);
-    throw error;
-  }
-
-  return (data || []).map(mapMilestoneFromDB);
+// Holt alle Meilensteine mit einem bestimmten Status
+export const fetchMilestonesByStatus = async (status: "pending" | "in-progress" | "completed" | "skipped"): Promise<Milestone[]> => {
+  // Simuliert einen API-Aufruf
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      const allMilestones: Milestone[] = [];
+      Object.values(milestonesStore).forEach(tenderMilestones => {
+        allMilestones.push(...tenderMilestones.filter(m => m.status === status));
+      });
+      resolve(allMilestones);
+    }, 300);
+  });
 };
 
-// Create a new milestone
+// Holt Meilensteine für eine bestimmte Ausschreibung
+export const fetchMilestonesByTenderId = async (tenderId: string): Promise<Milestone[]> => {
+  // Simuliert einen API-Aufruf
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(milestonesStore[tenderId] || []);
+    }, 300);
+  });
+};
+
+// Erstellt einen neuen Meilenstein
 export const createMilestone = async (milestone: Omit<Milestone, 'id'>): Promise<Milestone> => {
-  const { data, error } = await supabase
-    .from('milestones')
-    .insert({
-      title: milestone.title,
-      description: milestone.description,
-      status: milestone.status,
-      sequence_number: milestone.sequenceNumber,
-      due_date: milestone.dueDate?.toISOString() || null,
-      completion_date: milestone.completionDate?.toISOString() || null,
-      notes: milestone.notes,
-      tender_id: milestone.tenderId
-    })
-    .select()
-    .single();
-
-  if (error) {
-    console.error('Error creating milestone:', error);
-    throw error;
-  }
-
-  return mapMilestoneFromDB(data);
-};
-
-// Update an existing milestone
-export const updateMilestone = async (milestone: Milestone): Promise<Milestone> => {
-  const { data, error } = await supabase
-    .from('milestones')
-    .update({
-      title: milestone.title,
-      description: milestone.description,
-      status: milestone.status,
-      sequence_number: milestone.sequenceNumber,
-      due_date: milestone.dueDate?.toISOString() || null,
-      completion_date: milestone.completionDate?.toISOString() || null,
-      notes: milestone.notes
-    })
-    .eq('id', milestone.id)
-    .select()
-    .single();
-
-  if (error) {
-    console.error('Error updating milestone:', error);
-    throw error;
-  }
-
-  return mapMilestoneFromDB(data);
-};
-
-// Delete a milestone
-export const deleteMilestone = async (id: string): Promise<void> => {
-  const { error } = await supabase
-    .from('milestones')
-    .delete()
-    .eq('id', id);
-
-  if (error) {
-    console.error('Error deleting milestone:', error);
-    throw error;
-  }
-};
-
-// Update milestone status
-export const updateMilestoneStatus = async (id: string, status: MilestoneStatus): Promise<Milestone> => {
-  // Prepare updates object
-  const updates: { 
-    status: MilestoneStatus;
-    completion_date?: string | null;
-  } = {
-    status
+  const newMilestone: Milestone = {
+    ...milestone,
+    id: uuidv4(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 
-  // If new status is "completed", set completion date
-  if (status === 'completed') {
-    updates.completion_date = new Date().toISOString();
-  }
-  // If new status is not "completed", clear completion date
-  else {
-    updates.completion_date = null;
+  if (!milestonesStore[milestone.tenderId]) {
+    milestonesStore[milestone.tenderId] = [];
   }
 
-  const { data, error } = await supabase
-    .from('milestones')
-    .update(updates)
-    .eq('id', id)
-    .select()
-    .single();
+  milestonesStore[milestone.tenderId].push(newMilestone);
 
-  if (error) {
-    console.error('Error updating milestone status:', error);
-    throw error;
-  }
-
-  return mapMilestoneFromDB(data);
+  // Simuliert einen API-Aufruf
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(newMilestone);
+    }, 300);
+  });
 };
 
-// Create default milestones for a new tender
-export const createDefaultMilestones = async (tenderId: string): Promise<Milestone[]> => {
-  // Map the default milestones to the actual milestone objects
-  const milestones = getDefaultMilestones().map((milestone, index) => ({
-    title: milestone.title,
-    description: milestone.description,
-    status: 'pending' as MilestoneStatus,
-    sequence_number: index + 1,
-    tender_id: tenderId
-  }));
-
-  // Insert all milestones
-  const { data, error } = await supabase
-    .from('milestones')
-    .insert(milestones)
-    .select();
-
-  if (error) {
-    console.error('Error creating default milestones:', error);
-    throw error;
-  }
-
-  return (data || []).map(mapMilestoneFromDB);
-};
-
-// Fetch upcoming milestones for the dashboard
-export const fetchUpcomingMilestones = async (limit: number = 5): Promise<any[]> => {
-  const { data: { user } } = await supabase.auth.getUser();
+// Aktualisiert einen bestehenden Meilenstein
+export const updateMilestone = async (milestone: Milestone): Promise<Milestone> => {
+  const index = milestonesStore[milestone.tenderId]?.findIndex(m => m.id === milestone.id);
   
-  if (!user) {
-    throw new Error('User not authenticated');
+  if (index === undefined || index === -1) {
+    throw new Error("Milestone not found");
   }
 
-  const { data, error } = await supabase
-    .from('milestones')
-    .select(`
-      id,
-      title,
-      status,
-      due_date,
-      tender_id,
-      tenders(title)
-    `)
-    .eq('status', 'in-progress')
-    .order('due_date', { ascending: true })
-    .limit(limit);
+  // Aktualisieren mit den neuen Daten
+  const updatedMilestone = {
+    ...milestone,
+    updatedAt: new Date(),
+  };
+  
+  milestonesStore[milestone.tenderId][index] = updatedMilestone;
 
-  if (error) {
-    console.error('Error fetching upcoming milestones:', error);
-    throw error;
+  // Simuliert einen API-Aufruf
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(updatedMilestone);
+    }, 300);
+  });
+};
+
+// Aktualisiert den Status eines Meilensteins
+export const updateMilestoneStatus = async (
+  milestoneId: string, 
+  tenderId: string, 
+  status: "pending" | "in-progress" | "completed" | "skipped"
+): Promise<Milestone> => {
+  const index = milestonesStore[tenderId]?.findIndex(m => m.id === milestoneId);
+  
+  if (index === undefined || index === -1) {
+    throw new Error("Milestone not found");
   }
 
-  // Format the data for the frontend
-  return (data || []).map(item => ({
-    id: item.id,
-    title: item.title,
-    status: item.status,
-    dueDate: item.due_date ? new Date(item.due_date) : null,
-    tenderId: item.tender_id,
-    tenderTitle: item.tenders?.title || '',
-    isOverdue: item.due_date ? new Date(item.due_date) < new Date() : false,
-    daysLeft: item.due_date ? Math.ceil((new Date(item.due_date).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)) : null
-  }));
+  const milestone = milestonesStore[tenderId][index];
+  
+  // Bestimmt, ob das completionDate aktualisiert werden muss
+  let completionDate = milestone.completionDate;
+  
+  // Setze das Abschlussdatum nur, wenn der Status auf "completed" geändert wird
+  if (status === 'completed') {
+    completionDate = new Date();
+  } 
+  // Lösche das Abschlussdatum, wenn der Status von "completed" zu etwas anderem geändert wird
+  else if (milestone.status === 'completed' && status !== 'completed') {
+    completionDate = null;
+  }
+
+  // Aktualisieren mit den neuen Daten
+  const updatedMilestone = {
+    ...milestone,
+    status,
+    completionDate,
+    updatedAt: new Date(),
+  };
+  
+  milestonesStore[tenderId][index] = updatedMilestone;
+
+  // Simuliert einen API-Aufruf
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(updatedMilestone);
+    }, 300);
+  });
+};
+
+// Löscht einen Meilenstein
+export const deleteMilestone = async (milestoneId: string, tenderId: string): Promise<void> => {
+  // Simuliert einen API-Aufruf
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      if (milestonesStore[tenderId]) {
+        milestonesStore[tenderId] = milestonesStore[tenderId].filter(m => m.id !== milestoneId);
+      }
+      resolve();
+    }, 300);
+  });
+};
+
+// Erstellt Standardmeilensteine für eine Ausschreibung
+export const createDefaultMilestones = async (tenderId: string, tenderTitle: string): Promise<Milestone[]> => {
+  const defaultMilestones = getDefaultMilestones(tenderId, tenderTitle);
+  
+  if (!milestonesStore[tenderId]) {
+    milestonesStore[tenderId] = [];
+  }
+  
+  milestonesStore[tenderId] = [...milestonesStore[tenderId], ...defaultMilestones];
+  
+  // Simuliert einen API-Aufruf
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(defaultMilestones);
+    }, 300);
+  });
 };

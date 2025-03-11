@@ -24,6 +24,7 @@ import NewTenderPage from "./pages/NewTenderPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import UpdatePasswordPage from "./pages/UpdatePasswordPage";
 import ProfilePage from "./pages/ProfilePage";
+import MilestoneDashboard from "./pages/MilestoneDashboard";
 import './i18n'; // Import i18n configuration
 
 const queryClient = new QueryClient();
@@ -54,6 +55,7 @@ const App = () => (
                     <Route path="/messages" element={<MessagesPage />} />
                     <Route path="/clients" element={<ClientsPage />} />
                     <Route path="/clients/:id" element={<ClientDetailPage />} />
+                    <Route path="/milestones" element={<MilestoneDashboard />} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </ClientProvider>

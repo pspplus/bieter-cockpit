@@ -57,7 +57,9 @@ export function MilestoneProcess({ milestones, tenderId }: MilestoneProcessProps
         ...milestone,
         status: newStatus,
         // Set or clear completionDate based on status
-        completionDate: newStatus === 'completed' ? new Date() : null
+        completionDate: newStatus === 'completed' ? new Date() : 
+                        milestone.status === 'completed' ? null : 
+                        milestone.completionDate
       });
       
       toast.success(t("milestones.statusUpdated", "Meilenstein-Status aktualisiert"));
