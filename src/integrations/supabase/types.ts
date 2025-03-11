@@ -45,8 +45,154 @@ export type Database = {
         }
         Relationships: []
       }
+      dashboard_settings: {
+        Row: {
+          created_at: string
+          favorite_metrics: string[] | null
+          id: string
+          layout_config: Json | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          favorite_metrics?: string[] | null
+          id?: string
+          layout_config?: Json | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          favorite_metrics?: string[] | null
+          id?: string
+          layout_config?: Json | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      document_approvals: {
+        Row: {
+          comment: string | null
+          created_at: string
+          document_id: string
+          id: string
+          status: Database["public"]["Enums"]["approval_status"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          document_id: string
+          id?: string
+          status?: Database["public"]["Enums"]["approval_status"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          document_id?: string
+          id?: string
+          status?: Database["public"]["Enums"]["approval_status"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "document_approvals_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "documents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      document_comments: {
+        Row: {
+          comment: string
+          created_at: string
+          document_id: string
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          comment: string
+          created_at?: string
+          document_id: string
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          comment?: string
+          created_at?: string
+          document_id?: string
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "document_comments_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "documents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      document_versions: {
+        Row: {
+          changes_description: string | null
+          document_id: string
+          file_size: number | null
+          file_type: string
+          file_url: string | null
+          id: string
+          upload_date: string
+          user_id: string
+          version_number: number
+        }
+        Insert: {
+          changes_description?: string | null
+          document_id: string
+          file_size?: number | null
+          file_type: string
+          file_url?: string | null
+          id?: string
+          upload_date?: string
+          user_id: string
+          version_number: number
+        }
+        Update: {
+          changes_description?: string | null
+          document_id?: string
+          file_size?: number | null
+          file_type?: string
+          file_url?: string | null
+          id?: string
+          upload_date?: string
+          user_id?: string
+          version_number?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "document_versions_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "documents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       documents: {
         Row: {
+          approval_status: Database["public"]["Enums"]["approval_status"] | null
+          current_version: number | null
           description: string | null
           file_size: number | null
           file_type: string
@@ -61,6 +207,10 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          approval_status?:
+            | Database["public"]["Enums"]["approval_status"]
+            | null
+          current_version?: number | null
           description?: string | null
           file_size?: number | null
           file_type: string
@@ -75,6 +225,10 @@ export type Database = {
           user_id: string
         }
         Update: {
+          approval_status?:
+            | Database["public"]["Enums"]["approval_status"]
+            | null
+          current_version?: number | null
           description?: string | null
           file_size?: number | null
           file_type?: string
@@ -335,6 +489,7 @@ export type Database = {
       }
     }
     Enums: {
+      approval_status: "pending" | "approved" | "rejected"
       objektart_enum: "grundschule" | "kindergarten" | "buero"
       vertragsart_enum:
         | "werkvertrag"

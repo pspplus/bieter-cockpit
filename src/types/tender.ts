@@ -32,6 +32,8 @@ export type Zertifikat =
   | 'din_iso_14001'
   | 'din_iso_45001';
 
+export type ApprovalStatus = 'pending' | 'approved' | 'rejected';
+
 export interface Folder {
   id: string;
   name: string;
@@ -56,6 +58,39 @@ export interface Milestone {
   tenderId?: string;
 }
 
+export interface DocumentVersion {
+  id: string;
+  documentId: string;
+  versionNumber: number;
+  fileUrl: string;
+  fileType: string;
+  fileSize?: number;
+  uploadDate: Date;
+  changesDescription?: string;
+  userId: string;
+}
+
+export interface DocumentComment {
+  id: string;
+  documentId: string;
+  userId: string;
+  userName?: string;
+  comment: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface DocumentApproval {
+  id: string;
+  documentId: string;
+  userId: string;
+  userName?: string;
+  status: ApprovalStatus;
+  comment?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 export interface TenderDocument {
   id: string;
   name: string;
@@ -68,6 +103,11 @@ export interface TenderDocument {
   folderPath?: string;
   tenderId?: string | null;
   milestoneId?: string | null;
+  approvalStatus?: ApprovalStatus;
+  currentVersion?: number;
+  versions?: DocumentVersion[];
+  comments?: DocumentComment[];
+  approvals?: DocumentApproval[];
 }
 
 export interface Tender {
@@ -109,4 +149,50 @@ export interface Tender {
   tariflohn?: boolean;
   qualitaetskontrollen?: boolean;
   raumgruppentabelle?: boolean;
+}
+
+export interface DashboardSettings {
+  id: string;
+  userId: string;
+  favoriteMetrics: string[];
+  layoutConfig?: any;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+// Dashboard statistik typen
+export interface TenderStatusStat {
+  status: TenderStatus;
+  count: number;
+  percentage: number;
+}
+
+export interface MonthlyTenderStat {
+  month: string;
+  count: number;
+  won: number;
+  lost: number;
+}
+
+export interface UpcomingMilestone {
+  id: string;
+  title: string;
+  dueDate: Date;
+  tenderId: string;
+  tenderTitle: string;
+  status: MilestoneStatus;
+  isOverdue: boolean;
+  daysLeft?: number;
+}
+
+export interface DashboardData {
+  statusStats: TenderStatusStat[];
+  monthlyStats: MonthlyTenderStat[];
+  upcomingMilestones: UpcomingMilestone[];
+  totalTenders: number;
+  activeTenders: number;
+  submittedTenders: number;
+  wonTenders: number;
+  lostTenders: number;
+  successRate: number;
 }
