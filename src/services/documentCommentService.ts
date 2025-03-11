@@ -8,7 +8,7 @@ const mapCommentFromDB = (comment: any): DocumentComment => {
     id: comment.id,
     documentId: comment.document_id,
     userId: comment.user_id,
-    userName: comment.user_email || comment.user_id, // Fallback, falls kein Name verfügbar ist
+    userName: comment.user_id, // Fallback, falls kein Name verfügbar ist
     comment: comment.comment,
     createdAt: new Date(comment.created_at),
     updatedAt: new Date(comment.updated_at)
@@ -19,13 +19,7 @@ const mapCommentFromDB = (comment: any): DocumentComment => {
 export const fetchDocumentComments = async (documentId: string): Promise<DocumentComment[]> => {
   const { data, error } = await supabase
     .from('document_comments')
-    .select(`
-      *,
-      profiles:user_id (
-        email,
-        full_name
-      )
-    `)
+    .select('*')
     .eq('document_id', documentId)
     .order('created_at', { ascending: true });
 
@@ -34,14 +28,22 @@ export const fetchDocumentComments = async (documentId: string): Promise<Documen
     throw error;
   }
 
-  return (data || []).map(comment => {
-    // Benutzernamen aus Profiltabelle extrahieren, falls verfügbar
-    const userName = comment.profiles?.full_name || comment.profiles?.email || comment.user_id;
-    return {
-      ...mapCommentFromDB(comment),
-      userName
-    };
-  });
+  const comments = (data || []).map(mapCommentFromDB);
+  
+  // Holen der Benutzerprofile für die Anzeigenamen
+  for (const comment of comments) {
+    try {
+      const { data: userData } = await supabase.auth.admin.getUserById(comment.userId);
+      if (userData && userData.user) {
+        comment.userName = userData.user.email || comment.userId;
+      }
+    } catch (error) {
+      console.error('Fehler beim Abrufen der Benutzerinformationen:', error);
+      // Fallback ist bereits in mapCommentFromDB gesetzt
+    }
+  }
+
+  return comments;
 };
 
 // Neuen Kommentar hinzufügen

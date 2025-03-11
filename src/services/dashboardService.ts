@@ -1,16 +1,13 @@
 
 import { supabase } from "@/integrations/supabase/client";
 import { 
-  DashboardData, 
-  TenderStatusStat, 
-  MonthlyTenderStat, 
-  UpcomingMilestone,
-  TenderStatus
+  DashboardData, MonthlyTenderStat, 
+  TenderStatusStat, UpcomingMilestone, 
+  MilestoneStatus, TenderStatus 
 } from "@/types/tender";
-import { format, addDays, isBefore, formatDistanceToNow, differenceInDays } from "date-fns";
-import { de } from 'date-fns/locale';
+import { format, isAfter, isBefore, subDays, differenceInDays } from "date-fns";
 
-// Dashboard-Einstellungen abrufen
+// Abruf der Dashboard-Einstellungen für den aktuellen Benutzer
 export const fetchDashboardSettings = async () => {
   const { data: { user } } = await supabase.auth.getUser();
   
@@ -22,9 +19,9 @@ export const fetchDashboardSettings = async () => {
     .from('dashboard_settings')
     .select('*')
     .eq('user_id', user.id)
-    .maybeSingle();
+    .single();
 
-  if (error) {
+  if (error && error.code !== 'PGRST116') { // PGRST116 ist "Did not find any rows"
     console.error('Fehler beim Abrufen der Dashboard-Einstellungen:', error);
     throw error;
   }
@@ -32,7 +29,7 @@ export const fetchDashboardSettings = async () => {
   return data;
 };
 
-// Dashboard-Einstellungen speichern oder aktualisieren
+// Speichern der Dashboard-Einstellungen
 export const saveDashboardSettings = async (favoriteMetrics: string[], layoutConfig?: any) => {
   const { data: { user } } = await supabase.auth.getUser();
   
@@ -45,26 +42,32 @@ export const saveDashboardSettings = async (favoriteMetrics: string[], layoutCon
     .from('dashboard_settings')
     .select('id')
     .eq('user_id', user.id)
-    .maybeSingle();
+    .single();
 
+  let result;
+  
   if (existingSettings) {
-    // Einstellungen aktualisieren
-    const { error } = await supabase
+    // Aktualisieren existierender Einstellungen
+    const { data, error } = await supabase
       .from('dashboard_settings')
       .update({
         favorite_metrics: favoriteMetrics,
         layout_config: layoutConfig,
         updated_at: new Date().toISOString()
       })
-      .eq('id', existingSettings.id);
+      .eq('id', existingSettings.id)
+      .select()
+      .single();
 
     if (error) {
       console.error('Fehler beim Aktualisieren der Dashboard-Einstellungen:', error);
       throw error;
     }
+    
+    result = data;
   } else {
-    // Neue Einstellungen erstellen
-    const { error } = await supabase
+    // Erstellen neuer Einstellungen
+    const { data, error } = await supabase
       .from('dashboard_settings')
       .insert({
         user_id: user.id,
@@ -72,16 +75,22 @@ export const saveDashboardSettings = async (favoriteMetrics: string[], layoutCon
         layout_config: layoutConfig,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
-      });
+      })
+      .select()
+      .single();
 
     if (error) {
       console.error('Fehler beim Erstellen der Dashboard-Einstellungen:', error);
       throw error;
     }
+    
+    result = data;
   }
+
+  return result;
 };
 
-// Alle Dashboard-Daten für einen Benutzer abrufen
+// Dashboard-Daten abrufen
 export const fetchDashboardData = async (): Promise<DashboardData> => {
   const { data: { user } } = await supabase.auth.getUser();
   
@@ -89,10 +98,10 @@ export const fetchDashboardData = async (): Promise<DashboardData> => {
     throw new Error('Benutzer nicht authentifiziert');
   }
 
-  // Alle Ausschreibungen des Benutzers abrufen
+  // 1. Basis-Statistik abrufen
   const { data: tenders, error: tendersError } = await supabase
     .from('tenders')
-    .select('*')
+    .select('id, status, created_at, due_date')
     .eq('user_id', user.id);
 
   if (tendersError) {
@@ -100,112 +109,103 @@ export const fetchDashboardData = async (): Promise<DashboardData> => {
     throw tendersError;
   }
 
-  // Alle Meilensteine abrufen
+  // 2. Anstehende Meilensteine abrufen
   const { data: milestones, error: milestonesError } = await supabase
     .from('milestones')
-    .select('*, tenders!inner(title, id)')
-    .lt('due_date', addDays(new Date(), 30).toISOString())
-    .gt('due_date', new Date().toISOString())
-    .neq('status', 'completed')
-    .neq('status', 'skipped')
-    .order('due_date', { ascending: true });
+    .select(`
+      id, title, due_date, status, 
+      tender_id,
+      tenders (title)
+    `)
+    .eq('status', 'pending')
+    .or('status.eq.in-progress')
+    .not('due_date', 'is', null)
+    .order('due_date', { ascending: true })
+    .limit(10);
 
   if (milestonesError) {
     console.error('Fehler beim Abrufen der Meilensteine:', milestonesError);
     throw milestonesError;
   }
 
-  // Status-Statistiken berechnen
-  const statusCounts: Record<TenderStatus, number> = {
-    'entwurf': 0,
-    'in-pruefung': 0,
-    'in-bearbeitung': 0,
-    'abgegeben': 0,
-    'aufklaerung': 0,
-    'gewonnen': 0,
-    'verloren': 0,
-    'abgeschlossen': 0
-  };
-
-  tenders.forEach(tender => {
-    if (statusCounts[tender.status as TenderStatus] !== undefined) {
-      statusCounts[tender.status as TenderStatus]++;
-    }
-  });
-
+  // Statistiken berechnen
   const totalTenders = tenders.length;
-  
-  const statusStats: TenderStatusStat[] = Object.entries(statusCounts).map(([status, count]) => ({
-    status: status as TenderStatus,
-    count,
-    percentage: totalTenders > 0 ? Math.round((count / totalTenders) * 100) : 0
-  }));
-
-  // Monatliche Statistiken berechnen
-  const last6Months: Record<string, { month: string, count: number, won: number, lost: number }> = {};
-  
-  // Letzten 6 Monate initialisieren
-  for (let i = 5; i >= 0; i--) {
-    const date = new Date();
-    date.setMonth(date.getMonth() - i);
-    const monthKey = format(date, 'yyyy-MM');
-    const monthName = format(date, 'MMM yyyy', { locale: de });
-    
-    last6Months[monthKey] = {
-      month: monthName,
-      count: 0,
-      won: 0,
-      lost: 0
-    };
-  }
-  
-  // Tender nach Monat zählen
-  tenders.forEach(tender => {
-    const createdDate = new Date(tender.created_at);
-    const monthKey = format(createdDate, 'yyyy-MM');
-    
-    if (last6Months[monthKey]) {
-      last6Months[monthKey].count++;
-      
-      if (tender.status === 'gewonnen') {
-        last6Months[monthKey].won++;
-      } else if (tender.status === 'verloren') {
-        last6Months[monthKey].lost++;
-      }
-    }
-  });
-  
-  const monthlyStats: MonthlyTenderStat[] = Object.values(last6Months);
-
-  // Bevorstehende Meilensteine
-  const upcomingMilestones: UpcomingMilestone[] = milestones.map(m => {
-    const dueDate = new Date(m.due_date);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    
-    const isOverdue = isBefore(dueDate, today);
-    const daysLeft = differenceInDays(dueDate, today);
-    
-    return {
-      id: m.id,
-      title: m.title,
-      dueDate: dueDate,
-      tenderId: m.tenders.id,
-      tenderTitle: m.tenders.title,
-      status: m.status,
-      isOverdue,
-      daysLeft
-    };
-  });
-
-  // Berechnete Metriken
-  const activeTenders = tenders.filter(t => ['in-bearbeitung', 'in-pruefung'].includes(t.status)).length;
-  const submittedTenders = tenders.filter(t => ['abgegeben', 'aufklaerung'].includes(t.status)).length;
+  const activeTenders = tenders.filter(t => 
+    t.status === 'entwurf' || t.status === 'in-pruefung' || t.status === 'in-bearbeitung'
+  ).length;
+  const submittedTenders = tenders.filter(t => t.status === 'abgegeben').length;
   const wonTenders = tenders.filter(t => t.status === 'gewonnen').length;
   const lostTenders = tenders.filter(t => t.status === 'verloren').length;
   
-  const allSubmittedTenders = submittedTenders + wonTenders + lostTenders;
-  const successRate = allSubmittedTenders > 0 ? Math.round((wonTenders / allSubmittedTenders) * 100) : 0;
+  // Erfolgsrate berechnen (gewonnene / (gewonnene + verlorene))
+  const totalCompleted = wonTenders + lostTenders;
+  const successRate = totalCompleted > 0 ? (wonTenders / totalCompleted) * 100 : 0;
+
+  // Status-Statistik
+  const statusStats: TenderStatusStat[] = [];
+  const statusCounts: Record<string, number> = {};
+
+  tenders.forEach(tender => {
+    statusCounts[tender.status] = (statusCounts[tender.status] || 0) + 1;
+  });
+
+  Object.keys(statusCounts).forEach(status => {
+    statusStats.push({
+      status: status as TenderStatus,
+      count: statusCounts[status],
+      percentage: (statusCounts[status] / totalTenders) * 100
+    });
+  });
+
+  // Monatliche Statistik
+  const monthlyStats: MonthlyTenderStat[] = [];
+  const monthCounts: Record<string, { count: number, won: number, lost: number }> = {};
+
+  tenders.forEach(tender => {
+    const month = format(new Date(tender.created_at), 'yyyy-MM');
+    
+    if (!monthCounts[month]) {
+      monthCounts[month] = { count: 0, won: 0, lost: 0 };
+    }
+    
+    monthCounts[month].count += 1;
+    
+    if (tender.status === 'gewonnen') {
+      monthCounts[month].won += 1;
+    } else if (tender.status === 'verloren') {
+      monthCounts[month].lost += 1;
+    }
+  });
+
+  Object.keys(monthCounts)
+    .sort()
+    .forEach(month => {
+      monthlyStats.push({
+        month: format(new Date(month), 'MMM yyyy'),
+        count: monthCounts[month].count,
+        won: monthCounts[month].won,
+        lost: monthCounts[month].lost
+      });
+    });
+
+  // Anstehende Meilensteine formatieren
+  const today = new Date();
+  const upcomingMilestones: UpcomingMilestone[] = milestones.map(milestone => {
+    const dueDate = milestone.due_date ? new Date(milestone.due_date) : null;
+    const isOverdue = dueDate ? isBefore(dueDate, today) : false;
+    const daysLeft = dueDate ? differenceInDays(dueDate, today) : undefined;
+    
+    return {
+      id: milestone.id,
+      title: milestone.title,
+      dueDate: dueDate as Date,
+      tenderId: milestone.tender_id,
+      tenderTitle: milestone.tenders?.title || '',
+      status: milestone.status as MilestoneStatus,
+      isOverdue,
+      daysLeft: daysLeft
+    };
+  });
 
   return {
     statusStats,

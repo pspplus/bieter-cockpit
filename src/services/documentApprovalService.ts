@@ -8,8 +8,8 @@ const mapApprovalFromDB = (approval: any): DocumentApproval => {
     id: approval.id,
     documentId: approval.document_id,
     userId: approval.user_id,
-    userName: approval.user_email || approval.user_id, // Fallback, falls kein Name verfügbar ist
-    status: approval.status,
+    userName: approval.user_id, // Default Fallback
+    status: approval.status as ApprovalStatus,
     comment: approval.comment || "",
     createdAt: new Date(approval.created_at),
     updatedAt: new Date(approval.updated_at)
@@ -20,33 +20,36 @@ const mapApprovalFromDB = (approval: any): DocumentApproval => {
 export const fetchDocumentApprovals = async (documentId: string): Promise<DocumentApproval[]> => {
   const { data, error } = await supabase
     .from('document_approvals')
-    .select(`
-      *,
-      profiles:user_id (
-        email,
-        full_name
-      )
-    `)
+    .select('*')
     .eq('document_id', documentId)
-    .order('created_at', { ascending: true });
+    .order('created_at', { ascending: false });
 
   if (error) {
     console.error('Fehler beim Abrufen der Genehmigungen:', error);
     throw error;
   }
 
-  return (data || []).map(approval => {
-    // Benutzernamen aus Profiltabelle extrahieren, falls verfügbar
-    const userName = approval.profiles?.full_name || approval.profiles?.email || approval.user_id;
-    return {
-      ...mapApprovalFromDB(approval),
-      userName
-    };
-  });
+  // Hier holen wir Benutzerinformationen separat
+  const approvals = (data || []).map(mapApprovalFromDB);
+  
+  // Holen der Benutzerprofile für die Anzeigenamen
+  for (const approval of approvals) {
+    try {
+      const { data: userData } = await supabase.auth.admin.getUserById(approval.userId);
+      if (userData && userData.user) {
+        approval.userName = userData.user.email || approval.userId;
+      }
+    } catch (error) {
+      console.error('Fehler beim Abrufen der Benutzerinformationen:', error);
+      // Fallback ist bereits in mapApprovalFromDB gesetzt
+    }
+  }
+
+  return approvals;
 };
 
-// Genehmigungsanfrage erstellen
-export const requestApproval = async (documentId: string): Promise<DocumentApproval> => {
+// Neue Genehmigung hinzufügen
+export const addApproval = async (documentId: string, status: ApprovalStatus, comment?: string): Promise<DocumentApproval> => {
   // Aktuellen Benutzer abrufen
   const { data: { user } } = await supabase.auth.getUser();
   
@@ -54,27 +57,11 @@ export const requestApproval = async (documentId: string): Promise<DocumentAppro
     throw new Error('Benutzer nicht authentifiziert');
   }
 
-  // Prüfen, ob bereits eine Genehmigungsanfrage vom Benutzer existiert
-  const { data: existingApproval, error: checkError } = await supabase
-    .from('document_approvals')
-    .select('*')
-    .eq('document_id', documentId)
-    .eq('user_id', user.id);
-
-  if (checkError) {
-    console.error('Fehler beim Prüfen vorhandener Genehmigungen:', checkError);
-    throw checkError;
-  }
-
-  if (existingApproval && existingApproval.length > 0) {
-    console.warn('Es existiert bereits eine Genehmigungsanfrage vom Benutzer.');
-    return mapApprovalFromDB(existingApproval[0]);
-  }
-
   const approvalData = {
     document_id: documentId,
     user_id: user.id,
-    status: 'pending' as ApprovalStatus,
+    status,
+    comment,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString()
   };
@@ -86,28 +73,23 @@ export const requestApproval = async (documentId: string): Promise<DocumentAppro
     .single();
 
   if (error) {
-    console.error('Fehler beim Erstellen der Genehmigungsanfrage:', error);
+    console.error('Fehler beim Hinzufügen der Genehmigung:', error);
     throw error;
   }
 
-  // Dokumentstatus aktualisieren
-  const { error: updateError } = await supabase
+  // Dokument-Status aktualisieren
+  await supabase
     .from('documents')
-    .update({ approval_status: 'pending' as ApprovalStatus })
+    .update({ approval_status: status })
     .eq('id', documentId);
-
-  if (updateError) {
-    console.error('Fehler beim Aktualisieren des Dokumentstatus:', updateError);
-    throw updateError;
-  }
 
   return mapApprovalFromDB(data);
 };
 
 // Genehmigungsstatus aktualisieren
 export const updateApprovalStatus = async (
-  approvalId: string,
-  status: ApprovalStatus,
+  approvalId: string, 
+  status: ApprovalStatus, 
   comment?: string
 ): Promise<DocumentApproval> => {
   // Aktuellen Benutzer abrufen
@@ -117,17 +99,33 @@ export const updateApprovalStatus = async (
     throw new Error('Benutzer nicht authentifiziert');
   }
 
-  // Genehmigung aktualisieren
+  // Zuerst die zugehörige Genehmigung abrufen, um die Dokument-ID zu erhalten
+  const { data: approvalData, error: approvalError } = await supabase
+    .from('document_approvals')
+    .select('document_id')
+    .eq('id', approvalId)
+    .eq('user_id', user.id) // Sicherstellen, dass nur der Ersteller aktualisieren kann
+    .single();
+
+  if (approvalError) {
+    console.error('Fehler beim Abrufen der Genehmigung:', approvalError);
+    throw approvalError;
+  }
+
+  const updateData: any = {
+    status,
+    updated_at: new Date().toISOString()
+  };
+
+  if (comment !== undefined) {
+    updateData.comment = comment;
+  }
+
   const { data, error } = await supabase
     .from('document_approvals')
-    .update({
-      status,
-      comment,
-      updated_at: new Date().toISOString()
-    })
+    .update(updateData)
     .eq('id', approvalId)
-    .eq('user_id', user.id) // Sicherstellen, dass nur der Ersteller die Genehmigung aktualisieren kann
-    .select('*, documents:document_id(id)')
+    .select()
     .single();
 
   if (error) {
@@ -135,102 +133,11 @@ export const updateApprovalStatus = async (
     throw error;
   }
 
-  // Dokumentstatus aktualisieren, falls alle Genehmigungen vom gleichen Typ sind
-  const documentId = data.document_id;
-  
-  // Alle Genehmigungen für dieses Dokument abrufen
-  const { data: allApprovals, error: fetchError } = await supabase
-    .from('document_approvals')
-    .select('status')
-    .eq('document_id', documentId);
-
-  if (fetchError) {
-    console.error('Fehler beim Abrufen aller Genehmigungen:', fetchError);
-    throw fetchError;
-  }
-
-  let newDocumentStatus: ApprovalStatus = 'pending';
-  
-  // Wenn alle Genehmigungen genehmigt sind, wird das Dokument genehmigt
-  if (allApprovals.every(a => a.status === 'approved')) {
-    newDocumentStatus = 'approved';
-  } 
-  // Wenn mindestens eine Genehmigung abgelehnt wurde, wird das Dokument abgelehnt
-  else if (allApprovals.some(a => a.status === 'rejected')) {
-    newDocumentStatus = 'rejected';
-  }
-
-  // Dokumentstatus aktualisieren
-  const { error: updateError } = await supabase
+  // Dokument-Status aktualisieren
+  await supabase
     .from('documents')
-    .update({ approval_status: newDocumentStatus })
-    .eq('id', documentId);
-
-  if (updateError) {
-    console.error('Fehler beim Aktualisieren des Dokumentstatus:', updateError);
-    throw updateError;
-  }
+    .update({ approval_status: status })
+    .eq('id', approvalData.document_id);
 
   return mapApprovalFromDB(data);
-};
-
-// Genehmigungsanfrage löschen
-export const deleteApproval = async (approvalId: string): Promise<void> => {
-  // Aktuellen Benutzer abrufen
-  const { data: { user } } = await supabase.auth.getUser();
-  
-  if (!user) {
-    throw new Error('Benutzer nicht authentifiziert');
-  }
-
-  // Dokumenten-ID vor dem Löschen abrufen
-  const { data: approval, error: fetchError } = await supabase
-    .from('document_approvals')
-    .select('document_id')
-    .eq('id', approvalId)
-    .eq('user_id', user.id)
-    .single();
-
-  if (fetchError) {
-    console.error('Fehler beim Abrufen der Genehmigungsinformationen:', fetchError);
-    throw fetchError;
-  }
-
-  const documentId = approval.document_id;
-
-  // Genehmigung löschen
-  const { error } = await supabase
-    .from('document_approvals')
-    .delete()
-    .eq('id', approvalId)
-    .eq('user_id', user.id);
-
-  if (error) {
-    console.error('Fehler beim Löschen der Genehmigung:', error);
-    throw error;
-  }
-
-  // Prüfen, ob noch andere Genehmigungen für dieses Dokument existieren
-  const { data: remainingApprovals, error: countError } = await supabase
-    .from('document_approvals')
-    .select('id')
-    .eq('document_id', documentId);
-
-  if (countError) {
-    console.error('Fehler beim Zählen verbleibender Genehmigungen:', countError);
-    throw countError;
-  }
-
-  // Wenn keine Genehmigungen mehr vorhanden sind, Dokumentstatus zurücksetzen
-  if (remainingApprovals.length === 0) {
-    const { error: updateError } = await supabase
-      .from('documents')
-      .update({ approval_status: null })
-      .eq('id', documentId);
-
-    if (updateError) {
-      console.error('Fehler beim Zurücksetzen des Dokumentstatus:', updateError);
-      throw updateError;
-    }
-  }
 };
