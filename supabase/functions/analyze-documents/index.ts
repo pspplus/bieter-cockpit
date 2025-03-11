@@ -16,7 +16,7 @@ serve(async (req) => {
 
   try {
     // Parse the request body
-    const { documentUrls } = await req.json();
+    const { documentUrls, customPrompt } = await req.json();
 
     if (!documentUrls || !Array.isArray(documentUrls) || documentUrls.length === 0) {
       return new Response(
@@ -26,6 +26,11 @@ serve(async (req) => {
     }
 
     console.log(`Analyzing ${documentUrls.length} documents`);
+    console.log(`Custom prompt provided: ${customPrompt ? 'Yes' : 'No'}`);
+    
+    if (customPrompt) {
+      console.log(`Custom prompt: ${customPrompt.substring(0, 100)}...`);
+    }
 
     // Here we would implement the actual document analysis logic
     // This could involve:
@@ -35,13 +40,20 @@ serve(async (req) => {
     // 4. Processing the AI response and formatting it for the client
 
     // For now, we'll return a placeholder response
-    const analysis = `This is a simulated AI analysis of ${documentUrls.length} documents.\n
-Key findings:
-- Document 1 contains contract specifications
-- Document 2 includes pricing information
-- Document 3 outlines service requirements
+    // In a real implementation, you would use the customPrompt to guide the AI analysis
+    let analysis = '';
+    
+    if (customPrompt) {
+      analysis = `Analyse basierend auf folgenden Fragestellungen:\n${customPrompt}\n\n`;
+    }
+    
+    analysis += `Dies ist eine simulierte KI-Analyse von ${documentUrls.length} Dokumenten.\n
+Wesentliche Erkenntnisse:
+- Dokument 1 enthält die Vertragsspezifikationen
+- Dokument 2 enthält Preisinformationen
+- Dokument 3 beschreibt die Anforderungen an den Service
 
-Recommended action: Review pricing details in document 2 for potential negotiation points.`;
+Empfohlene Maßnahme: Überprüfen Sie die Preisdetails in Dokument 2 für mögliche Verhandlungspunkte.`;
 
     // Return the analysis result
     return new Response(

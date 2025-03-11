@@ -9,6 +9,7 @@ import { TenderDocument, Folder } from "@/types/tender";
 import { fetchFolderDocuments } from "@/services/documentService";
 import { useTranslation } from "react-i18next";
 import { analyzeDocumentsWithAI } from "@/services/aiAnalysisService";
+import { Textarea } from "@/components/ui/textarea";
 
 interface DocumentAIAnalysisProps {
   tenderId: string;
@@ -23,6 +24,14 @@ export function DocumentAIAnalysis({ tenderId, folders, onAnalysisComplete }: Do
   const [progress, setProgress] = useState(0);
   const [analysisResult, setAnalysisResult] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [customPrompt, setCustomPrompt] = useState<string>(
+    "Analysiere die folgenden Dokumente und beantworte diese Fragen:\n" +
+    "1. Worum geht es in dieser Ausschreibung?\n" +
+    "2. Welche Anforderungen werden gestellt?\n" +
+    "3. Gibt es besondere Qualifikationen oder Zertifikate, die verlangt werden?\n" +
+    "4. Wie ist der Zeitrahmen für die Auftragsausführung?\n" +
+    "5. Gibt es Besonderheiten, auf die wir achten sollten?"
+  );
 
   // Find the specific folders we want to analyze
   const targetFolderNames = [
@@ -101,6 +110,7 @@ export function DocumentAIAnalysis({ tenderId, folders, onAnalysisComplete }: Do
       // Call the AI service to analyze documents
       const result = await analyzeDocumentsWithAI(
         relevantDocuments,
+        customPrompt,
         (currentProgress) => {
           setProgress(currentProgress);
         }
@@ -152,6 +162,22 @@ export function DocumentAIAnalysis({ tenderId, folders, onAnalysisComplete }: Do
               </ul>
             </div>
           )}
+          
+          <div className="space-y-2">
+            <label htmlFor="customPrompt" className="text-sm font-medium">
+              Prompt für die KI-Analyse:
+            </label>
+            <Textarea
+              id="customPrompt"
+              value={customPrompt}
+              onChange={(e) => setCustomPrompt(e.target.value)}
+              placeholder="Geben Sie Ihre Fragestellungen für die KI-Analyse ein..."
+              className="min-h-[150px]"
+            />
+            <p className="text-xs text-muted-foreground">
+              Definieren Sie hier spezifische Fragestellungen, die die KI bei der Analyse der Dokumente berücksichtigen soll.
+            </p>
+          </div>
           
           {relevantDocuments.length === 0 && !error && (
             <div className="text-center py-4 text-muted-foreground">
