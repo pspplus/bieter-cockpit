@@ -1,6 +1,6 @@
 
 import { Milestone } from "@/types/tender";
-import { Circle, Clock, CheckCircle, XCircle, Edit, Users } from "lucide-react";
+import { Circle, Clock, CheckCircle, XCircle, Edit, Users, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Popover, PopoverTrigger } from "@/components/ui/popover";
 import { useTranslation } from "react-i18next";
@@ -10,9 +10,16 @@ interface MilestoneItemProps {
   index: number;
   totalMilestones: number;
   popoverContent: React.ReactNode;
+  employees?: Array<{ id: string; name: string }>;
 }
 
-export function MilestoneItem({ milestone, index, totalMilestones, popoverContent }: MilestoneItemProps) {
+export function MilestoneItem({ 
+  milestone, 
+  index, 
+  totalMilestones, 
+  popoverContent,
+  employees = []
+}: MilestoneItemProps) {
   const { t } = useTranslation();
   
   const getStatusIcon = (status: string) => {
@@ -72,8 +79,19 @@ export function MilestoneItem({ milestone, index, totalMilestones, popoverConten
       </div>
     );
   };
+
+  // Funktion zum Ermitteln der Mitarbeiternamen
+  const getAssigneeNames = (assigneeIds?: string[]) => {
+    if (!assigneeIds || assigneeIds.length === 0) return [];
+    
+    return assigneeIds.map(id => {
+      const employee = employees.find(e => e.id === id);
+      return employee?.name || id;
+    });
+  };
   
   const statusColors = getStatusColors(milestone.status);
+  const assigneeNames = getAssigneeNames(milestone.assignees);
   
   return (
     <Popover>
@@ -122,6 +140,18 @@ export function MilestoneItem({ milestone, index, totalMilestones, popoverConten
                   {t(`milestoneStatus.${milestone.status}`)}
                 </span>
               </div>
+              
+              {/* Assignees displayed under the milestone */}
+              {assigneeNames.length > 0 && (
+                <div className="mt-2 text-[10px] text-tender-600">
+                  {assigneeNames.map((name, idx) => (
+                    <div key={idx} className="flex items-center justify-center gap-0.5 mt-0.5">
+                      <User className="h-2.5 w-2.5" />
+                      <span className="truncate max-w-24">{name}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>

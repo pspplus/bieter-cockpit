@@ -37,6 +37,7 @@ export function MilestoneLine({
             milestone={milestone}
             index={index}
             totalMilestones={sortedMilestones.length}
+            employees={employees}
             popoverContent={
               <MilestonePopover
                 milestone={milestone}
