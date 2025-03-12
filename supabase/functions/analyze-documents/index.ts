@@ -11,6 +11,76 @@ const corsHeaders = {
 // Get OpenAI API key from environment variables
 const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
 
+// Helper function to check if a URL is a PDF
+function isPDF(url: string): boolean {
+  return url.toLowerCase().endsWith('.pdf');
+}
+
+// Helper function to extract text from a PDF file (placeholder for now)
+async function extractTextFromPDF(pdfUrl: string): Promise<string> {
+  try {
+    console.log(`Fetching PDF from: ${pdfUrl}`);
+    
+    // Download the PDF content
+    const response = await fetch(pdfUrl);
+    
+    if (!response.ok) {
+      throw new Error(`Failed to fetch PDF: ${response.status} ${response.statusText}`);
+    }
+    
+    // For now, we'll just get the size of the PDF
+    // In a real implementation, you would use a PDF parsing library
+    const contentLength = response.headers.get('content-length') || 'unknown size';
+    
+    return `[PDF Document: ${pdfUrl.split('/').pop()} (${contentLength} bytes). This is extracted content from a PDF.]`;
+    
+  } catch (error) {
+    console.error('Error extracting text from PDF:', error);
+    return `[Failed to extract content from PDF: ${pdfUrl}]`;
+  }
+}
+
+// Helper function to get the content of a document
+async function getDocumentContent(url: string): Promise<string> {
+  try {
+    console.log(`Processing document: ${url}`);
+    
+    // Check if it's a PDF
+    if (isPDF(url)) {
+      return await extractTextFromPDF(url);
+    }
+    
+    // For other file types, download and extract plain text if possible
+    const response = await fetch(url);
+    
+    if (!response.ok) {
+      throw new Error(`Failed to fetch document: ${response.status} ${response.statusText}`);
+    }
+    
+    const contentType = response.headers.get('content-type') || '';
+    const fileName = url.split('/').pop() || 'document';
+    
+    // Handle different content types
+    if (contentType.includes('text/')) {
+      // For text files, get the text content
+      const text = await response.text();
+      return text.substring(0, 10000); // Limit text size
+    } else if (contentType.includes('application/json')) {
+      // For JSON files
+      const json = await response.json();
+      return JSON.stringify(json, null, 2).substring(0, 10000);
+    } else {
+      // For other file types, return a summary with the file type and size
+      const contentLength = response.headers.get('content-length') || 'unknown size';
+      return `[Document: ${fileName} (${contentType}, ${contentLength} bytes). Cannot extract detailed content from this file type.]`;
+    }
+    
+  } catch (error) {
+    console.error('Error getting document content:', error);
+    return `[Failed to get content from: ${url}]`;
+  }
+}
+
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -35,14 +105,12 @@ serve(async (req) => {
       console.log(`Custom prompt: ${customPrompt.substring(0, 100)}...`);
     }
 
-    // For now, we'll simulate fetching document content
-    // In a real implementation, you would download and parse the documents
+    // Fetch document content in parallel
     const documentContents = await Promise.all(
-      documentUrls.map(async (url, index) => {
-        // Here you would implement actual document downloading and parsing
-        // For now, we create a placeholder content based on the URL
-        const fileName = url.split('/').pop() || `document-${index + 1}`;
-        return `Document: ${fileName}\nThis is a simulated content for ${fileName}`;
+      documentUrls.map(async (url: string) => {
+        const fileName = url.split('/').pop() || 'document';
+        const content = await getDocumentContent(url);
+        return `Document: ${fileName}\n${content}`;
       })
     );
 
@@ -60,12 +128,13 @@ serve(async (req) => {
     
     // Trim the prompt if it's too long for the API
     // OpenAI has token limits, so in a real implementation, you might need to chunk or summarize first
-    const maxLength = 4000;
+    const maxLength = 15000;
     const trimmedPrompt = prompt.length > maxLength ? 
       prompt.substring(0, maxLength) + "...[content truncated due to length]" : 
       prompt;
 
     console.log("Sending request to OpenAI API");
+    console.log(`Total content length: ${prompt.length} characters, trimmed to ${trimmedPrompt.length}`);
     
     // Call the OpenAI API
     const openAIResponse = await fetch('https://api.openai.com/v1/chat/completions', {

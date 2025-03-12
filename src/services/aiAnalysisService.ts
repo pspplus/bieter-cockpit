@@ -21,10 +21,22 @@ export const analyzeDocumentsWithAI = async (
     if (onProgress) {
       onProgress(10); // Starting progress
     }
+    
+    // Filter out documents without URLs
+    const validDocuments = documents.filter(doc => doc.fileUrl && doc.fileUrl.trim() !== '');
+    
+    if (validDocuments.length === 0) {
+      throw new Error('Keine gültigen Dokument-URLs zur Analyse vorhanden.');
+    }
+    
+    // Set intermediate progress as we're starting to process
+    if (onProgress) {
+      onProgress(20);
+    }
 
     const { data, error } = await supabase.functions.invoke('analyze-documents', {
       body: { 
-        documentUrls: documents.map(doc => doc.fileUrl),
+        documentUrls: validDocuments.map(doc => doc.fileUrl),
         customPrompt: customPrompt
       }
     });
@@ -34,9 +46,17 @@ export const analyzeDocumentsWithAI = async (
       throw new Error('Fehler bei der Dokumentenanalyse: ' + error.message);
     }
 
+    // Set progress to almost complete
     if (onProgress) {
-      onProgress(100); // Completed
+      onProgress(90);
     }
+
+    // Small delay to show completion progress
+    setTimeout(() => {
+      if (onProgress) {
+        onProgress(100); // Completed
+      }
+    }, 500);
 
     return data.analysis;
   } catch (error) {
