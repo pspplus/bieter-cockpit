@@ -1,3 +1,4 @@
+
 import React, { createContext, useState, useEffect } from "react";
 import { Tender, Milestone, MilestoneStatus } from "@/types/tender";
 import { useAuth } from "@/context/AuthContext";
@@ -167,7 +168,12 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
         milestone.sequenceNumber = maxSequence + 1;
       }
       
-      const newMilestone = await createMilestoneService({ ...milestone, tenderId });
+      const newMilestone = await createMilestoneService({ 
+        ...milestone, 
+        tenderId,
+        // Ensure milestone has proper status
+        status: milestone.status || 'pending' 
+      });
       
       setTenders(tenders.map(tender => {
         if (tender.id === tenderId) {
