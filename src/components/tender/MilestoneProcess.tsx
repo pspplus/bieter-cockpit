@@ -110,7 +110,7 @@ export function MilestoneProcess({ milestones, tenderId }: MilestoneProcessProps
   return (
     <Card className="p-4 bg-white shadow-sm border border-tender-100">
       <CardContent className="p-0">
-        <div className="space-y-4">
+        <div className="space-y-6">
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-medium text-tender-700">
               {t('milestones.progress', "Fortschritt")}
@@ -127,7 +127,8 @@ export function MilestoneProcess({ milestones, tenderId }: MilestoneProcessProps
             ></div>
           </div>
           
-          <div className="relative w-full overflow-x-auto pb-2 md:pb-0 mt-4">
+          {/* Increased spacing here with my-8 instead of mt-4 */}
+          <div className="relative w-full overflow-x-auto pb-2 md:pb-0 my-8">
             <div className="flex w-full">
               {sortedMilestones.map((milestone, index) => {
                 const statusColors = getStatusColors(milestone.status);
@@ -145,9 +146,9 @@ export function MilestoneProcess({ milestones, tenderId }: MilestoneProcessProps
                         )}
                         
                         <div className="flex flex-col items-center relative z-10">
-                          {/* Status Icon */}
+                          {/* Status Icon - made larger for better visibility */}
                           <div className={cn(
-                            "rounded-full p-1 bg-white border-2",
+                            "rounded-full p-1.5 bg-white border-2",
                             statusColors.icon
                           )}>
                             {getStatusIcon(milestone.status)}
@@ -160,8 +161,8 @@ export function MilestoneProcess({ milestones, tenderId }: MilestoneProcessProps
                             </div>
                           </div>
                           
-                          {/* Milestone Title */}
-                          <div className="mt-2 text-center w-full px-1">
+                          {/* Milestone Title - added more spacing with mt-3 */}
+                          <div className="mt-3 text-center w-full px-1">
                             <div className={cn(
                               "text-xs font-medium break-words hyphens-auto",
                               statusColors.text
