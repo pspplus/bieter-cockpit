@@ -1,3 +1,4 @@
+
 import React, { createContext, useState, useEffect } from "react";
 import { Tender, Milestone, MilestoneStatus } from "@/types/tender";
 import { useAuth } from "@/context/AuthContext";
@@ -70,21 +71,28 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
     try {
       const partialMilestones = tenderData.milestones || [];
       
+      // Entferne die Meilensteine aus den Daten für den ersten API-Aufruf
       const { milestones: _, ...tenderDataWithoutMilestones } = tenderData;
       
+      // Erstelle zuerst die Ausschreibung ohne Meilensteine
       const newTender = await createTenderService(tenderDataWithoutMilestones);
       
+      // Erstelle dann die Meilensteine, wenn welche vorhanden sind
       if (partialMilestones.length > 0) {
+        console.log("Creating milestones:", partialMilestones);
+        
         await Promise.all(
           partialMilestones.map((milestone, index) => 
             createMilestoneService({ 
               ...milestone,
               sequenceNumber: milestone.sequenceNumber || index + 1,
-              tenderId: newTender.id 
+              tenderId: newTender.id,
+              assignees: milestone.assignees || [] // Stelle sicher, dass assignees immer gesetzt ist
             })
           )
         );
         
+        // Lade die Ausschreibung mit Meilensteinen neu
         const updatedTender = await fetchTenders()
           .then(tenders => tenders.find(t => t.id === newTender.id))
           .catch(error => {

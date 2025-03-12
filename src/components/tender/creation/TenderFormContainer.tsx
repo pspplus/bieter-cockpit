@@ -76,8 +76,10 @@ export function TenderFormContainer() {
     setIsSubmitting(true);
     
     try {
+      // Hole die Standard-Meilensteine
       const defaultMilestones = getDefaultMilestones();
       
+      // Erstelle die neue Ausschreibung mit Meilensteinen
       const newTender = await createTender({
         title: formData.title || t('tenders.newTender'),
         externalReference: formData.externalReference,

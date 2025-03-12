@@ -410,8 +410,11 @@ export const createMilestone = async (milestone: Partial<Milestone>): Promise<Mi
     sequence_number: milestone.sequenceNumber || sequenceNumber,
     due_date: formattedDueDate,
     completion_date: formattedCompletionDate,
-    notes: milestone.notes || ""
+    notes: milestone.notes || "",
+    assignees: milestone.assignees || [] // Stelle sicher, dass assignees immer gesetzt ist
   };
+
+  console.log("Creating milestone with data:", dbMilestone);
 
   // Insert the milestone
   const { data, error } = await supabase

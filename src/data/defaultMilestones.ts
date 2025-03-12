@@ -19,35 +19,40 @@ export const getDefaultMilestones = (): Partial<Milestone>[] => {
       description: "Anforderungen und Leistungsbeschreibung analysieren",
       status: "pending",
       sequenceNumber: 1,
-      dueDate: dueDates[0]
+      dueDate: dueDates[0],
+      assignees: []
     },
     {
       title: "Angebot vorbereiten",
       description: "Kalkulation und Angebotserstellung",
       status: "pending",
       sequenceNumber: 2,
-      dueDate: dueDates[1]
+      dueDate: dueDates[1],
+      assignees: []
     },
     {
       title: "Angebot abgeben",
       description: "Finales Angebot an den Kunden übermitteln",
       status: "pending",
       sequenceNumber: 3,
-      dueDate: dueDates[2]
+      dueDate: dueDates[2],
+      assignees: []
     },
     {
       title: "Präsentation",
       description: "Vorstellung des Angebots beim Kunden",
       status: "pending",
       sequenceNumber: 4,
-      dueDate: dueDates[3]
+      dueDate: dueDates[3],
+      assignees: []
     },
     {
       title: "Vertragsabschluss",
       description: "Finalisierung und Unterschrift des Vertrags",
       status: "pending",
       sequenceNumber: 5,
-      dueDate: dueDates[4]
+      dueDate: dueDates[4],
+      assignees: []
     }
   ];
 };
