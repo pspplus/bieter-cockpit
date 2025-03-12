@@ -8,6 +8,9 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Get OpenAI API key from environment variables
+const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
+
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -32,28 +35,72 @@ serve(async (req) => {
       console.log(`Custom prompt: ${customPrompt.substring(0, 100)}...`);
     }
 
-    // Here we would implement the actual document analysis logic
-    // This could involve:
-    // 1. Downloading the documents from their URLs
-    // 2. Parsing the documents based on their type (PDF, Word, Excel)
-    // 3. Sending the extracted text to an AI service like OpenAI, Google Vertex AI, etc.
-    // 4. Processing the AI response and formatting it for the client
+    // For now, we'll simulate fetching document content
+    // In a real implementation, you would download and parse the documents
+    const documentContents = await Promise.all(
+      documentUrls.map(async (url, index) => {
+        // Here you would implement actual document downloading and parsing
+        // For now, we create a placeholder content based on the URL
+        const fileName = url.split('/').pop() || `document-${index + 1}`;
+        return `Document: ${fileName}\nThis is a simulated content for ${fileName}`;
+      })
+    );
 
-    // For now, we'll return a placeholder response
-    // In a real implementation, you would use the customPrompt to guide the AI analysis
-    let analysis = '';
+    // Combine all document contents
+    const combinedContent = documentContents.join('\n\n');
+    
+    // Create the prompt for OpenAI
+    let prompt = "Bitte analysiere die folgenden Ausschreibungsdokumente und extrahiere die wichtigsten Informationen:";
     
     if (customPrompt) {
-      analysis = `Analyse basierend auf folgenden Fragestellungen:\n${customPrompt}\n\n`;
+      prompt += `\n\nBitte beantworte speziell diese Fragen:\n${customPrompt}`;
     }
     
-    analysis += `Dies ist eine simulierte KI-Analyse von ${documentUrls.length} Dokumenten.\n
-Wesentliche Erkenntnisse:
-- Dokument 1 enthält die Vertragsspezifikationen
-- Dokument 2 enthält Preisinformationen
-- Dokument 3 beschreibt die Anforderungen an den Service
+    prompt += `\n\nDokumente:\n${combinedContent}`;
+    
+    // Trim the prompt if it's too long for the API
+    // OpenAI has token limits, so in a real implementation, you might need to chunk or summarize first
+    const maxLength = 4000;
+    const trimmedPrompt = prompt.length > maxLength ? 
+      prompt.substring(0, maxLength) + "...[content truncated due to length]" : 
+      prompt;
 
-Empfohlene Maßnahme: Überprüfen Sie die Preisdetails in Dokument 2 für mögliche Verhandlungspunkte.`;
+    console.log("Sending request to OpenAI API");
+    
+    // Call the OpenAI API
+    const openAIResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${openAIApiKey}`
+      },
+      body: JSON.stringify({
+        model: 'gpt-4o-mini', // Using a modern, cost-effective model
+        messages: [
+          {
+            role: 'system',
+            content: 'Du bist ein KI-Assistent, der spezialisiert ist auf die Analyse von Ausschreibungsdokumenten. Extrahiere relevante Informationen und liefere eine strukturierte Zusammenfassung.'
+          },
+          {
+            role: 'user',
+            content: trimmedPrompt
+          }
+        ],
+        temperature: 0.5 // Balance between creativity and precision
+      })
+    });
+
+    // Process the OpenAI response
+    if (!openAIResponse.ok) {
+      const errorText = await openAIResponse.text();
+      console.error('OpenAI API error:', errorText);
+      throw new Error(`OpenAI API error: ${errorText}`);
+    }
+
+    const openAIData = await openAIResponse.json();
+    const analysis = openAIData.choices[0].message.content;
+
+    console.log("Analysis completed successfully");
 
     // Return the analysis result
     return new Response(
