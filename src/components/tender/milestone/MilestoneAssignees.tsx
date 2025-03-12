@@ -29,6 +29,9 @@ export function MilestoneAssignees({
 }: MilestoneAssigneesProps) {
   const { t } = useTranslation();
   
+  // Debugausgabe zum Verfolgen der zugewiesenen Mitarbeiter
+  console.log("Current milestone assignees:", milestone.assignees);
+  
   return (
     <div className="space-y-2">
       <h5 className="text-xs font-medium flex items-center">
@@ -69,7 +72,10 @@ export function MilestoneAssignees({
       
       <div className="flex items-center gap-2">
         <Select 
-          onValueChange={(value) => onAssigneeAdd(milestone, value)}
+          onValueChange={(value) => {
+            console.log("Selected employee:", value);
+            onAssigneeAdd(milestone, value);
+          }}
           disabled={isUpdating}
         >
           <SelectTrigger className="h-8 text-xs">

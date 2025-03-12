@@ -214,16 +214,18 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
         }
       }
       
+      // Sicherstellen, dass alle notwendigen Felder korrekt gesetzt sind
       const updatedMilestone = {
         ...milestone,
         sequenceNumber: milestone.sequenceNumber || 0,
-        // Ensure assignees are properly handled
-        assignees: milestone.assignees || []
+        assignees: milestone.assignees || [] // Sicherstellen, dass die Zuweisungen korrekt übergeben werden
       };
       
+      console.log("Updating milestone with assignees:", updatedMilestone.assignees);
       await updateMilestoneService(updatedMilestone);
       
       setTenders(tenders.map(tender => {
+        // Die Meilensteine des betroffenen Tenders aktualisieren
         const updatedMilestones = tender.milestones.map(m => 
           m.id === milestone.id ? updatedMilestone : m
         );

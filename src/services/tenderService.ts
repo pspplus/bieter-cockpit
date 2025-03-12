@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { Tender, TenderStatus, Milestone, MilestoneStatus, Folder, Vertragsart, Objektart, Zertifikat } from "@/types/tender";
 import { format } from "date-fns";
@@ -56,6 +57,7 @@ const mapMilestoneFromDB = (milestone: any): Milestone => {
     dueDate: milestone.due_date ? new Date(milestone.due_date) : null,
     completionDate: milestone.completion_date ? new Date(milestone.completion_date) : null,
     notes: milestone.notes || "",
+    assignees: milestone.assignees || [], // Stellen Sie sicher, dass assignees geladen werden
   };
 };
 
@@ -70,6 +72,7 @@ const mapMilestoneForDB = (milestone: Partial<Milestone>) => {
     ...(milestone.dueDate && { due_date: milestone.dueDate.toISOString() }),
     ...(milestone.completionDate && { completion_date: milestone.completionDate.toISOString() }),
     ...(milestone.notes !== undefined && { notes: milestone.notes }),
+    ...(milestone.assignees !== undefined && { assignees: milestone.assignees }), // Hier die Mitarbeiterzuweisungen speichern
   };
   
   return dbMilestone;
