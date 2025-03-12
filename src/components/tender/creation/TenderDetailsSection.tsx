@@ -76,7 +76,7 @@ export function TenderDetailsSection({ formData, setFormData }: TenderDetailsSec
         <Label>Objektart</Label>
         <Select 
           value={formData.objektart[0] || ""} 
-          onValueChange={(value: Objektart) => setFormData(prev => ({ ...prev, objektart: [value] }))}
+          onValueChange={(value: Objektart) => setFormData(prev => ({ ...prev, objektart: value ? [value] : [] }))}
         >
           <SelectTrigger>
             <SelectValue placeholder="Objektart wählen" />
@@ -85,6 +85,7 @@ export function TenderDetailsSection({ formData, setFormData }: TenderDetailsSec
             <SelectItem value="grundschule">Grundschule</SelectItem>
             <SelectItem value="kindergarten">Kindergarten</SelectItem>
             <SelectItem value="buero">Büro</SelectItem>
+            <SelectItem value="">Keine Angabe</SelectItem>
           </SelectContent>
         </Select>
       </div>
