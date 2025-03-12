@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -79,7 +78,6 @@ export function TenderFormContainer() {
     try {
       // Hole die Standard-Meilensteine
       const defaultMilestones = getDefaultMilestones();
-      console.log("Form submission - default milestones:", defaultMilestones);
       
       // Erstelle die neue Ausschreibung mit Meilensteinen
       const newTender = await createTender({
@@ -114,9 +112,6 @@ export function TenderFormContainer() {
         raumgruppentabelle: formData.raumgruppentabelle
       } as Partial<Tender>);
 
-      console.log("New tender created with ID:", newTender.id);
-      console.log("New tender milestones:", newTender.milestones);
-      
       toast.success(t('toasts.tenderCreated'));
       navigate(`/tenders/${newTender.id}`);
     } catch (error) {

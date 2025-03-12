@@ -13,7 +13,7 @@ export const getDefaultMilestones = (): Partial<Milestone>[] => {
     new Date(today.getFullYear(), today.getMonth(), today.getDate() + 45)  // Vertragsabschluss: in 45 Tagen
   ];
   
-  const milestones = [
+  return [
     {
       title: "Ausschreibung analysieren",
       description: "Anforderungen und Leistungsbeschreibung analysieren",
@@ -55,7 +55,4 @@ export const getDefaultMilestones = (): Partial<Milestone>[] => {
       assignees: []
     }
   ];
-  
-  console.log("Default milestones generated:", milestones);
-  return milestones;
 };

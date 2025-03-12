@@ -70,39 +70,31 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
   const createTender = async (tenderData: Partial<Tender>): Promise<Tender> => {
     try {
       const partialMilestones = tenderData.milestones || [];
-      console.log("TenderContext - createTender - initial milestones:", partialMilestones);
       
       // Entferne die Meilensteine aus den Daten für den ersten API-Aufruf
       const { milestones: _, ...tenderDataWithoutMilestones } = tenderData;
       
       // Erstelle zuerst die Ausschreibung ohne Meilensteine
       const newTender = await createTenderService(tenderDataWithoutMilestones);
-      console.log("TenderContext - tender created:", newTender);
       
       // Erstelle dann die Meilensteine, wenn welche vorhanden sind
       if (partialMilestones.length > 0) {
-        console.log("TenderContext - creating milestones:", partialMilestones);
+        console.log("Creating milestones:", partialMilestones);
         
         await Promise.all(
-          partialMilestones.map((milestone, index) => {
-            const milestoneData = { 
+          partialMilestones.map((milestone, index) => 
+            createMilestoneService({ 
               ...milestone,
               sequenceNumber: milestone.sequenceNumber || index + 1,
               tenderId: newTender.id,
               assignees: milestone.assignees || [] // Stelle sicher, dass assignees immer gesetzt ist
-            };
-            console.log(`TenderContext - creating milestone ${index + 1}:`, milestoneData);
-            return createMilestoneService(milestoneData);
-          })
+            })
+          )
         );
         
         // Lade die Ausschreibung mit Meilensteinen neu
         const updatedTender = await fetchTenders()
-          .then(tenders => {
-            const tender = tenders.find(t => t.id === newTender.id);
-            console.log("TenderContext - refetched tender:", tender);
-            return tender;
-          })
+          .then(tenders => tenders.find(t => t.id === newTender.id))
           .catch(error => {
             console.error("Error fetching updated tender:", error);
             return newTender;
@@ -110,8 +102,6 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
           
         if (updatedTender) {
           const sortedMilestones = sortMilestones(updatedTender.milestones);
-          console.log("TenderContext - sorted milestones:", sortedMilestones);
-          
           const finalTender = { ...updatedTender, milestones: sortedMilestones };
           setTenders(prev => [finalTender, ...prev.filter(t => t.id !== finalTender.id)]);
           return finalTender;
