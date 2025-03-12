@@ -38,11 +38,14 @@ export default function MilestoneDashboard() {
 
   // Filter milestones by status
   const upcomingMilestones = milestones.filter(
-    (m) => m.status === "pending" && new Date(m.due_date) > new Date()
-  ).sort((a, b) => new Date(a.due_date).getTime() - new Date(b.due_date).getTime());
+    (m) => m.status === "pending" && m.dueDate && new Date(m.dueDate) > new Date()
+  ).sort((a, b) => {
+    if (!a.dueDate || !b.dueDate) return 0;
+    return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
+  });
 
   const lateMilestones = milestones.filter(
-    (m) => m.status === "pending" && new Date(m.due_date) < new Date()
+    (m) => m.status === "pending" && m.dueDate && new Date(m.dueDate) < new Date()
   );
 
   const inProgressMilestones = milestones.filter((m) => m.status === "in-progress");
@@ -56,8 +59,8 @@ export default function MilestoneDashboard() {
   const thisWeekMilestones = milestones.filter(
     (m) => 
       m.status !== "completed" && 
-      new Date(m.due_date) >= today && 
-      new Date(m.due_date) <= endOfWeek
+      m.dueDate && new Date(m.dueDate) >= today && 
+      m.dueDate && new Date(m.dueDate) <= endOfWeek
   );
 
   return (
@@ -90,11 +93,11 @@ export default function MilestoneDashboard() {
                           <div>
                             <p className="font-medium text-sm">{milestone.title}</p>
                             <p className="text-xs text-muted-foreground truncate">
-                              {milestone.tender_title || t("milestones.noTenderTitle", "Ohne Ausschreibungstitel")}
+                              {milestone.tenderTitle || t("milestones.noTenderTitle", "Ohne Ausschreibungstitel")}
                             </p>
                           </div>
                           <Badge variant="outline" className="text-xs">
-                            {new Date(milestone.due_date).toLocaleDateString()}
+                            {milestone.dueDate && new Date(milestone.dueDate).toLocaleDateString()}
                           </Badge>
                         </div>
                       ))}
@@ -123,11 +126,11 @@ export default function MilestoneDashboard() {
                           <div>
                             <p className="font-medium text-sm">{milestone.title}</p>
                             <p className="text-xs text-muted-foreground truncate">
-                              {milestone.tender_title || t("milestones.noTenderTitle", "Ohne Ausschreibungstitel")}
+                              {milestone.tenderTitle || t("milestones.noTenderTitle", "Ohne Ausschreibungstitel")}
                             </p>
                           </div>
                           <Badge variant="destructive" className="text-xs">
-                            {formatDistanceToNow(new Date(milestone.due_date), { addSuffix: true, locale: de })}
+                            {milestone.dueDate && formatDistanceToNow(new Date(milestone.dueDate), { addSuffix: true, locale: de })}
                           </Badge>
                         </div>
                       ))}
@@ -156,11 +159,11 @@ export default function MilestoneDashboard() {
                           <div>
                             <p className="font-medium text-sm">{milestone.title}</p>
                             <p className="text-xs text-muted-foreground truncate">
-                              {milestone.tender_title || t("milestones.noTenderTitle", "Ohne Ausschreibungstitel")}
+                              {milestone.tenderTitle || t("milestones.noTenderTitle", "Ohne Ausschreibungstitel")}
                             </p>
                           </div>
                           <Badge variant="outline" className="text-xs">
-                            {new Date(milestone.due_date).toLocaleDateString()}
+                            {milestone.dueDate && new Date(milestone.dueDate).toLocaleDateString()}
                           </Badge>
                         </div>
                       ))}
@@ -178,16 +181,16 @@ export default function MilestoneDashboard() {
                 <TabsTrigger value="completed">{t("milestones.completed", "Abgeschlossen")}</TabsTrigger>
               </TabsList>
               <TabsContent value="all">
-                <MilestonesList milestones={milestones} />
+                <MilestonesList milestonesList={milestones} />
               </TabsContent>
               <TabsContent value="upcoming">
-                <MilestonesList milestones={upcomingMilestones} />
+                <MilestonesList milestonesList={upcomingMilestones} />
               </TabsContent>
               <TabsContent value="in-progress">
-                <MilestonesList milestones={inProgressMilestones} />
+                <MilestonesList milestonesList={inProgressMilestones} />
               </TabsContent>
               <TabsContent value="completed">
-                <MilestonesList milestones={completedMilestones} />
+                <MilestonesList milestonesList={completedMilestones} />
               </TabsContent>
             </Tabs>
           </>
