@@ -1,6 +1,7 @@
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
+import { parse as parsePdf } from "https://deno.land/x/pdfparser@v1.0.1/mod.ts";
 
 // Define cors headers for cross-origin requests
 const corsHeaders = {
@@ -16,7 +17,7 @@ function isPDF(url: string): boolean {
   return url.toLowerCase().endsWith('.pdf');
 }
 
-// Helper function to extract text from a PDF file (placeholder for now)
+// Helper function to extract text from a PDF file
 async function extractTextFromPDF(pdfUrl: string): Promise<string> {
   try {
     console.log(`Fetching PDF from: ${pdfUrl}`);
@@ -28,12 +29,32 @@ async function extractTextFromPDF(pdfUrl: string): Promise<string> {
       throw new Error(`Failed to fetch PDF: ${response.status} ${response.statusText}`);
     }
     
-    // For now, we'll just get the size of the PDF
-    // In a real implementation, you would use a PDF parsing library
-    const contentLength = response.headers.get('content-length') || 'unknown size';
+    // Get the PDF as ArrayBuffer
+    const pdfData = await response.arrayBuffer();
     
-    return `[PDF Document: ${pdfUrl.split('/').pop()} (${contentLength} bytes). This is extracted content from a PDF.]`;
-    
+    // Parse the PDF using pdfparser
+    console.log("Parsing PDF content...");
+    try {
+      const pdfContent = await parsePdf(new Uint8Array(pdfData));
+      if (!pdfContent || !pdfContent.text) {
+        console.warn("PDF parsing returned empty or invalid content");
+        return `[PDF Document: ${pdfUrl.split('/').pop()} - Extracted content is empty. The PDF may be scanned or contain only images.]`;
+      }
+      
+      // Return the extracted text, limiting length to avoid token limits
+      const extractedText = pdfContent.text.trim();
+      console.log(`Extracted ${extractedText.length} characters from PDF`);
+      
+      if (extractedText.length > 15000) {
+        return extractedText.substring(0, 15000) + "... [content truncated due to length]";
+      }
+      
+      return extractedText;
+    } catch (pdfError) {
+      console.error("Error during PDF parsing:", pdfError);
+      // Fallback method if PDF parsing fails
+      return `[PDF Document: ${pdfUrl.split('/').pop()} - Could not extract content: ${pdfError.message}]`;
+    }
   } catch (error) {
     console.error('Error extracting text from PDF:', error);
     return `[Failed to extract content from PDF: ${pdfUrl}]`;
