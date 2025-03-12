@@ -116,7 +116,7 @@ export function MilestoneItem({
             </div>
             
             {/* Show edit indicator on hover */}
-            <div className="absolute -right-1 -top-1 opacity-0 group-hover:opacity-100 transition-opacity">
+            <div className="absolute -right-2 -top-2 opacity-0 group-hover:opacity-100 transition-opacity">
               <div className="bg-primary rounded-full p-0.5">
                 <Edit className="h-3 w-3 text-white" />
               </div>

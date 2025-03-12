@@ -1,4 +1,3 @@
-
 import { Milestone, MilestoneStatus } from "@/types/tender";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
@@ -53,7 +52,7 @@ export function MilestoneProcess({ milestones, tenderId }: MilestoneProcessProps
       setUpdating(false);
     }
   };
-
+  
   const handleAssigneeAdd = async (milestone: Milestone, employeeId: string) => {
     if (!tenderId) return;
     
@@ -131,10 +130,10 @@ export function MilestoneProcess({ milestones, tenderId }: MilestoneProcessProps
   return (
     <Card className="p-4 bg-white shadow-sm border border-tender-100">
       <CardContent className="p-0">
-        <div className="space-y-6">
+        <div className="space-y-4">
           <MilestoneProgress milestones={milestones} />
           
-          <div className="min-h-[300px]">
+          <div className="min-h-[320px] h-full">
             <MilestoneLine 
               milestones={milestones}
               employees={employees}
