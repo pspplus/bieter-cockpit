@@ -15,7 +15,6 @@ import {
   BarChart,
   CheckCircle2,
   Circle,
-  CircleSlash,
   CircleDashed,
   ExternalLink
 } from "lucide-react";
@@ -63,20 +62,18 @@ export default function Dashboard() {
     }))
   );
 
-  // Group milestones by status
+  // Group milestones by status - removing the 'skipped' status
   const milestonesByStatus = {
     pending: allMilestones.filter(m => m.status === 'pending'),
     'in-progress': allMilestones.filter(m => m.status === 'in-progress'),
-    completed: allMilestones.filter(m => m.status === 'completed'),
-    skipped: allMilestones.filter(m => m.status === 'skipped')
+    completed: allMilestones.filter(m => m.status === 'completed')
   };
 
-  // Get counts for each status
+  // Get counts for each status - removed skipped from the count
   const milestoneStatusCounts = {
     pending: milestonesByStatus.pending.length,
     inProgress: milestonesByStatus['in-progress'].length,
     completed: milestonesByStatus.completed.length,
-    skipped: milestonesByStatus.skipped.length,
     total: allMilestones.length
   };
 
@@ -89,8 +86,6 @@ export default function Dashboard() {
         return <CircleDashed className="h-4 w-4 text-blue-500" />;
       case 'completed':
         return <CheckCircle2 className="h-4 w-4 text-green-500" />;
-      case 'skipped':
-        return <CircleSlash className="h-4 w-4 text-amber-500" />;
       default:
         return <Circle className="h-4 w-4" />;
     }
@@ -191,18 +186,11 @@ export default function Dashboard() {
                       <span className="font-medium">{milestoneStatusCounts.inProgress}</span>
                     </div>
                   </div>
-                  <div className="flex items-center">
+                  <div className="flex items-center col-span-2">
                     <CheckCircle2 className="h-4 w-4 text-green-500 mr-2" />
                     <div className="flex-1 flex justify-between">
                       <span className="text-sm">Abgeschlossen</span>
                       <span className="font-medium">{milestoneStatusCounts.completed}</span>
-                    </div>
-                  </div>
-                  <div className="flex items-center">
-                    <CircleSlash className="h-4 w-4 text-amber-500 mr-2" />
-                    <div className="flex-1 flex justify-between">
-                      <span className="text-sm">Übersprungen</span>
-                      <span className="font-medium">{milestoneStatusCounts.skipped}</span>
                     </div>
                   </div>
                 </div>
@@ -217,10 +205,6 @@ export default function Dashboard() {
                       <div 
                         className="h-full bg-green-500 float-left"
                         style={{ width: `${(milestoneStatusCounts.completed / milestoneStatusCounts.total) * 100}%` }}
-                      ></div>
-                      <div 
-                        className="h-full bg-amber-500 float-left"
-                        style={{ width: `${(milestoneStatusCounts.skipped / milestoneStatusCounts.total) * 100}%` }}
                       ></div>
                     </>
                   )}
