@@ -490,13 +490,7 @@ export type Database = {
     }
     Enums: {
       approval_status: "pending" | "approved" | "rejected"
-      objektart_enum:
-        | "Grundschule"
-        | "Kindergarten"
-        | "Buero"
-        | "Berufsschule"
-        | "Feuerwache"
-        | "Sportplatz"
+      objektart_enum: "grundschule" | "kindergarten" | "buero"
       vertragsart_enum:
         | "werkvertrag"
         | "dienstleistungsvertrag"

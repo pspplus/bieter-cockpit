@@ -1,4 +1,3 @@
-
 import { Tender, Objektart } from "@/types/tender";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Building, Edit, Save, X } from "lucide-react";
@@ -10,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface ObjectInfoCardProps {
   tender: Tender;
@@ -21,7 +20,7 @@ export function ObjectInfoCard({ tender, onUpdateTender }: ObjectInfoCardProps) 
   const { t } = useTranslation();
   const [editing, setEditing] = useState(false);
   const [location, setLocation] = useState(tender.location || "");
-  const [objektart, setObjektart] = useState<Objektart>(tender.objektart?.[0] || "");
+  const [objektarten, setObjektarten] = useState<Objektart[]>(tender.objektart || []);
   const [objektbesichtigungErforderlich, setObjektbesichtigungErforderlich] = useState(tender.objektbesichtigungErforderlich || false);
   const [raumgruppentabelle, setRaumgruppentabelle] = useState(tender.raumgruppentabelle || false);
   const [waschmaschine, setWaschmaschine] = useState(tender.waschmaschine || false);
@@ -29,7 +28,7 @@ export function ObjectInfoCard({ tender, onUpdateTender }: ObjectInfoCardProps) 
 
   useEffect(() => {
     setLocation(tender.location || "");
-    setObjektart(tender.objektart?.[0] || "");
+    setObjektarten(tender.objektart || []);
     setObjektbesichtigungErforderlich(tender.objektbesichtigungErforderlich || false);
     setRaumgruppentabelle(tender.raumgruppentabelle || false);
     setWaschmaschine(tender.waschmaschine || false);
@@ -40,7 +39,7 @@ export function ObjectInfoCard({ tender, onUpdateTender }: ObjectInfoCardProps) 
     try {
       await onUpdateTender({
         location,
-        objektart: objektart ? [objektart] : [],
+        objektart: objektarten,
         objektbesichtigungErforderlich,
         raumgruppentabelle,
         waschmaschine
@@ -57,19 +56,18 @@ export function ObjectInfoCard({ tender, onUpdateTender }: ObjectInfoCardProps) 
 
   const handleCancel = () => {
     setLocation(tender.location || "");
-    setObjektart(tender.objektart?.[0] || "");
+    setObjektarten(tender.objektart || []);
     setObjektbesichtigungErforderlich(tender.objektbesichtigungErforderlich || false);
     setRaumgruppentabelle(tender.raumgruppentabelle || false);
     setWaschmaschine(tender.waschmaschine || false);
     setEditing(false);
   };
 
-  const getObjektartDisplayName = (art: Objektart): string => {
-    switch(art) {
-      case "grundschule": return "Grundschule";
-      case "kindergarten": return "Kindergarten";
-      case "buero": return "Büro";
-      default: return "-";
+  const toggleObjektart = (objektart: Objektart) => {
+    if (objektarten.includes(objektart)) {
+      setObjektarten(objektarten.filter(o => o !== objektart));
+    } else {
+      setObjektarten([...objektarten, objektart]);
     }
   };
 
@@ -133,20 +131,32 @@ export function ObjectInfoCard({ tender, onUpdateTender }: ObjectInfoCardProps) 
           <div>
             <div className="text-sm font-medium mb-1">{t("tender.objektart", "Objektart")}</div>
             {editing ? (
-              <Select 
-                value={objektart} 
-                onValueChange={(value: Objektart) => setObjektart(value)}
-              >
-                <SelectTrigger className="w-full mt-1">
-                  <SelectValue placeholder="Objektart auswählen" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="grundschule">Grundschule</SelectItem>
-                  <SelectItem value="kindergarten">Kindergarten</SelectItem>
-                  <SelectItem value="buero">Büro</SelectItem>
-                  <SelectItem value="">Keine Angabe</SelectItem>
-                </SelectContent>
-              </Select>
+              <div className="space-y-2 mt-1">
+                <div className="flex items-center space-x-2">
+                  <Checkbox 
+                    id="grundschule" 
+                    checked={objektarten.includes("grundschule")}
+                    onCheckedChange={() => toggleObjektart("grundschule")}
+                  />
+                  <Label htmlFor="grundschule">Grundschule</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Checkbox 
+                    id="kindergarten" 
+                    checked={objektarten.includes("kindergarten")}
+                    onCheckedChange={() => toggleObjektart("kindergarten")}
+                  />
+                  <Label htmlFor="kindergarten">Kindergarten</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Checkbox 
+                    id="buero" 
+                    checked={objektarten.includes("buero")}
+                    onCheckedChange={() => toggleObjektart("buero")}
+                  />
+                  <Label htmlFor="buero">Büro</Label>
+                </div>
+              </div>
             ) : (
               <div className="text-sm">{displayObjektarten(tender.objektart)}</div>
             )}
