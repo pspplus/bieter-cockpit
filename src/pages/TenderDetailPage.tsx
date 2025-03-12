@@ -4,48 +4,23 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Layout } from "@/components/layout/Layout";
-import { TenderDetails } from "@/components/tender/TenderDetails";
-import { DocumentList } from "@/components/document/DocumentList";
-import { DocumentViewer } from "@/components/document/DocumentViewer";
-import { DocumentAIAnalysis } from "@/components/document/DocumentAIAnalysis";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { fetchTenderById } from "@/services/tenderService";
 import { fetchTenderDocuments, isViewableInBrowser } from "@/services/documentService";
 import { fetchFolders } from "@/services/folderService";
 import { Tender, TenderDocument, Folder, TenderStatus } from "@/types/tender";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
-import { Trash2, X, PencilLine } from "lucide-react";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogClose,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { ArrowLeft } from "lucide-react";
 import { TenderDetailsEditForm } from "@/components/tender/TenderDetailsEditForm";
 import { TenderContactEditForm } from "@/components/tender/TenderContactEditForm";
-import { Badge } from "@/components/ui/badge";
-import { statusDisplayMap, statusColors } from "@/utils/statusUtils";
 import { useTender } from "@/hooks/useTender";
-import { MilestoneProcess } from "@/components/tender/milestone/MilestoneProcess";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { TenderDetailsTab } from "@/components/tender/detail/TenderDetailsTab";
+import { DocumentsTab } from "@/components/tender/detail/DocumentsTab";
+import { AIAnalysisTab } from "@/components/tender/detail/AIAnalysisTab";
+import { TenderDocumentViewerDialog } from "@/components/tender/detail/TenderDocumentViewerDialog";
+import { DeleteTenderDialog } from "@/components/tender/detail/DeleteTenderDialog";
+import { DocumentAIAnalysis } from "@/components/document/DocumentAIAnalysis";
 
 export default function TenderDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -59,13 +34,9 @@ export default function TenderDetailPage() {
   const [contactDialogOpen, setContactDialogOpen] = useState(false);
   const [selectedDocument, setSelectedDocument] = useState<TenderDocument | null>(null);
   const [documentViewerOpen, setDocumentViewerOpen] = useState(false);
-  const [statusPopoverOpen, setStatusPopoverOpen] = useState(false);
-  const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
   const navigate = useNavigate();
   const { t } = useTranslation();
   const { updateTender: contextUpdateTender, deleteTender: contextDeleteTender } = useTender();
-
-  const [aiTab, setAiTab] = useState(false);
 
   useEffect(() => {
     const loadTender = async () => {
@@ -136,19 +107,6 @@ export default function TenderDetailPage() {
     }
   };
 
-  const handleStatusChange = async (newStatus: TenderStatus) => {
-    if (!tender) return;
-    
-    try {
-      await contextUpdateTender(id, { status: newStatus });
-      setTender(prev => prev ? { ...prev, status: newStatus } : null);
-      toast.success(t('notifications.statusUpdated', "Status aktualisiert"));
-    } catch (error) {
-      console.error("Error updating tender status:", error);
-      toast.error(t('errorMessages.couldNotUpdateStatus', "Fehler beim Aktualisieren des Status"));
-    }
-  };
-
   const handleAIAnalysisComplete = async (analysisResult: string) => {
     if (!tender || !id) return;
     
@@ -196,8 +154,6 @@ export default function TenderDetailPage() {
     );
   }
 
-  const { bg, text } = statusColors[tender.status];
-
   return (
     <Layout title={tender.title}>
       <div className="space-y-6">
@@ -213,36 +169,16 @@ export default function TenderDetailPage() {
               </div>
             
               <TabsContent value="details" className="mt-4">
-                <div className="flex justify-between">
-                  <div className="flex-grow">
-                    <TenderDetails 
-                      tender={tender} 
-                      onOpenDetailsDialog={() => setDetailsDialogOpen(true)} 
-                      onOpenContactDialog={() => setContactDialogOpen(true)} 
-                    />
-
-                    {tender.milestones.length > 0 && (
-                      <div className="mt-8">
-                        <h3 className="text-lg font-medium">{t("milestones.title", "Meilensteine")}</h3>
-                        <MilestoneProcess milestones={tender.milestones} tenderId={tender.id} />
-                      </div>
-                    )}
-                  </div>
-                  <Button
-                    variant="destructive"
-                    size="icon"
-                    onClick={() => setDeleteDialogOpen(true)}
-                    className="ml-2 flex-shrink-0 h-10"
-                    aria-label={t("delete")}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                    <span className="sr-only">{t("delete")}</span>
-                  </Button>
-                </div>
+                <TenderDetailsTab 
+                  tender={tender}
+                  onOpenDetailsDialog={() => setDetailsDialogOpen(true)}
+                  onOpenContactDialog={() => setContactDialogOpen(true)}
+                  onDeleteClick={() => setDeleteDialogOpen(true)}
+                />
               </TabsContent>
               
               <TabsContent value="documents" className="mt-4">
-                <DocumentList 
+                <DocumentsTab 
                   documents={documents}
                   tenderId={tender.id}
                   folders={folders}
@@ -253,55 +189,23 @@ export default function TenderDetailPage() {
               </TabsContent>
 
               <TabsContent value="ai-analysis" className="mt-4">
-                <div className="grid gap-6 md:grid-cols-2">
-                  <DocumentAIAnalysis 
-                    tenderId={tender.id}
-                    folders={folders}
-                    onAnalysisComplete={handleAIAnalysisComplete}
-                  />
-                  
-                  <div className="space-y-4">
-                    <div className="bg-muted rounded-lg p-4">
-                      <h3 className="text-lg font-medium mb-2">Über die KI-Analyse</h3>
-                      <p className="text-sm text-muted-foreground">
-                        Diese Funktion analysiert PDF-, Word- und Excel-Dokumente in den folgenden Ordnern:
-                      </p>
-                      <ul className="mt-2 space-y-1 text-sm">
-                        <li>• 01 Dateien für Angebot</li>
-                        <li>• 02 Leistungsverzeichnis</li>
-                        <li>• 03 Zusätzliche Informationen</li>
-                      </ul>
-                      <p className="mt-4 text-sm text-muted-foreground">
-                        Die Ergebnisse der Analyse werden zu den Notizen der Ausschreibung hinzugefügt.
-                      </p>
-                    </div>
-                  </div>
-                </div>
+                <AIAnalysisTab 
+                  tenderId={tender.id}
+                  folders={folders}
+                  onAnalysisComplete={handleAIAnalysisComplete}
+                />
               </TabsContent>
             </Tabs>
           </div>
         </div>
       </div>
 
-      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>{t("deleteConfirmation.title", "Ausschreibung löschen")}</AlertDialogTitle>
-            <AlertDialogDescription>
-              {t("deleteConfirmation.description", "Sind Sie sicher, dass Sie diese Ausschreibung löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.")}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>{t("cancel", "Abbrechen")}</AlertDialogCancel>
-            <AlertDialogAction 
-              onClick={handleDelete}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
-              {t("deleteConfirmation.confirm", "Ausschreibung löschen")}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      {/* Dialogs */}
+      <DeleteTenderDialog 
+        isOpen={deleteDialogOpen}
+        onClose={() => setDeleteDialogOpen(false)}
+        onConfirm={handleDelete}
+      />
 
       <Dialog open={detailsDialogOpen} onOpenChange={setDetailsDialogOpen}>
         <DialogContent className="sm:max-w-[600px]">
@@ -341,52 +245,11 @@ export default function TenderDetailPage() {
         </DialogContent>
       </Dialog>
 
-      <Dialog open={documentViewerOpen} onOpenChange={setDocumentViewerOpen}>
-        <DialogContent className="sm:max-w-5xl max-h-[90vh]">
-          <DialogHeader className="flex flex-row items-center justify-between">
-            <div>
-              <DialogTitle className="pr-8">
-                {selectedDocument?.name}
-              </DialogTitle>
-              <DialogDescription>
-                {selectedDocument?.description}
-              </DialogDescription>
-            </div>
-            <DialogClose className="absolute right-4 top-4 opacity-70 ring-offset-background transition-opacity hover:opacity-100">
-              <X className="h-4 w-4" />
-              <span className="sr-only">Schließen</span>
-            </DialogClose>
-          </DialogHeader>
-          
-          <div className="flex-1 overflow-hidden">
-            {selectedDocument && (
-              <DocumentViewer 
-                document={selectedDocument}
-                isOpen={documentViewerOpen}
-                onClose={() => setDocumentViewerOpen(false)}
-              />
-            )}
-          </div>
-          
-          <div className="flex justify-end space-x-2 mt-4">
-            <Button variant="outline" onClick={() => setDocumentViewerOpen(false)}>
-              Schließen
-            </Button>
-            {selectedDocument && (
-              <Button 
-                variant="default"
-                onClick={() => {
-                  if (selectedDocument) {
-                    window.open(selectedDocument.fileUrl, '_blank');
-                  }
-                }}
-              >
-                Herunterladen
-              </Button>
-            )}
-          </div>
-        </DialogContent>
-      </Dialog>
+      <TenderDocumentViewerDialog 
+        isOpen={documentViewerOpen}
+        onClose={() => setDocumentViewerOpen(false)}
+        document={selectedDocument}
+      />
     </Layout>
   );
 }
