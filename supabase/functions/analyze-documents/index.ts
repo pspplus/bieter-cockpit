@@ -53,7 +53,7 @@ serve(async (req) => {
     let prompt = "Bitte analysiere die folgenden Ausschreibungsdokumente und extrahiere die wichtigsten Informationen:";
     
     if (customPrompt) {
-      prompt += `\n\nBitte beantworte speziell diese Fragen:\n${customPrompt}`;
+      prompt = customPrompt;
     }
     
     prompt += `\n\nDokumente:\n${combinedContent}`;
