@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -43,7 +44,7 @@ import { TenderContactEditForm } from "@/components/tender/TenderContactEditForm
 import { Badge } from "@/components/ui/badge";
 import { statusDisplayMap, statusColors } from "@/utils/statusUtils";
 import { useTender } from "@/hooks/useTender";
-import { MilestoneProcess } from "@/components/tender/MilestoneProcess";
+import { MilestoneProcess } from "@/components/tender/milestone/MilestoneProcess";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export default function TenderDetailPage() {
