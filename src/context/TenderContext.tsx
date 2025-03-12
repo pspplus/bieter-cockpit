@@ -1,4 +1,3 @@
-
 import React, { createContext, useState, useEffect } from "react";
 import { Tender, Milestone, MilestoneStatus } from "@/types/tender";
 import { useAuth } from "@/context/AuthContext";
@@ -201,7 +200,12 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
         .flatMap(t => t.milestones)
         .find(m => m.id === milestone.id);
       
-      if (existingMilestone && existingMilestone.status !== milestone.status) {
+      if (!existingMilestone) {
+        throw new Error("Milestone not found");
+      }
+      
+      // Nur die Statusvalidierung durchführen, wenn sich der Status tatsächlich ändert 
+      if (existingMilestone.status !== milestone.status) {
         const isAllowed = canUpdateMilestoneStatus(existingMilestone, milestone.status);
         
         if (!isAllowed) {
