@@ -134,15 +134,17 @@ export function MilestoneProcess({ milestones, tenderId }: MilestoneProcessProps
         <div className="space-y-6">
           <MilestoneProgress milestones={milestones} />
           
-          <MilestoneLine 
-            milestones={milestones}
-            employees={employees}
-            isUpdating={updating}
-            onAssigneeAdd={handleAssigneeAdd}
-            onAssigneeRemove={handleAssigneeRemove}
-            onStatusChange={handleStatusChange}
-            canUpdateMilestoneStatus={canUpdateMilestoneStatus}
-          />
+          <div className="min-h-[300px]">
+            <MilestoneLine 
+              milestones={milestones}
+              employees={employees}
+              isUpdating={updating}
+              onAssigneeAdd={handleAssigneeAdd}
+              onAssigneeRemove={handleAssigneeRemove}
+              onStatusChange={handleStatusChange}
+              canUpdateMilestoneStatus={canUpdateMilestoneStatus}
+            />
+          </div>
         </div>
       </CardContent>
     </Card>

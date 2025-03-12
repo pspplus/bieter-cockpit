@@ -39,7 +39,7 @@ export function MilestoneAssignees({
         {t("milestones.assignees", "Zuständige Mitarbeiter")}:
       </h5>
       
-      <div className="flex flex-wrap gap-1 mb-2">
+      <div className="flex flex-wrap gap-1 mb-2 min-h-[30px]">
         {(!milestone.assignees || milestone.assignees.length === 0) && (
           <p className="text-xs text-tender-500 italic">
             {t("milestones.noAssignees", "Keine Mitarbeiter zugewiesen")}

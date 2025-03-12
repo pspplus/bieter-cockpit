@@ -30,7 +30,7 @@ export function MilestoneLine({
   
   return (
     <div className="relative w-full overflow-x-auto pb-2 md:pb-0 my-8">
-      <div className="flex w-full">
+      <div className="flex w-full h-full">
         {sortedMilestones.map((milestone, index) => (
           <MilestoneItem
             key={milestone.id}
