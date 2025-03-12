@@ -12,6 +12,7 @@ interface MilestoneLineProps {
   onAssigneeRemove: (milestone: Milestone, employeeId: string) => Promise<void>;
   onStatusChange: (milestone: Milestone, newStatus: MilestoneStatus) => Promise<void>;
   canUpdateMilestoneStatus: (milestone: Milestone, newStatus: MilestoneStatus) => boolean;
+  onDueDateChange?: (milestone: Milestone, newDate: Date) => Promise<void>;
 }
 
 export function MilestoneLine({
@@ -21,7 +22,8 @@ export function MilestoneLine({
   onAssigneeAdd,
   onAssigneeRemove,
   onStatusChange,
-  canUpdateMilestoneStatus
+  canUpdateMilestoneStatus,
+  onDueDateChange
 }: MilestoneLineProps) {
   // Ensure milestones are sorted by sequence number
   const sortedMilestones = [...milestones].sort((a, b) => 
@@ -47,6 +49,7 @@ export function MilestoneLine({
                 onAssigneeRemove={onAssigneeRemove}
                 onStatusChange={onStatusChange}
                 canUpdateMilestoneStatus={canUpdateMilestoneStatus}
+                onDueDateChange={onDueDateChange}
               />
             }
           />

@@ -1,3 +1,4 @@
+
 import { Milestone, MilestoneStatus } from "@/types/tender";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
@@ -119,6 +120,26 @@ export function MilestoneProcess({ milestones, tenderId }: MilestoneProcessProps
     }
   };
   
+  const handleDueDateChange = async (milestone: Milestone, newDate: Date) => {
+    if (!tenderId) return;
+    
+    try {
+      setUpdating(true);
+      
+      await updateMilestone({
+        ...milestone,
+        dueDate: newDate
+      });
+      
+      toast.success(t("milestones.dueDateUpdated", "Fälligkeitsdatum aktualisiert"));
+    } catch (error) {
+      console.error("Error updating due date:", error);
+      toast.error(t("milestones.dueDateError", "Fehler beim Aktualisieren des Fälligkeitsdatums"));
+    } finally {
+      setUpdating(false);
+    }
+  };
+  
   if (milestones.length === 0) {
     return (
       <div className="text-sm text-tender-500 italic">
@@ -142,6 +163,7 @@ export function MilestoneProcess({ milestones, tenderId }: MilestoneProcessProps
               onAssigneeRemove={handleAssigneeRemove}
               onStatusChange={handleStatusChange}
               canUpdateMilestoneStatus={canUpdateMilestoneStatus}
+              onDueDateChange={handleDueDateChange}
             />
           </div>
         </div>
