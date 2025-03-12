@@ -212,7 +212,9 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
       
       const updatedMilestone = {
         ...milestone,
-        sequenceNumber: milestone.sequenceNumber || 0
+        sequenceNumber: milestone.sequenceNumber || 0,
+        // Ensure assignees are properly handled
+        assignees: milestone.assignees || []
       };
       
       await updateMilestoneService(updatedMilestone);

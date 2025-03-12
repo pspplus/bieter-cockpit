@@ -319,6 +319,7 @@ export type Database = {
       }
       milestones: {
         Row: {
+          assignees: string[] | null
           completion_date: string | null
           created_at: string
           description: string
@@ -332,6 +333,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          assignees?: string[] | null
           completion_date?: string | null
           created_at?: string
           description: string
@@ -345,6 +347,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          assignees?: string[] | null
           completion_date?: string | null
           created_at?: string
           description?: string

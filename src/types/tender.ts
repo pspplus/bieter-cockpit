@@ -1,4 +1,3 @@
-
 export type TenderStatus = 
   | 'entwurf'
   | 'in-pruefung'
@@ -57,6 +56,7 @@ export interface Milestone {
   documents?: TenderDocument[];
   tenderId?: string;
   tenderTitle?: string; // Added for dashboard display
+  assignees?: string[]; // Added for employee assignments
 }
 
 export interface DocumentVersion {

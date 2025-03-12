@@ -1,7 +1,7 @@
 
 import { Milestone } from "@/types/tender";
 import { useTranslation } from "react-i18next";
-import { CheckCircle, Circle, Clock, XCircle, Edit } from "lucide-react";
+import { CheckCircle, Circle, Clock, XCircle, Edit, UserPlus, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -9,6 +9,15 @@ import { Button } from "@/components/ui/button";
 import { useTender } from "@/hooks/useTender";
 import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
+} from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
 
 interface MilestoneProcessProps {
   milestones: Milestone[];
@@ -19,6 +28,16 @@ export function MilestoneProcess({ milestones, tenderId }: MilestoneProcessProps
   const { t } = useTranslation();
   const { updateMilestone, canUpdateMilestoneStatus } = useTender();
   const [updating, setUpdating] = useState(false);
+  const [newAssignee, setNewAssignee] = useState("");
+  
+  // Mock employees list - in a real application, this would come from a database
+  const employees = [
+    { id: "1", name: "Max Mustermann" },
+    { id: "2", name: "Jane Doe" },
+    { id: "3", name: "John Smith" },
+    { id: "4", name: "Anna Müller" },
+    { id: "5", name: "Thomas Weber" },
+  ];
   
   // Ensure milestones are sorted by sequence number
   const sortedMilestones = [...milestones].sort((a, b) => 
@@ -98,6 +117,88 @@ export function MilestoneProcess({ milestones, tenderId }: MilestoneProcessProps
       setUpdating(false);
     }
   };
+
+  const handleAssigneeAdd = async (milestone: Milestone, employeeId: string) => {
+    if (!tenderId) return;
+    
+    try {
+      setUpdating(true);
+      
+      // Get employee name for better UX messaging
+      const employee = employees.find(e => e.id === employeeId);
+      
+      // Prepare the updated assignees list, ensuring we don't add duplicates
+      const currentAssignees = milestone.assignees || [];
+      if (currentAssignees.includes(employeeId)) {
+        toast.info(t("milestones.alreadyAssigned", "Mitarbeiter bereits zugewiesen"));
+        return;
+      }
+      
+      const updatedAssignees = [...currentAssignees, employeeId];
+      
+      await updateMilestone({
+        ...milestone,
+        assignees: updatedAssignees
+      });
+      
+      toast.success(
+        t("milestones.assigneeAdded", "Mitarbeiter {{name}} zugewiesen", { 
+          name: employee?.name || employeeId 
+        })
+      );
+    } catch (error) {
+      console.error("Error adding assignee:", error);
+      toast.error(t("milestones.assigneeError", "Fehler beim Zuweisen des Mitarbeiters"));
+    } finally {
+      setUpdating(false);
+    }
+  };
+
+  const handleAssigneeRemove = async (milestone: Milestone, employeeId: string) => {
+    if (!tenderId) return;
+    
+    try {
+      setUpdating(true);
+      
+      // Get employee name for better UX messaging
+      const employee = employees.find(e => e.id === employeeId);
+      
+      // Remove the assignee
+      const updatedAssignees = (milestone.assignees || []).filter(id => id !== employeeId);
+      
+      await updateMilestone({
+        ...milestone,
+        assignees: updatedAssignees
+      });
+      
+      toast.success(
+        t("milestones.assigneeRemoved", "Mitarbeiter {{name}} entfernt", { 
+          name: employee?.name || employeeId 
+        })
+      );
+    } catch (error) {
+      console.error("Error removing assignee:", error);
+      toast.error(t("milestones.assigneeRemoveError", "Fehler beim Entfernen des Mitarbeiters"));
+    } finally {
+      setUpdating(false);
+    }
+  };
+  
+  const getAssigneesDisplay = (assignees?: string[]) => {
+    if (!assignees || assignees.length === 0) {
+      return null;
+    }
+    
+    const displayCount = assignees.length;
+    return (
+      <div className="absolute -bottom-1 -right-1 bg-primary rounded-full p-0.5">
+        <div className="flex items-center justify-center">
+          <Users className="h-3 w-3 text-white" />
+          <span className="text-white text-[10px] ml-0.5 font-medium">{displayCount}</span>
+        </div>
+      </div>
+    );
+  };
   
   if (sortedMilestones.length === 0) {
     return (
@@ -152,6 +253,7 @@ export function MilestoneProcess({ milestones, tenderId }: MilestoneProcessProps
                             statusColors.icon
                           )}>
                             {getStatusIcon(milestone.status)}
+                            {getAssigneesDisplay(milestone.assignees)}
                           </div>
                           
                           {/* Show edit indicator on hover */}
@@ -183,13 +285,75 @@ export function MilestoneProcess({ milestones, tenderId }: MilestoneProcessProps
                         </div>
                       </div>
                     </PopoverTrigger>
-                    <PopoverContent className="w-64 p-4" align="center">
+                    <PopoverContent className="w-80 p-4" align="center">
                       <div className="space-y-4">
                         <div>
                           <h4 className="font-medium text-sm">{milestone.title}</h4>
                           {milestone.description && (
                             <p className="text-xs text-muted-foreground mt-1">{milestone.description}</p>
                           )}
+                        </div>
+                        
+                        {/* Assignees Section */}
+                        <div className="space-y-2">
+                          <h5 className="text-xs font-medium flex items-center">
+                            <Users className="h-3 w-3 mr-1" />
+                            {t("milestones.assignees", "Zuständige Mitarbeiter")}:
+                          </h5>
+                          
+                          <div className="flex flex-wrap gap-1 mb-2">
+                            {(!milestone.assignees || milestone.assignees.length === 0) && (
+                              <p className="text-xs text-tender-500 italic">
+                                {t("milestones.noAssignees", "Keine Mitarbeiter zugewiesen")}
+                              </p>
+                            )}
+                            
+                            {milestone.assignees?.map(assigneeId => {
+                              const employee = employees.find(e => e.id === assigneeId);
+                              return (
+                                <Badge key={assigneeId} variant="secondary" className="flex items-center gap-1">
+                                  <span className="max-w-[150px] truncate">
+                                    {employee?.name || assigneeId}
+                                  </span>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-4 w-4 rounded-full p-0 hover:bg-destructive hover:text-destructive-foreground"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleAssigneeRemove(milestone, assigneeId);
+                                    }}
+                                    disabled={updating}
+                                  >
+                                    <XCircle className="h-3 w-3" />
+                                  </Button>
+                                </Badge>
+                              );
+                            })}
+                          </div>
+                          
+                          <div className="flex items-center gap-2">
+                            <Select 
+                              onValueChange={(value) => handleAssigneeAdd(milestone, value)}
+                              disabled={updating}
+                            >
+                              <SelectTrigger className="h-8 text-xs">
+                                <SelectValue placeholder={t("milestones.addAssignee", "Mitarbeiter hinzufügen")} />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {employees.map(employee => (
+                                  <SelectItem 
+                                    key={employee.id} 
+                                    value={employee.id}
+                                    disabled={milestone.assignees?.includes(employee.id)}
+                                    className="text-xs"
+                                  >
+                                    {employee.name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
                         </div>
                         
                         <div className="space-y-2">
