@@ -63,10 +63,10 @@ export function MilestonePopover({
       <div className="space-y-2">
         <Label>Status</Label>
         <MilestoneStatusButtons
-          currentStatus={milestone.status}
+          milestone={milestone}
           onStatusChange={(newStatus) => onStatusChange(milestone, newStatus)}
           isUpdating={isUpdating}
-          canUpdateStatus={(newStatus) => canUpdateMilestoneStatus(milestone, newStatus)}
+          canUpdateMilestoneStatus={canUpdateMilestoneStatus}
         />
       </div>
       

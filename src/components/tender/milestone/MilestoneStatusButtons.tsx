@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 
 interface MilestoneStatusButtonsProps {
   milestone: Milestone;
-  onStatusChange: (milestone: Milestone, newStatus: MilestoneStatus) => Promise<void>;
+  onStatusChange: (newStatus: MilestoneStatus) => Promise<void>;
   canUpdateMilestoneStatus: (milestone: Milestone, newStatus: MilestoneStatus) => boolean;
   isUpdating: boolean;
 }
@@ -27,7 +27,7 @@ export function MilestoneStatusButtons({
           variant={milestone.status === "pending" ? "default" : "outline"}
           size="sm"
           className="text-xs h-8"
-          onClick={() => onStatusChange(milestone, "pending")}
+          onClick={() => onStatusChange("pending")}
           disabled={isUpdating || milestone.status === "pending"}
         >
           <Circle className="h-3 w-3 mr-1 text-tender-300" />
@@ -38,7 +38,7 @@ export function MilestoneStatusButtons({
           variant={milestone.status === "in-progress" ? "default" : "outline"}
           size="sm"
           className="text-xs h-8"
-          onClick={() => onStatusChange(milestone, "in-progress")}
+          onClick={() => onStatusChange("in-progress")}
           disabled={isUpdating || milestone.status === "in-progress"}
         >
           <Clock className="h-3 w-3 mr-1 text-blue-500" />
@@ -49,7 +49,7 @@ export function MilestoneStatusButtons({
           variant={milestone.status === "completed" ? "default" : "outline"}
           size="sm"
           className="text-xs h-8"
-          onClick={() => onStatusChange(milestone, "completed")}
+          onClick={() => onStatusChange("completed")}
           disabled={isUpdating || milestone.status === "completed" || !canUpdateMilestoneStatus(milestone, "completed")}
         >
           <CheckCircle className="h-3 w-3 mr-1 text-green-500" />
@@ -60,7 +60,7 @@ export function MilestoneStatusButtons({
           variant={milestone.status === "skipped" ? "default" : "outline"}
           size="sm"
           className="text-xs h-8"
-          onClick={() => onStatusChange(milestone, "skipped")}
+          onClick={() => onStatusChange("skipped")}
           disabled={isUpdating || milestone.status === "skipped" || !canUpdateMilestoneStatus(milestone, "skipped")}
         >
           <XCircle className="h-3 w-3 mr-1 text-tender-400" />
