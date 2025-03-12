@@ -5,9 +5,23 @@ import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { TenderCard } from "@/components/tender/TenderCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowRight, FileCheck, FileText, Flag, Clock, AlertCircle, BarChart } from "lucide-react";
+import { 
+  ArrowRight, 
+  FileCheck, 
+  FileText, 
+  Flag, 
+  Clock, 
+  AlertCircle, 
+  BarChart,
+  CheckCircle2,
+  Circle,
+  CircleSlash,
+  CircleDashed,
+  ExternalLink
+} from "lucide-react";
 import { Link } from "react-router-dom";
 import { statusGroups } from "@/utils/statusUtils";
+import { MilestoneStatus } from "@/types/tender";
 
 export default function Dashboard() {
   const { tenders } = useTender();
@@ -40,6 +54,47 @@ export default function Dashboard() {
       return dueDate > now && dueDate <= oneWeekFromNow && statusGroups.active.includes(t.status);
     })
     .sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime());
+
+  // Get all milestones across all tenders
+  const allMilestones = tenders.flatMap(tender => 
+    tender.milestones.map(milestone => ({
+      ...milestone,
+      tenderTitle: tender.title
+    }))
+  );
+
+  // Group milestones by status
+  const milestonesByStatus = {
+    pending: allMilestones.filter(m => m.status === 'pending'),
+    'in-progress': allMilestones.filter(m => m.status === 'in-progress'),
+    completed: allMilestones.filter(m => m.status === 'completed'),
+    skipped: allMilestones.filter(m => m.status === 'skipped')
+  };
+
+  // Get counts for each status
+  const milestoneStatusCounts = {
+    pending: milestonesByStatus.pending.length,
+    inProgress: milestonesByStatus['in-progress'].length,
+    completed: milestonesByStatus.completed.length,
+    skipped: milestonesByStatus.skipped.length,
+    total: allMilestones.length
+  };
+
+  // Get the milestone status icon
+  const getMilestoneStatusIcon = (status: MilestoneStatus) => {
+    switch (status) {
+      case 'pending':
+        return <Circle className="h-4 w-4 text-slate-400" />;
+      case 'in-progress':
+        return <CircleDashed className="h-4 w-4 text-blue-500" />;
+      case 'completed':
+        return <CheckCircle2 className="h-4 w-4 text-green-500" />;
+      case 'skipped':
+        return <CircleSlash className="h-4 w-4 text-amber-500" />;
+      default:
+        return <Circle className="h-4 w-4" />;
+    }
+  };
 
   return (
     <Layout title="Dashboard">
@@ -90,28 +145,94 @@ export default function Dashboard() {
           </Card>
         </div>
         
-        <Card className="animate-blur-in" style={{ animationDelay: "200ms" }}>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Zuschlagsquote</CardTitle>
-            <BarChart className="h-4 w-4 text-bieter-blue" />
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center space-x-4">
-              <div className="flex-1">
-                <div className="text-2xl font-bold">{successRate}%</div>
-                <p className="text-xs text-tender-500">
-                  {tendersWon} won out of {allSubmittedTenders} submitted tenders
-                </p>
+        <div className="grid gap-4 md:grid-cols-2">
+          <Card className="animate-blur-in" style={{ animationDelay: "200ms" }}>
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm font-medium">Zuschlagsquote</CardTitle>
+              <BarChart className="h-4 w-4 text-bieter-blue" />
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center space-x-4">
+                <div className="flex-1">
+                  <div className="text-2xl font-bold">{successRate}%</div>
+                  <p className="text-xs text-tender-500">
+                    {tendersWon} won out of {allSubmittedTenders} submitted tenders
+                  </p>
+                </div>
+                <div className="h-2 flex-1 bg-gray-200 rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-bieter-blue rounded-full"
+                    style={{ width: `${successRate}%` }}
+                  ></div>
+                </div>
               </div>
-              <div className="h-2 flex-1 bg-gray-200 rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-bieter-blue rounded-full"
-                  style={{ width: `${successRate}%` }}
-                ></div>
+            </CardContent>
+          </Card>
+
+          <Card className="animate-blur-in" style={{ animationDelay: "250ms" }}>
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm font-medium">Meilenstein Übersicht</CardTitle>
+              <CheckCircle2 className="h-4 w-4 text-bieter-blue" />
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="flex items-center">
+                    <Circle className="h-4 w-4 text-slate-400 mr-2" />
+                    <div className="flex-1 flex justify-between">
+                      <span className="text-sm">Ausstehend</span>
+                      <span className="font-medium">{milestoneStatusCounts.pending}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center">
+                    <CircleDashed className="h-4 w-4 text-blue-500 mr-2" />
+                    <div className="flex-1 flex justify-between">
+                      <span className="text-sm">In Bearbeitung</span>
+                      <span className="font-medium">{milestoneStatusCounts.inProgress}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center">
+                    <CheckCircle2 className="h-4 w-4 text-green-500 mr-2" />
+                    <div className="flex-1 flex justify-between">
+                      <span className="text-sm">Abgeschlossen</span>
+                      <span className="font-medium">{milestoneStatusCounts.completed}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center">
+                    <CircleSlash className="h-4 w-4 text-amber-500 mr-2" />
+                    <div className="flex-1 flex justify-between">
+                      <span className="text-sm">Übersprungen</span>
+                      <span className="font-medium">{milestoneStatusCounts.skipped}</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="h-2 w-full bg-gray-200 rounded-full overflow-hidden">
+                  {milestoneStatusCounts.total > 0 && (
+                    <>
+                      <div 
+                        className="h-full bg-blue-500 float-left"
+                        style={{ width: `${(milestoneStatusCounts.inProgress / milestoneStatusCounts.total) * 100}%` }}
+                      ></div>
+                      <div 
+                        className="h-full bg-green-500 float-left"
+                        style={{ width: `${(milestoneStatusCounts.completed / milestoneStatusCounts.total) * 100}%` }}
+                      ></div>
+                      <div 
+                        className="h-full bg-amber-500 float-left"
+                        style={{ width: `${(milestoneStatusCounts.skipped / milestoneStatusCounts.total) * 100}%` }}
+                      ></div>
+                    </>
+                  )}
+                </div>
+                
+                <div className="text-xs text-center text-tender-500">
+                  {milestoneStatusCounts.total} Meilensteine insgesamt
+                </div>
               </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </div>
         
         <div className="grid gap-6 md:grid-cols-2">
           <div className="space-y-4">
