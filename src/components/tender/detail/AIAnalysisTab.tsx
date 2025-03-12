@@ -1,5 +1,6 @@
 
 import { Folder } from "@/types/tender";
+import { DocumentAIAnalysis } from "@/components/document/DocumentAIAnalysis";
 
 interface AIAnalysisTabProps {
   tenderId: string;
