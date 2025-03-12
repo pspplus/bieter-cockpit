@@ -1,6 +1,7 @@
 
 import { Tender } from "@/types/tender";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { FileText, BrainCircuit } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
@@ -35,21 +36,23 @@ export function NotesCard({ tender }: NotesCardProps) {
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        {regularNotes && regularNotes.length > 0 && (
-          <div className="whitespace-pre-wrap">{regularNotes}</div>
-        )}
-        
-        {aiAnalysis && (
-          <div className="mt-4 pt-4 border-t">
-            <div className="flex items-center gap-2 mb-2">
-              <BrainCircuit className="h-5 w-5 text-indigo-500" />
-              <h3 className="font-medium">KI-Analyse Ergebnisse</h3>
+        <ScrollArea className="h-[300px] pr-4">
+          {regularNotes && regularNotes.length > 0 && (
+            <div className="whitespace-pre-wrap">{regularNotes}</div>
+          )}
+          
+          {aiAnalysis && (
+            <div className="mt-4 pt-4 border-t">
+              <div className="flex items-center gap-2 mb-2">
+                <BrainCircuit className="h-5 w-5 text-indigo-500" />
+                <h3 className="font-medium">KI-Analyse Ergebnisse</h3>
+              </div>
+              <div className="whitespace-pre-wrap text-sm bg-muted p-3 rounded-md">
+                {aiAnalysis.replace("--- KI-ANALYSE", "").trim()}
+              </div>
             </div>
-            <div className="whitespace-pre-wrap text-sm bg-muted p-3 rounded-md">
-              {aiAnalysis.replace("--- KI-ANALYSE", "").trim()}
-            </div>
-          </div>
-        )}
+          )}
+        </ScrollArea>
       </CardContent>
     </Card>
   );
