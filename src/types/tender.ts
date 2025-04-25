@@ -6,13 +6,14 @@ export type TenderStatus =
   | 'aufklaerung'
   | 'gewonnen'
   | 'verloren'
-  | 'abgeschlossen';
+  | 'abgeschlossen'
+  | 'nicht-abgegeben';
 
 export type MilestoneStatus = 
-  | 'pending'
-  | 'in-progress'
-  | 'completed'
-  | 'skipped';
+  | 'ausstehend'
+  | 'in-bearbeitung'
+  | 'abgeschlossen'
+  | 'uebersprungen';
 
 export type Vertragsart = 
   | 'werkvertrag'
