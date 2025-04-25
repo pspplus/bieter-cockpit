@@ -1,8 +1,8 @@
 
-import { Milestone } from "@/types/tender";
+import React from "react";
+import { Milestone, MilestoneStatus, TenderStatus } from "@/types/tender";
 import { MilestoneItem } from "./MilestoneItem";
 import { MilestonePopover } from "./MilestonePopover";
-import { MilestoneStatus } from "@/types/tender";
 
 interface MilestoneLineProps {
   milestones: Milestone[];
@@ -13,6 +13,7 @@ interface MilestoneLineProps {
   onStatusChange: (milestone: Milestone, newStatus: MilestoneStatus) => Promise<void>;
   canUpdateMilestoneStatus: (milestone: Milestone, newStatus: MilestoneStatus) => boolean;
   onDueDateChange?: (milestone: Milestone, newDate: Date) => Promise<void>;
+  tenderStatus?: TenderStatus;
 }
 
 export function MilestoneLine({
@@ -23,22 +24,27 @@ export function MilestoneLine({
   onAssigneeRemove,
   onStatusChange,
   canUpdateMilestoneStatus,
-  onDueDateChange
+  onDueDateChange,
+  tenderStatus
 }: MilestoneLineProps) {
-  // Ensure milestones are sorted by sequence number
-  const sortedMilestones = [...milestones].sort((a, b) => 
-    (a.sequenceNumber || 0) - (b.sequenceNumber || 0)
-  );
-  
   return (
-    <div className="relative w-full h-full pb-2 md:pb-0 my-6">
-      <div className="flex w-full h-full">
-        {sortedMilestones.map((milestone, index) => (
+    <div className="flex flex-row w-full">
+      {milestones.map((milestone, idx) => {
+        // Bearbeitbarkeit je nach Meilensteintitel & Tenderstatus
+        let canEdit = true;
+        if (milestone.title === "Aufklärung") {
+          canEdit = tenderStatus === "aufklaerung";
+        } else if (milestone.title === "Implementierung") {
+          canEdit = tenderStatus === "gewonnen";
+        }
+        // Alle anderen wie gehabt
+
+        return (
           <MilestoneItem
             key={milestone.id}
             milestone={milestone}
-            index={index}
-            totalMilestones={sortedMilestones.length}
+            index={idx}
+            totalMilestones={milestones.length}
             employees={employees}
             popoverContent={
               <MilestonePopover
@@ -50,11 +56,14 @@ export function MilestoneLine({
                 onStatusChange={onStatusChange}
                 canUpdateMilestoneStatus={canUpdateMilestoneStatus}
                 onDueDateChange={onDueDateChange}
+                canEdit={canEdit}
+                tenderStatus={tenderStatus}
               />
             }
+            canEdit={canEdit}
           />
-        ))}
-      </div>
+        );
+      })}
     </div>
   );
 }

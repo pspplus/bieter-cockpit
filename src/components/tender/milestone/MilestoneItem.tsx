@@ -12,6 +12,7 @@ interface MilestoneItemProps {
   totalMilestones: number;
   employees?: Array<{ id: string; name: string }>;
   popoverContent: React.ReactNode;
+  canEdit?: boolean; // NEU
 }
 
 export function MilestoneItem({
@@ -19,7 +20,8 @@ export function MilestoneItem({
   index,
   totalMilestones,
   employees,
-  popoverContent
+  popoverContent,
+  canEdit = true
 }: MilestoneItemProps) {
   const statusColors = {
     'pending': 'bg-gray-200',
@@ -38,25 +40,20 @@ export function MilestoneItem({
   // Fehlerfall: Fallback-Werte
   const title = milestone.title && milestone.title.trim() !== "" ? milestone.title : `Meilenstein ${index + 1}`;
   const status = milestone.status || "pending";
-  
-  // Sichtbarkeit der Beschriftung (dunkel, wenn erreicht/aktiv, sonst hell)
+
   const isCompleted = status === "completed";
   const isActive = status === "in-progress";
-  // Meilensteine bis (einschließlich) des ersten "nicht completed/in-progress" sollen dunkel sein
-  // (Optional: Wenn du einen "aktiven Index" übergeben möchtest, kann man das noch smarter gestalten)
   const titleColor =
     isCompleted || isActive
       ? "text-slate-900"
       : "text-slate-500";
-  
-  // Get milestone assignees if available
+
   const assigneeCount = milestone.assignees?.length || 0;
-  
-  // Format due date if available
+
   const formattedDueDate = milestone.dueDate 
     ? format(new Date(milestone.dueDate), 'dd.MM.yyyy')
     : null;
-  
+
   return (
     <div 
       className={cn(
@@ -113,13 +110,19 @@ export function MilestoneItem({
         
         <PopoverTrigger asChild>
           <button
-            className="absolute top-0 right-2 p-1 rounded-full bg-white border border-gray-200 shadow-sm hover:bg-gray-50"
+            className={cn(
+              "absolute top-0 right-2 p-1 rounded-full bg-white border border-gray-200 shadow-sm",
+              canEdit ? "hover:bg-gray-50 cursor-pointer" : "opacity-40 cursor-not-allowed"
+            )}
             aria-label="Edit milestone"
+            disabled={!canEdit}
+            tabIndex={canEdit ? 0 : -1}
           >
             <Edit className="h-3 w-3 text-gray-500" />
           </button>
         </PopoverTrigger>
         
+        {/* Inhalt nur im Popover, Button kann trotzdem disabled sein, daher Info ggf. im Popover */}
         <PopoverContent align="center" className="w-auto p-0">
           {popoverContent}
         </PopoverContent>
@@ -131,4 +134,3 @@ export function MilestoneItem({
     </div>
   );
 }
-

@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Milestone, MilestoneStatus } from "@/types/tender";
+import { Milestone, MilestoneStatus, TenderStatus } from "@/types/tender";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -20,6 +20,8 @@ interface MilestonePopoverProps {
   onStatusChange: (milestone: Milestone, newStatus: MilestoneStatus) => Promise<void>;
   canUpdateMilestoneStatus: (milestone: Milestone, newStatus: MilestoneStatus) => boolean;
   onDueDateChange?: (milestone: Milestone, newDate: Date) => Promise<void>;
+  canEdit?: boolean;
+  tenderStatus?: TenderStatus;
 }
 
 export function MilestonePopover({
@@ -30,7 +32,9 @@ export function MilestonePopover({
   onAssigneeRemove,
   onStatusChange,
   canUpdateMilestoneStatus,
-  onDueDateChange
+  onDueDateChange,
+  canEdit = true,
+  tenderStatus
 }: MilestonePopoverProps) {
   const { t } = useTranslation();
   const [date, setDate] = useState<Date | undefined>(
@@ -38,11 +42,21 @@ export function MilestonePopover({
   );
   
   const handleDateChange = async (newDate: Date | undefined) => {
-    if (newDate && onDueDateChange) {
+    if (newDate && onDueDateChange && canEdit) {
       setDate(newDate);
       await onDueDateChange(milestone, newDate);
     }
   };
+
+  // Grund der Bearbeitungssperre erklären
+  let editNotice: string | null = null;
+  if (!canEdit) {
+    if (milestone.title === "Aufklärung") {
+      editNotice = "Bearbeitung erst möglich, wenn die Ausschreibung im Status 'Aufklärung' ist.";
+    } else if (milestone.title === "Implementierung") {
+      editNotice = "Bearbeitung erst möglich, wenn die Ausschreibung im Status 'Gewonnen' ist.";
+    }
+  }
   
   return (
     <div className="w-64 p-2 space-y-4">
@@ -50,34 +64,39 @@ export function MilestonePopover({
         <h3 className="font-medium text-lg mb-1">{milestone.title}</h3>
         <p className="text-sm text-muted-foreground">{milestone.description}</p>
       </div>
-      
+      {!canEdit && (
+        <div className="text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded px-2 py-1 mb-2">
+          {editNotice}
+        </div>
+      )}
       <div className="space-y-2">
         <Label htmlFor="due-date">Fälligkeitsdatum</Label>
         <DatePicker
           date={date}
-          setDate={handleDateChange}
+          setDate={canEdit ? handleDateChange : undefined}
           className="w-full"
+          disabled={!canEdit}
         />
       </div>
-      
       <div className="space-y-2">
         <Label>Status</Label>
         <MilestoneStatusButtons
           milestone={milestone}
-          onStatusChange={(newStatus) => onStatusChange(milestone, newStatus)}
+          onStatusChange={(newStatus) => canEdit ? onStatusChange(milestone, newStatus) : undefined}
           isUpdating={isUpdating}
           canUpdateMilestoneStatus={canUpdateMilestoneStatus}
+          disabled={!canEdit}
         />
       </div>
-      
       <div className="space-y-2">
         <Label>Zugewiesene Mitarbeiter</Label>
         <MilestoneAssignees
           milestone={milestone}
           employees={employees}
-          onAssigneeAdd={onAssigneeAdd}
-          onAssigneeRemove={onAssigneeRemove}
+          onAssigneeAdd={canEdit ? onAssigneeAdd : () => Promise.resolve()}
+          onAssigneeRemove={canEdit ? onAssigneeRemove : () => Promise.resolve()}
           isUpdating={isUpdating}
+          disabled={!canEdit}
         />
       </div>
     </div>

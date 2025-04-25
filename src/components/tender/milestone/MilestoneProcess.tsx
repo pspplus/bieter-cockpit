@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Milestone, MilestoneStatus } from "@/types/tender";
+import { Milestone, MilestoneStatus, TenderStatus } from "@/types/tender";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -13,9 +13,10 @@ import { MilestoneDataConsistencyBanner } from "./MilestoneDataConsistencyBanner
 interface MilestoneProcessProps {
   milestones: Milestone[];
   tenderId?: string;
+  tenderStatus?: TenderStatus;
 }
 
-export function MilestoneProcess({ milestones, tenderId }: MilestoneProcessProps) {
+export function MilestoneProcess({ milestones, tenderId, tenderStatus }: MilestoneProcessProps) {
   const { t } = useTranslation();
   const { updateMilestone, canUpdateMilestoneStatus } = useTender();
   const [updating, setUpdating] = useState(false);
@@ -161,11 +162,10 @@ export function MilestoneProcess({ milestones, tenderId }: MilestoneProcessProps
       </div>
     );
   }
-  
+
   return (
     <Card className="p-4 bg-white shadow-sm border border-tender-100">
       <CardContent className="p-0">
-        {/* Neuer Banner für Daten-Konsistenz */}
         <MilestoneDataConsistencyBanner milestones={milestones} />
         <div className="space-y-4">
           <MilestoneProgress milestones={milestones} />
@@ -179,6 +179,7 @@ export function MilestoneProcess({ milestones, tenderId }: MilestoneProcessProps
               onStatusChange={handleStatusChange}
               canUpdateMilestoneStatus={canUpdateMilestoneStatus}
               onDueDateChange={handleDueDateChange}
+              tenderStatus={tenderStatus}
             />
           </div>
         </div>

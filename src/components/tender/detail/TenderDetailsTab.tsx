@@ -30,7 +30,8 @@ export function TenderDetailsTab({
         {tender.milestones.length > 0 && (
           <div className="mt-8">
             <h3 className="text-lg font-medium">Meilensteine</h3>
-            <MilestoneProcess milestones={tender.milestones} tenderId={tender.id} />
+            {/* Tenderstatus jetzt mitgeben */}
+            <MilestoneProcess milestones={tender.milestones} tenderId={tender.id} tenderStatus={tender.status} />
           </div>
         )}
       </div>
