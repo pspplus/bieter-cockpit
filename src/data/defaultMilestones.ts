@@ -6,12 +6,14 @@ export const getDefaultMilestones = (): Partial<Milestone>[] => {
   
   // Berechne Fälligkeitsdaten basierend auf dem aktuellen Datum
   const dueDates = [
-    new Date(today.getFullYear(), today.getMonth(), today.getDate() + 3),  // Quick Check: in 3 Tagen
-    new Date(today.getFullYear(), today.getMonth(), today.getDate() + 7),  // Besichtigung: in 1 Woche
-    new Date(today.getFullYear(), today.getMonth(), today.getDate() + 14), // Konzept: in 2 Wochen
-    new Date(today.getFullYear(), today.getMonth(), today.getDate() + 18), // Kalkulation: in 18 Tagen
-    new Date(today.getFullYear(), today.getMonth(), today.getDate() + 25), // Dokumente prüfen: in 25 Tagen
-    new Date(today.getFullYear(), today.getMonth(), today.getDate() + 30)  // Ausschreibung einreichen: in 30 Tagen
+    new Date(today.getFullYear(), today.getMonth(), today.getDate() + 3),   // Quick Check: in 3 Tagen
+    new Date(today.getFullYear(), today.getMonth(), today.getDate() + 7),   // Besichtigung: in 1 Woche
+    new Date(today.getFullYear(), today.getMonth(), today.getDate() + 14),  // Konzept: in 2 Wochen
+    new Date(today.getFullYear(), today.getMonth(), today.getDate() + 18),  // Kalkulation: in 18 Tagen
+    new Date(today.getFullYear(), today.getMonth(), today.getDate() + 25),  // Dokumente prüfen: in 25 Tagen
+    new Date(today.getFullYear(), today.getMonth(), today.getDate() + 30),  // Ausschreibung einreichen: in 30 Tagen
+    new Date(today.getFullYear(), today.getMonth(), today.getDate() + 33),  // Aufklärung: in 33 Tagen (z.B. 3 Tage nach Einreichen)
+    new Date(today.getFullYear(), today.getMonth(), today.getDate() + 38),  // Implementierung: in 38 Tagen (z.B. 5 Tage nach Aufklärung)
   ];
   
   return [
@@ -61,6 +63,22 @@ export const getDefaultMilestones = (): Partial<Milestone>[] => {
       status: "pending" as MilestoneStatus,
       sequenceNumber: 6,
       dueDate: dueDates[5],
+      assignees: []
+    },
+    {
+      title: "Aufklärung",
+      description: "Rückfragen und Klärungen zur Ausschreibung bearbeiten",
+      status: "pending" as MilestoneStatus,
+      sequenceNumber: 7,
+      dueDate: dueDates[6],
+      assignees: []
+    },
+    {
+      title: "Implementierung",
+      description: "Implementierung der Anforderungen nach Zuschlag",
+      status: "pending" as MilestoneStatus,
+      sequenceNumber: 8,
+      dueDate: dueDates[7],
       assignees: []
     }
   ];
