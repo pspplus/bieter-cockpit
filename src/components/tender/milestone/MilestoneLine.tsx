@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Milestone, MilestoneStatus, TenderStatus } from "@/types/tender";
 import { MilestoneItem } from "./MilestoneItem";
@@ -13,6 +14,7 @@ interface MilestoneLineProps {
   canUpdateMilestoneStatus: (milestone: Milestone, newStatus: MilestoneStatus) => boolean;
   onDueDateChange?: (milestone: Milestone, newDate: Date) => Promise<void>;
   tenderStatus?: TenderStatus;
+  tenderId?: string; // neu: tenderId als prop für die Verknüpfung
 }
 
 // Utility type guard to ensure status string is of type TenderStatus
@@ -39,7 +41,8 @@ export function MilestoneLine({
   onStatusChange,
   canUpdateMilestoneStatus,
   onDueDateChange,
-  tenderStatus
+  tenderStatus,
+  tenderId // neu!
 }: MilestoneLineProps) {
   return (
     <div className="flex flex-row w-full">
@@ -55,10 +58,11 @@ export function MilestoneLine({
           canEdit = tenderStatus === "gewonnen";
         }
 
+        // tenderId mitgeben (fix für klickbaren Kreis)
         return (
           <MilestoneItem
             key={milestone.id}
-            milestone={milestone}
+            milestone={{ ...milestone, tenderId }} // tenderId injizieren!
             index={idx}
             totalMilestones={milestones.length}
             employees={employees}
