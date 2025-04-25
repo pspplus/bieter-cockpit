@@ -24,25 +24,25 @@ export function MilestoneItem({
   canEdit = true
 }: MilestoneItemProps) {
   const statusColors = {
-    'pending': 'bg-gray-200',
-    'in-progress': 'bg-blue-200',
-    'completed': 'bg-green-200',
-    'skipped': 'bg-amber-200'
+    'ausstehend': 'bg-gray-200',
+    'in-bearbeitung': 'bg-blue-200',
+    'abgeschlossen': 'bg-green-200',
+    'uebersprungen': 'bg-amber-200'
   };
   
   const statusTextColors = {
-    'pending': 'text-gray-700',
-    'in-progress': 'text-blue-700',
-    'completed': 'text-green-700',
-    'skipped': 'text-amber-700'
+    'ausstehend': 'text-gray-700',
+    'in-bearbeitung': 'text-blue-700',
+    'abgeschlossen': 'text-green-700',
+    'uebersprungen': 'text-amber-700'
   };
 
   // Fehlerfall: Fallback-Werte
   const title = milestone.title && milestone.title.trim() !== "" ? milestone.title : `Meilenstein ${index + 1}`;
-  const status = milestone.status || "pending";
+  const status = milestone.status || "ausstehend";
 
-  const isCompleted = status === "completed";
-  const isActive = status === "in-progress";
+  const isCompleted = status === "abgeschlossen";
+  const isActive = status === "in-bearbeitung";
   const titleColor =
     isCompleted || isActive
       ? "text-slate-900"

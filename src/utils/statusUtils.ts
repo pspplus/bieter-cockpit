@@ -1,4 +1,5 @@
 
+
 import { TenderStatus } from "@/types/tender";
 
 // Map of status codes to display text
@@ -10,7 +11,8 @@ export const statusDisplayMap: Record<TenderStatus, string> = {
   "aufklaerung": "Aufklärung",
   "gewonnen": "Gewonnen",
   "verloren": "Verloren",
-  "abgeschlossen": "Abgeschlossen"
+  "abgeschlossen": "Abgeschlossen",
+  "nicht-abgegeben": "Nicht abgegeben"
 };
 
 // Map of status codes to colors
@@ -22,7 +24,8 @@ export const statusColors: Record<TenderStatus, { bg: string; text: string }> = 
   "aufklaerung": { bg: "bg-purple-100", text: "text-purple-600" },
   "gewonnen": { bg: "bg-green-100", text: "text-green-600" },
   "verloren": { bg: "bg-red-100", text: "text-red-600" },
-  "abgeschlossen": { bg: "bg-teal-100", text: "text-teal-600" }
+  "abgeschlossen": { bg: "bg-teal-100", text: "text-teal-600" },
+  "nicht-abgegeben": { bg: "bg-gray-200", text: "text-gray-500" }
 };
 
 // Function to get status display text
@@ -40,8 +43,8 @@ export const statusGroups = {
   active: ["in-bearbeitung", "in-pruefung"] as TenderStatus[],
   draft: ["entwurf"] as TenderStatus[],
   submitted: ["abgegeben", "aufklaerung"] as TenderStatus[],
-  completed: ["gewonnen", "verloren", "abgeschlossen"] as TenderStatus[],
-  allSubmitted: ["abgegeben", "aufklaerung", "gewonnen", "verloren", "abgeschlossen"] as TenderStatus[]
+  completed: ["gewonnen", "verloren", "abgeschlossen", "nicht-abgegeben"] as TenderStatus[],
+  allSubmitted: ["abgegeben", "aufklaerung", "gewonnen", "verloren", "abgeschlossen", "nicht-abgegeben"] as TenderStatus[]
 };
 
 // Translation key mapping for i18n
@@ -53,5 +56,6 @@ export const statusTranslationKeys: Record<TenderStatus, string> = {
   "aufklaerung": "tenderStatus.clarification",
   "gewonnen": "tenderStatus.won",
   "verloren": "tenderStatus.lost",
-  "abgeschlossen": "tenderStatus.completed"
+  "abgeschlossen": "tenderStatus.completed",
+  "nicht-abgegeben": "tenderStatus.notSubmitted"
 };

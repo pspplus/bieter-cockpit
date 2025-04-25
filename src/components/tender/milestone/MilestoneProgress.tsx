@@ -11,7 +11,7 @@ export function MilestoneProgress({ milestones }: MilestoneProgressProps) {
   const { t } = useTranslation();
   
   // Count completions for progress calculation
-  const completedCount = milestones.filter(m => m.status === "completed").length;
+  const completedCount = milestones.filter(m => m.status === "abgeschlossen").length;
   const totalMilestones = milestones.length;
   const progress = totalMilestones > 0 ? Math.round((completedCount / totalMilestones) * 100) : 0;
   

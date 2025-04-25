@@ -24,44 +24,44 @@ export function MilestoneStatusButtons({
       <h5 className="text-xs font-medium">{t("milestones.updateStatus", "Status aktualisieren")}:</h5>
       <div className="grid grid-cols-2 gap-2">
         <Button
-          variant={milestone.status === "pending" ? "default" : "outline"}
+          variant={milestone.status === "ausstehend" ? "default" : "outline"}
           size="sm"
           className="text-xs h-8"
-          onClick={() => onStatusChange("pending")}
-          disabled={isUpdating || milestone.status === "pending"}
+          onClick={() => onStatusChange("ausstehend")}
+          disabled={isUpdating || milestone.status === "ausstehend"}
         >
           <Circle className="h-3 w-3 mr-1 text-tender-300" />
           {t("milestoneStatus.pending", "Ausstehend")}
         </Button>
         
         <Button
-          variant={milestone.status === "in-progress" ? "default" : "outline"}
+          variant={milestone.status === "in-bearbeitung" ? "default" : "outline"}
           size="sm"
           className="text-xs h-8"
-          onClick={() => onStatusChange("in-progress")}
-          disabled={isUpdating || milestone.status === "in-progress"}
+          onClick={() => onStatusChange("in-bearbeitung")}
+          disabled={isUpdating || milestone.status === "in-bearbeitung"}
         >
           <Clock className="h-3 w-3 mr-1 text-blue-500" />
           {t("milestoneStatus.in-progress", "In Bearbeitung")}
         </Button>
         
         <Button
-          variant={milestone.status === "completed" ? "default" : "outline"}
+          variant={milestone.status === "abgeschlossen" ? "default" : "outline"}
           size="sm"
           className="text-xs h-8"
-          onClick={() => onStatusChange("completed")}
-          disabled={isUpdating || milestone.status === "completed" || !canUpdateMilestoneStatus(milestone, "completed")}
+          onClick={() => onStatusChange("abgeschlossen")}
+          disabled={isUpdating || milestone.status === "abgeschlossen" || !canUpdateMilestoneStatus(milestone, "abgeschlossen")}
         >
           <CheckCircle className="h-3 w-3 mr-1 text-green-500" />
           {t("milestoneStatus.completed", "Abgeschlossen")}
         </Button>
         
         <Button
-          variant={milestone.status === "skipped" ? "default" : "outline"}
+          variant={milestone.status === "uebersprungen" ? "default" : "outline"}
           size="sm"
           className="text-xs h-8"
-          onClick={() => onStatusChange("skipped")}
-          disabled={isUpdating || milestone.status === "skipped" || !canUpdateMilestoneStatus(milestone, "skipped")}
+          onClick={() => onStatusChange("uebersprungen")}
+          disabled={isUpdating || milestone.status === "uebersprungen" || !canUpdateMilestoneStatus(milestone, "uebersprungen")}
         >
           <XCircle className="h-3 w-3 mr-1 text-tender-400" />
           {t("milestoneStatus.skipped", "Übersprungen")}

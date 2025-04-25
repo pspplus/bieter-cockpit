@@ -1,4 +1,3 @@
-
 import React, { createContext, useState, useEffect } from "react";
 import { Tender, Milestone, MilestoneStatus } from "@/types/tender";
 import { useAuth } from "@/context/AuthContext";
@@ -144,20 +143,20 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
   };
 
   const canUpdateMilestoneStatus = (milestone: Milestone, newStatus: MilestoneStatus): boolean => {
-    if (newStatus === "pending") {
+    if (newStatus === "ausstehend") {
       return true;
     }
     
-    if (newStatus === "in-progress") {
+    if (newStatus === "in-bearbeitung") {
       return true;
     }
     
-    if (newStatus === "completed") {
-      return milestone.status === "in-progress";
+    if (newStatus === "abgeschlossen") {
+      return milestone.status === "in-bearbeitung";
     }
     
-    if (newStatus === "skipped") {
-      return milestone.status === "pending";
+    if (newStatus === "uebersprungen") {
+      return milestone.status === "ausstehend";
     }
     
     return false;
@@ -179,7 +178,7 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
         ...milestone, 
         tenderId,
         // Ensure milestone has proper status
-        status: milestone.status || 'pending' 
+        status: milestone.status || 'ausstehend'
       });
       
       setTenders(tenders.map(tender => {

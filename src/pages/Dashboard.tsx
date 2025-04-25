@@ -64,9 +64,9 @@ export default function Dashboard() {
 
   // Group milestones by status - removing the 'skipped' status
   const milestonesByStatus = {
-    pending: allMilestones.filter(m => m.status === 'pending'),
-    'in-progress': allMilestones.filter(m => m.status === 'in-progress'),
-    completed: allMilestones.filter(m => m.status === 'completed')
+    pending: allMilestones.filter(m => m.status === 'ausstehend'),
+    'in-progress': allMilestones.filter(m => m.status === 'in-bearbeitung'),
+    completed: allMilestones.filter(m => m.status === 'abgeschlossen')
   };
 
   // Get counts for each status - removed skipped from the count
@@ -80,11 +80,11 @@ export default function Dashboard() {
   // Get the milestone status icon
   const getMilestoneStatusIcon = (status: MilestoneStatus) => {
     switch (status) {
-      case 'pending':
+      case 'ausstehend':
         return <Circle className="h-4 w-4 text-slate-400" />;
-      case 'in-progress':
+      case 'in-bearbeitung':
         return <CircleDashed className="h-4 w-4 text-blue-500" />;
-      case 'completed':
+      case 'abgeschlossen':
         return <CheckCircle2 className="h-4 w-4 text-green-500" />;
       default:
         return <Circle className="h-4 w-4" />;

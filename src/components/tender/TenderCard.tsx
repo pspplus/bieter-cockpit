@@ -22,7 +22,7 @@ export function TenderCard({ tender, isActive = false }: TenderCardProps) {
   
   // Calculate progress
   const completedMilestones = tender.milestones.filter(
-    (m) => m.status === "completed"
+    (m) => m.status === "abgeschlossen"
   ).length;
   const totalMilestones = tender.milestones.length;
   const progress = totalMilestones > 0 

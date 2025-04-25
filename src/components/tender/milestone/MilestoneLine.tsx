@@ -28,6 +28,7 @@ function isTenderStatus(status: any): status is TenderStatus {
     "gewonnen",
     "verloren",
     "abgeschlossen",
+    "nicht-abgegeben"
   ];
   return validStatuses.includes(status);
 }

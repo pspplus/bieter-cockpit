@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Milestone, MilestoneStatus, TenderStatus } from "@/types/tender";
 import { useTranslation } from "react-i18next";
@@ -45,7 +44,7 @@ export function MilestoneProcess({ milestones, tenderId, tenderStatus }: Milesto
         ...milestone,
         status: newStatus,
         // Set or clear completionDate based on status
-        completionDate: newStatus === 'completed' ? new Date() : null
+        completionDate: newStatus === 'abgeschlossen' ? new Date() : null
       });
       
       toast.success(t("milestones.statusUpdated", "Meilenstein-Status aktualisiert"));
