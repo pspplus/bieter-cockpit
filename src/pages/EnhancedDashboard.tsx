@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { Layout } from "@/components/layout/Layout";
 import {
@@ -328,7 +327,7 @@ export default function EnhancedDashboard() {
                           Fällig am: <span className="text-gray-700">
                             {format(new Date(milestone.dueDate), "dd. MMMM yyyy", { locale: de })}
                           </span>
-                          {milestone.status === "in-progress" && (
+                          {milestone.status === "in-bearbeitung" && (
                             <span className="inline-flex items-center ml-2 text-blue-500">
                               <Clock className="h-3 w-3 mr-1" />
                               In Bearbeitung

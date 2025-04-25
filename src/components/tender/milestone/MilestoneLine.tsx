@@ -51,7 +51,7 @@ export function MilestoneLine({
         let canEdit = true;
 
         // Sicherstellen, dass tenderStatus ein gültiger Wert ist
-        if (isTenderStatus(tenderStatus) && tenderStatus === "gewonnen") {
+        if (tenderStatus === "gewonnen") {
           canEdit = milestone.title === "Implementierung";
         } else if (milestone.title === "Aufklärung") {
           canEdit = tenderStatus === "aufklaerung";
