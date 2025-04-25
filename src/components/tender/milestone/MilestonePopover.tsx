@@ -75,17 +75,15 @@ export function MilestonePopover({
           date={date}
           setDate={canEdit ? handleDateChange : undefined}
           className="w-full"
-          disabled={!canEdit}
         />
       </div>
       <div className="space-y-2">
         <Label>Status</Label>
         <MilestoneStatusButtons
           milestone={milestone}
-          onStatusChange={(newStatus) => canEdit ? onStatusChange(milestone, newStatus) : undefined}
+          onStatusChange={(newStatus) => canEdit ? onStatusChange(milestone, newStatus) : Promise.resolve()}
           isUpdating={isUpdating}
           canUpdateMilestoneStatus={canUpdateMilestoneStatus}
-          disabled={!canEdit}
         />
       </div>
       <div className="space-y-2">
@@ -96,7 +94,6 @@ export function MilestonePopover({
           onAssigneeAdd={canEdit ? onAssigneeAdd : () => Promise.resolve()}
           onAssigneeRemove={canEdit ? onAssigneeRemove : () => Promise.resolve()}
           isUpdating={isUpdating}
-          disabled={!canEdit}
         />
       </div>
     </div>
