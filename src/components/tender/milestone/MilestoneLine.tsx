@@ -30,9 +30,11 @@ export function MilestoneLine({
   return (
     <div className="flex flex-row w-full">
       {milestones.map((milestone, idx) => {
-        // Bearbeitbarkeit je nach Meilensteintitel & Tenderstatus
+        // Exklusive Bearbeitbarkeit im Status "gewonnen":
         let canEdit = true;
-        if (milestone.title === "Aufklärung") {
+        if (tenderStatus === "gewonnen") {
+          canEdit = milestone.title === "Implementierung";
+        } else if (milestone.title === "Aufklärung") {
           canEdit = tenderStatus === "aufklaerung";
         } else if (milestone.title === "Implementierung") {
           canEdit = tenderStatus === "gewonnen";

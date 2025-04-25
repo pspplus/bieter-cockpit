@@ -51,7 +51,10 @@ export function MilestonePopover({
   // Grund der Bearbeitungssperre erklären
   let editNotice: string | null = null;
   if (!canEdit) {
-    if (milestone.title === "Aufklärung") {
+    if (tenderStatus === "gewonnen") {
+      // Gesperrt wegen Status "gewonnen"
+      editNotice = "Nach Zuschlag ist nur der Meilenstein 'Implementierung' bearbeitbar.";
+    } else if (milestone.title === "Aufklärung") {
       editNotice = "Bearbeitung erst möglich, wenn die Ausschreibung im Status 'Aufklärung' ist.";
     } else if (milestone.title === "Implementierung") {
       editNotice = "Bearbeitung erst möglich, wenn die Ausschreibung im Status 'Gewonnen' ist.";
