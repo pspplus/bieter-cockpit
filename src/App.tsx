@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -25,6 +24,7 @@ import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import UpdatePasswordPage from "./pages/UpdatePasswordPage";
 import ProfilePage from "./pages/ProfilePage";
 import './i18n'; // Import i18n configuration
+import MilestoneDetailPage from "./pages/MilestoneDetailPage";
 
 const queryClient = new QueryClient();
 
@@ -54,6 +54,7 @@ const App = () => (
                     <Route path="/messages" element={<MessagesPage />} />
                     <Route path="/clients" element={<ClientsPage />} />
                     <Route path="/clients/:id" element={<ClientDetailPage />} />
+                    <Route path="/tenders/:tenderId/milestones/:milestoneId" element={<MilestoneDetailPage />} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </ClientProvider>

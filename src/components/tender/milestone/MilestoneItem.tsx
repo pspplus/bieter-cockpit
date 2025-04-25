@@ -1,10 +1,10 @@
-
 import React from "react";
 import { Milestone } from "@/types/tender";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar, Edit, User2 } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
+import { Link } from "react-router-dom";
 
 interface MilestoneItemProps {
   milestone: Milestone;
@@ -54,6 +54,8 @@ export function MilestoneItem({
     ? format(new Date(milestone.dueDate), 'dd.MM.yyyy')
     : null;
 
+  const tenderId = milestone.tenderId;
+
   return (
     <div 
       className={cn(
@@ -64,14 +66,26 @@ export function MilestoneItem({
     >
       <Popover>
         <div className="flex flex-col items-center">
-          <div
-            className={cn(
-              "h-12 w-12 rounded-full flex items-center justify-center mb-2",
-              statusColors[status as keyof typeof statusColors]
-            )}
-          >
-            <span className="text-sm font-medium">{index + 1}</span>
-          </div>
+          {/* Kreis mit Meilenstein-Nummer ist jetzt Link */}
+          {tenderId ? (
+            <Link
+              to={`/tenders/${tenderId}/milestones/${milestone.id}`}
+              className="h-12 w-12 rounded-full flex items-center justify-center mb-2 focus-visible:ring-2 ring-primary/60 transition border border-gray-300 bg-white hover:bg-primary/10 cursor-pointer text-center"
+              tabIndex={0}
+              aria-label={`Meilensteindetails zu ${title}`}
+            >
+              <span className="text-sm font-medium">{index + 1}</span>
+            </Link>
+          ) : (
+            <div
+              className={cn(
+                "h-12 w-12 rounded-full flex items-center justify-center mb-2",
+                statusColors[status as keyof typeof statusColors]
+              )}
+            >
+              <span className="text-sm font-medium">{index + 1}</span>
+            </div>
+          )}
           
           <h4
             className={cn(
@@ -121,8 +135,6 @@ export function MilestoneItem({
             <Edit className="h-3 w-3 text-gray-500" />
           </button>
         </PopoverTrigger>
-        
-        {/* Inhalt nur im Popover, Button kann trotzdem disabled sein, daher Info ggf. im Popover */}
         <PopoverContent align="center" className="w-auto p-0">
           {popoverContent}
         </PopoverContent>

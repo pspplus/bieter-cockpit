@@ -57,6 +57,7 @@ export interface Milestone {
   tenderId?: string;
   tenderTitle?: string; // Added for dashboard display
   assignees?: string[]; // Added for employee assignments
+  checklist?: string[]; // <= NEU: Optionale Checkliste
 }
 
 export interface DocumentVersion {
