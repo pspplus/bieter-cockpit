@@ -16,6 +16,20 @@ interface MilestoneLineProps {
   tenderStatus?: TenderStatus;
 }
 
+// Utility type guard to ensure status string is of type TenderStatus
+function isTenderStatus(status: any): status is TenderStatus {
+  return [
+    "entwurf",
+    "in-pruefung",
+    "in-bearbeitung",
+    "abgegeben",
+    "aufklaerung",
+    "gewonnen",
+    "verloren",
+    "abgeschlossen",
+  ].includes(status);
+}
+
 export function MilestoneLine({
   milestones,
   employees,
@@ -30,16 +44,16 @@ export function MilestoneLine({
   return (
     <div className="flex flex-row w-full">
       {milestones.map((milestone, idx) => {
-        // Exklusive Bearbeitbarkeit im Status "gewonnen":
         let canEdit = true;
-        if (tenderStatus === "gewonnen") {
+
+        // Sicherstellen, dass tenderStatus ein gültiger Wert ist
+        if (isTenderStatus(tenderStatus) && tenderStatus === "gewonnen") {
           canEdit = milestone.title === "Implementierung";
         } else if (milestone.title === "Aufklärung") {
           canEdit = tenderStatus === "aufklaerung";
         } else if (milestone.title === "Implementierung") {
           canEdit = tenderStatus === "gewonnen";
         }
-        // Alle anderen wie gehabt
 
         return (
           <MilestoneItem
@@ -69,3 +83,4 @@ export function MilestoneLine({
     </div>
   );
 }
+
