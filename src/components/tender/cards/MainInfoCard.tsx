@@ -1,7 +1,7 @@
 
 import { Tender, Vertragsart } from "@/types/tender";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Edit, FileText, Save, X } from "lucide-react";
+import { Edit, FileText, Save, X, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 import { displayVertragsart } from "../utils/DisplayFormatters";
@@ -9,6 +9,7 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface MainInfoCardProps {
   tender: Tender;
@@ -140,6 +141,7 @@ export function MainInfoCard({ tender, onOpenDetailsDialog, onUpdateTender }: Ma
               <div className="text-sm">{tender.vergabeplattform}</div>
             </div>
           )}
+
           <div>
             <div className="text-sm font-medium">{t("tender.vertragsart", "Vertragsart")}</div>
             {editing ? (
@@ -161,6 +163,31 @@ export function MainInfoCard({ tender, onOpenDetailsDialog, onUpdateTender }: Ma
               <div className="text-sm">{displayVertragsart(tender.vertragsart)}</div>
             )}
           </div>
+
+          {/* Internal Reference Display, always read-only, not editable */}
+          <div className="flex flex-col">
+            <div className="text-sm font-medium flex items-center gap-1">
+              {t("tender.internalReference", "Interne Referenz")}
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span tabIndex={0}>
+                      <Info className="h-4 w-4 text-muted-foreground cursor-pointer" />
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent side="top">
+                    {t("tender.internalReferenceTooltip", "Wird automatisch vergeben (Format: JJJJ-0000)")}
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+            <div
+              className="text-sm rounded bg-muted px-2 py-1 text-gray-600 mt-1"
+              data-testid="internal-reference"
+            >
+              {tender.internalReference ? tender.internalReference : "—"}
+            </div>
+          </div>
         </div>
         
         {/* Fields that take more space stay in one column */}
@@ -176,3 +203,4 @@ export function MainInfoCard({ tender, onOpenDetailsDialog, onUpdateTender }: Ma
     </Card>
   );
 }
+
