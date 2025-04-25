@@ -34,6 +34,10 @@ export function MilestoneItem({
     'completed': 'text-green-700',
     'skipped': 'text-amber-700'
   };
+
+  // Fehlerfall: Fallback-Werte
+  const title = milestone.title && milestone.title.trim() !== "" ? milestone.title : `Meilenstein ${index + 1}`;
+  const status = milestone.status || "pending";
   
   // Get milestone assignees if available
   const assigneeCount = milestone.assignees?.length || 0;
@@ -56,24 +60,24 @@ export function MilestoneItem({
           <div
             className={cn(
               "h-12 w-12 rounded-full flex items-center justify-center mb-2",
-              statusColors[milestone.status as keyof typeof statusColors]
+              statusColors[status as keyof typeof statusColors]
             )}
           >
             <span className="text-sm font-medium">{index + 1}</span>
           </div>
           
           <h4 className="text-sm font-medium text-center line-clamp-2 mb-1 min-h-[40px]">
-            {milestone.title}
+            {title}
           </h4>
           
           <div className="flex items-center mb-1">
             <span
               className={cn(
                 "text-xs font-medium",
-                statusTextColors[milestone.status as keyof typeof statusTextColors]
+                statusTextColors[status as keyof typeof statusTextColors]
               )}
             >
-              {milestone.status}
+              {status}
             </span>
           </div>
           
@@ -112,3 +116,4 @@ export function MilestoneItem({
     </div>
   );
 }
+

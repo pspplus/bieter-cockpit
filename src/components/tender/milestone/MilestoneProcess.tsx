@@ -1,4 +1,3 @@
-
 import { Milestone, MilestoneStatus } from "@/types/tender";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
@@ -7,6 +6,7 @@ import { useTender } from "@/hooks/useTender";
 import { toast } from "sonner";
 import { MilestoneProgress } from "./MilestoneProgress";
 import { MilestoneLine } from "./MilestoneLine";
+import { MilestoneDataConsistencyBanner } from "./MilestoneDataConsistencyBanner";
 
 interface MilestoneProcessProps {
   milestones: Milestone[];
@@ -140,7 +140,19 @@ export function MilestoneProcess({ milestones, tenderId }: MilestoneProcessProps
     }
   };
   
-  if (milestones.length === 0) {
+  // Logging & Datenprüfungen vor der Anzeige
+  React.useEffect(() => {
+    if (!milestones) {
+      console.warn("Keine Milestones geladen!");
+      return;
+    }
+    milestones.forEach((m, i) => {
+      if (!m.title || typeof m.sequenceNumber !== "number" || !m.status)
+        console.warn("Inkonsistenter Milestone:", m, "Index:", i);
+    });
+  }, [milestones]);
+
+  if (!milestones || milestones.length === 0) {
     return (
       <div className="text-sm text-tender-500 italic">
         {t('milestones.noMilestonesYet', "Noch keine Meilensteine vorhanden")}
@@ -151,9 +163,10 @@ export function MilestoneProcess({ milestones, tenderId }: MilestoneProcessProps
   return (
     <Card className="p-4 bg-white shadow-sm border border-tender-100">
       <CardContent className="p-0">
+        {/* Neuer Banner für Daten-Konsistenz */}
+        <MilestoneDataConsistencyBanner milestones={milestones} />
         <div className="space-y-4">
           <MilestoneProgress milestones={milestones} />
-          
           <div className="min-h-[320px] h-full">
             <MilestoneLine 
               milestones={milestones}
