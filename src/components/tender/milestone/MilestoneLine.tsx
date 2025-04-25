@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Milestone, MilestoneStatus, TenderStatus } from "@/types/tender";
 import { MilestoneItem } from "./MilestoneItem";
@@ -18,7 +17,7 @@ interface MilestoneLineProps {
 
 // Utility type guard to ensure status string is of type TenderStatus
 function isTenderStatus(status: any): status is TenderStatus {
-  return [
+  const validStatuses: TenderStatus[] = [
     "entwurf",
     "in-pruefung",
     "in-bearbeitung",
@@ -27,7 +26,8 @@ function isTenderStatus(status: any): status is TenderStatus {
     "gewonnen",
     "verloren",
     "abgeschlossen",
-  ].includes(status);
+  ];
+  return validStatuses.includes(status);
 }
 
 export function MilestoneLine({
@@ -83,4 +83,3 @@ export function MilestoneLine({
     </div>
   );
 }
-
