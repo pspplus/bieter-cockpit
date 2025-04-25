@@ -39,6 +39,16 @@ export function MilestoneItem({
   const title = milestone.title && milestone.title.trim() !== "" ? milestone.title : `Meilenstein ${index + 1}`;
   const status = milestone.status || "pending";
   
+  // Sichtbarkeit der Beschriftung (dunkel, wenn erreicht/aktiv, sonst hell)
+  const isCompleted = status === "completed";
+  const isActive = status === "in-progress";
+  // Meilensteine bis (einschließlich) des ersten "nicht completed/in-progress" sollen dunkel sein
+  // (Optional: Wenn du einen "aktiven Index" übergeben möchtest, kann man das noch smarter gestalten)
+  const titleColor =
+    isCompleted || isActive
+      ? "text-slate-900"
+      : "text-slate-500";
+  
   // Get milestone assignees if available
   const assigneeCount = milestone.assignees?.length || 0;
   
@@ -66,7 +76,12 @@ export function MilestoneItem({
             <span className="text-sm font-medium">{index + 1}</span>
           </div>
           
-          <h4 className="text-sm font-medium text-center line-clamp-2 mb-1 min-h-[40px]">
+          <h4
+            className={cn(
+              "text-sm font-medium text-center line-clamp-2 mb-1 min-h-[40px]",
+              titleColor
+            )}
+          >
             {title}
           </h4>
           
