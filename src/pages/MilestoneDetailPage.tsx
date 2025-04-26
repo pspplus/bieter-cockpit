@@ -194,7 +194,7 @@ export default function MilestoneDetailPage() {
           {/* Zweite Karte: Vorlagen-Details */}
           <Card className="bg-slate-50">
             <CardHeader>
-              <CardTitle className="text-xl">Meilensteinvorlage</CardTitle>
+              <CardTitle className="text-[#1A1F2C] text-xl">Aufgabenbeschreibung</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
               {template ? (
@@ -202,7 +202,7 @@ export default function MilestoneDetailPage() {
                   <div className="space-y-4">
                     {template.description && (
                       <div>
-                        <h3 className="font-semibold mb-2">Vorlagenbeschreibung</h3>
+                        <h3 className="font-semibold mb-2 text-[#9b87f5] text-lg">Arbeitsanweisung</h3>
                         <p className="text-gray-600">{template.description}</p>
                       </div>
                     )}
@@ -211,7 +211,7 @@ export default function MilestoneDetailPage() {
                       <div className="space-y-4">
                         <div className="flex items-center">
                           <ListCheck className="h-4 w-4 mr-2" />
-                          <h3 className="font-semibold">Checkliste aus Vorlage</h3>
+                          <h3 className="font-semibold text-[#9b87f5] text-lg">Aufgaben</h3>
                         </div>
                         <div className="space-y-2">
                           {template.checklist_items.map((item, index) => (
