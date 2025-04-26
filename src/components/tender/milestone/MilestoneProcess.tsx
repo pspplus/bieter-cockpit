@@ -28,6 +28,8 @@ export function MilestoneProcess({ milestones, tenderId, tenderStatus }: Milesto
     { id: "4", name: "Anna Müller" },
     { id: "5", name: "Thomas Weber" },
   ];
+
+  console.log("MilestoneProcess - tenderId:", tenderId); // Debug log
   
   const handleStatusChange = async (milestone: Milestone, newStatus: MilestoneStatus) => {
     if (!tenderId) return;
@@ -162,15 +164,21 @@ export function MilestoneProcess({ milestones, tenderId, tenderStatus }: Milesto
     );
   }
 
+  // Add tenderId to each milestone
+  const milestonesWithTenderId = milestones.map(milestone => ({
+    ...milestone,
+    tenderId: tenderId
+  }));
+
   return (
     <Card className="p-4 bg-white shadow-sm border border-tender-100">
       <CardContent className="p-0">
-        <MilestoneDataConsistencyBanner milestones={milestones} />
+        <MilestoneDataConsistencyBanner milestones={milestonesWithTenderId} />
         <div className="space-y-4">
-          <MilestoneProgress milestones={milestones} />
+          <MilestoneProgress milestones={milestonesWithTenderId} />
           <div className="min-h-[320px] h-full">
             <MilestoneLine 
-              milestones={milestones}
+              milestones={milestonesWithTenderId}
               employees={employees}
               isUpdating={updating}
               onAssigneeAdd={handleAssigneeAdd}
@@ -179,6 +187,7 @@ export function MilestoneProcess({ milestones, tenderId, tenderStatus }: Milesto
               canUpdateMilestoneStatus={canUpdateMilestoneStatus}
               onDueDateChange={handleDueDateChange}
               tenderStatus={tenderStatus}
+              tenderId={tenderId}
             />
           </div>
         </div>

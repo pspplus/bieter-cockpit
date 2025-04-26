@@ -6,6 +6,11 @@ import { Calendar, Edit, User2 } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
 
 interface MilestoneItemProps {
   milestone: Milestone;
@@ -24,6 +29,8 @@ export function MilestoneItem({
   popoverContent,
   canEdit = true
 }: MilestoneItemProps) {
+  console.log("MilestoneItem - milestone:", milestone); // Debug log
+
   const statusColors = {
     'ausstehend': 'bg-gray-200 text-gray-700',
     'in-bearbeitung': 'bg-blue-200 text-blue-700',
@@ -38,26 +45,39 @@ export function MilestoneItem({
     'uebersprungen': 'Übersprungen'
   };
 
-  // Fehlerfall: Fallback-Werte
   const title = milestone.title && milestone.title.trim() !== "" ? milestone.title : `Meilenstein ${index + 1}`;
   const status = milestone.status || "ausstehend";
-
   const isCompleted = status === "abgeschlossen";
   const isActive = status === "in-bearbeitung";
   const titleColor = isCompleted || isActive ? "text-slate-900" : "text-slate-500";
-
   const assigneeCount = milestone.assignees?.length || 0;
-
   const formattedDueDate = milestone.dueDate 
     ? format(new Date(milestone.dueDate), 'dd.MM.yyyy')
     : null;
 
   const tenderId = milestone.tenderId;
+  console.log("MilestoneItem - tenderId:", tenderId); // Debug log
 
   const circleClasses = cn(
-    "h-12 w-12 rounded-full flex items-center justify-center mb-2",
+    "h-12 w-12 rounded-full flex items-center justify-center mb-2 transition-all duration-200",
     statusColors[status as keyof typeof statusColors],
-    tenderId ? "hover:bg-primary/10 cursor-pointer" : ""
+    tenderId ? "hover:scale-110 hover:shadow-md cursor-pointer hover:bg-primary/20" : "",
+    "border border-gray-300"
+  );
+
+  const MilestoneCircle = () => (
+    <HoverCard>
+      <HoverCardTrigger>
+        <div className={circleClasses}>
+          <span className="text-sm font-medium">{index + 1}</span>
+        </div>
+      </HoverCardTrigger>
+      <HoverCardContent>
+        <div className="text-sm">
+          <strong>Klicken Sie</strong>, um die Meilensteindetails anzuzeigen
+        </div>
+      </HoverCardContent>
+    </HoverCard>
   );
 
   return (
@@ -73,19 +93,14 @@ export function MilestoneItem({
           {tenderId ? (
             <Link
               to={`/tenders/${tenderId}/milestones/${milestone.id}`}
-              className={cn(
-                circleClasses,
-                "focus-visible:ring-2 ring-primary/60 transition border border-gray-300"
-              )}
+              className="focus-visible:outline-none"
               tabIndex={0}
               aria-label={`Meilensteindetails zu ${title}`}
             >
-              <span className="text-sm font-medium">{index + 1}</span>
+              <MilestoneCircle />
             </Link>
           ) : (
-            <div className={circleClasses}>
-              <span className="text-sm font-medium">{index + 1}</span>
-            </div>
+            <MilestoneCircle />
           )}
           
           <h4
