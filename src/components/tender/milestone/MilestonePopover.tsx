@@ -65,7 +65,7 @@ export function MilestonePopover({
     <div className="w-64 p-2 space-y-4">
       <div>
         <h3 className="font-medium text-lg mb-1">{milestone.title}</h3>
-        <p className="text-sm text-muted-foreground">{milestone.description}</p>
+        {/* Description removed per user request */}
       </div>
       {!canEdit && (
         <div className="text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded px-2 py-1 mb-2">
@@ -102,3 +102,4 @@ export function MilestonePopover({
     </div>
   );
 }
+
