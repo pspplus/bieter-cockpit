@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Milestone, MilestoneStatus, TenderStatus } from "@/types/tender";
 import { MilestoneItem } from "./MilestoneItem";
@@ -17,38 +16,18 @@ interface MilestoneLineProps {
   tenderId?: string;
 }
 
-// Verbesserte Type Guard Funktion
-function isTenderStatus(status: any): status is TenderStatus {
-  const validStatuses: TenderStatus[] = [
-    "entwurf",
-    "in-pruefung",
-    "in-bearbeitung",
-    "abgegeben",
-    "aufklaerung",
-    "gewonnen",
-    "verloren",
-    "abgeschlossen",
-    "nicht-abgegeben"
-  ];
-  return validStatuses.includes(status);
-}
-
-// Neue Funktion zur Prüfung der Bearbeitungsrechte
-function canEditMilestone(milestone: Milestone, status: TenderStatus | undefined): boolean {
-  if (!status || !isTenderStatus(status)) {
+// Vereinfachte Funktion zur Prüfung der Bearbeitungsrechte
+function canEditMilestone(milestone: Milestone, tenderStatus: TenderStatus | undefined): boolean {
+  if (!tenderStatus) {
     return true; // Standardmäßig erlauben, wenn kein Status gesetzt ist
   }
 
-  if (status === "gewonnen") {
-    return milestone.title === "Implementierung";
+  if (milestone.title === "Implementierung") {
+    return tenderStatus === "gewonnen";
   }
 
   if (milestone.title === "Aufklärung") {
-    return status === "aufklaerung";
-  }
-
-  if (milestone.title === "Implementierung") {
-    return status === "gewonnen";
+    return tenderStatus === "aufklaerung";
   }
 
   return true; // Für alle anderen Fälle erlauben
