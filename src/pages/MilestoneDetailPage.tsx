@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useTender } from "@/hooks/useTender";
@@ -74,11 +75,11 @@ export default function MilestoneDetailPage() {
         setMilestone(foundMilestone);
 
         // Lade die Meilensteinvorlage, falls vorhanden
-        const { data: templateData, error: templateError } = await supabase
+        const { data: templateData } = await supabase
           .from('milestone_templates')
           .select('*')
           .eq('title', foundMilestone.title)
-          .single();
+          .maybeSingle();
 
         if (templateData) {
           // Konvertiere das JSON-Array in ein string[]
@@ -93,7 +94,6 @@ export default function MilestoneDetailPage() {
 
         setIsLoading(false);
       } catch (error) {
-        console.error("Error loading milestone data:", error);
         setError("Fehler beim Laden der Daten");
         setIsLoading(false);
       }

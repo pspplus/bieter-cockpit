@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Milestone, MilestoneStatus, TenderStatus } from "@/types/tender";
 import { useTranslation } from "react-i18next";
@@ -28,8 +29,6 @@ export function MilestoneProcess({ milestones, tenderId, tenderStatus }: Milesto
     { id: "4", name: "Anna Müller" },
     { id: "5", name: "Thomas Weber" },
   ];
-
-  console.log("MilestoneProcess - tenderId:", tenderId); // Debug log
   
   const handleStatusChange = async (milestone: Milestone, newStatus: MilestoneStatus) => {
     if (!tenderId) return;
@@ -51,7 +50,6 @@ export function MilestoneProcess({ milestones, tenderId, tenderStatus }: Milesto
       
       toast.success(t("milestones.statusUpdated", "Meilenstein-Status aktualisiert"));
     } catch (error) {
-      console.error("Error updating milestone status:", error);
       toast.error(t("milestones.updateError", "Fehler beim Aktualisieren des Status"));
     } finally {
       setUpdating(false);
@@ -87,7 +85,6 @@ export function MilestoneProcess({ milestones, tenderId, tenderStatus }: Milesto
         })
       );
     } catch (error) {
-      console.error("Error adding assignee:", error);
       toast.error(t("milestones.assigneeError", "Fehler beim Zuweisen des Mitarbeiters"));
     } finally {
       setUpdating(false);
@@ -117,7 +114,6 @@ export function MilestoneProcess({ milestones, tenderId, tenderStatus }: Milesto
         })
       );
     } catch (error) {
-      console.error("Error removing assignee:", error);
       toast.error(t("milestones.assigneeRemoveError", "Fehler beim Entfernen des Mitarbeiters"));
     } finally {
       setUpdating(false);
@@ -137,24 +133,11 @@ export function MilestoneProcess({ milestones, tenderId, tenderStatus }: Milesto
       
       toast.success(t("milestones.dueDateUpdated", "Fälligkeitsdatum aktualisiert"));
     } catch (error) {
-      console.error("Error updating due date:", error);
       toast.error(t("milestones.dueDateError", "Fehler beim Aktualisieren des Fälligkeitsdatums"));
     } finally {
       setUpdating(false);
     }
   };
-  
-  // Logging & Datenprüfungen vor der Anzeige
-  React.useEffect(() => {
-    if (!milestones) {
-      console.warn("Keine Milestones geladen!");
-      return;
-    }
-    milestones.forEach((m, i) => {
-      if (!m.title || typeof m.sequenceNumber !== "number" || !m.status)
-        console.warn("Inkonsistenter Milestone:", m, "Index:", i);
-    });
-  }, [milestones]);
 
   if (!milestones || milestones.length === 0) {
     return (

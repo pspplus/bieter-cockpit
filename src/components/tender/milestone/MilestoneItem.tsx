@@ -29,8 +29,6 @@ export function MilestoneItem({
   popoverContent,
   canEdit = true
 }: MilestoneItemProps) {
-  console.log("MilestoneItem - milestone:", milestone); // Debug log
-
   const statusColors = {
     'ausstehend': 'bg-gray-200 text-gray-700',
     'in-bearbeitung': 'bg-blue-200 text-blue-700',
@@ -56,7 +54,6 @@ export function MilestoneItem({
     : null;
 
   const tenderId = milestone.tenderId;
-  console.log("MilestoneItem - tenderId:", tenderId); // Debug log
 
   const circleClasses = cn(
     "h-12 w-12 rounded-full flex items-center justify-center mb-2 transition-all duration-200",
@@ -144,7 +141,7 @@ export function MilestoneItem({
               "absolute top-0 right-2 p-1 rounded-full bg-white border border-gray-200 shadow-sm",
               canEdit ? "hover:bg-gray-50 cursor-pointer" : "opacity-40 cursor-not-allowed"
             )}
-            aria-label="Edit milestone"
+            aria-label="Meilenstein bearbeiten"
             disabled={!canEdit}
             tabIndex={canEdit ? 0 : -1}
           >
