@@ -43,27 +43,28 @@ export function MilestoneLine({
   canUpdateMilestoneStatus,
   onDueDateChange,
   tenderStatus,
-  tenderId // neu!
+  tenderId
 }: MilestoneLineProps) {
   return (
     <div className="flex flex-row w-full">
       {milestones.map((milestone, idx) => {
         let canEdit = true;
 
-        // Sicherstellen, dass tenderStatus ein gültiger Wert ist
-        if (tenderStatus === "gewonnen") {
-          canEdit = milestone.title === "Implementierung";
-        } else if (milestone.title === "Aufklärung") {
-          canEdit = tenderStatus === "aufklaerung";
-        } else if (milestone.title === "Implementierung") {
-          canEdit = tenderStatus === "gewonnen";
+        // Überprüfung des Tender-Status mit Typ-Sicherheit
+        if (isTenderStatus(tenderStatus)) {
+          if (tenderStatus === "gewonnen") {
+            canEdit = milestone.title === "Implementierung";
+          } else if (milestone.title === "Aufklärung") {
+            canEdit = tenderStatus === "aufklaerung";
+          } else if (milestone.title === "Implementierung") {
+            canEdit = tenderStatus === "gewonnen";
+          }
         }
 
-        // tenderId mitgeben (fix für klickbaren Kreis)
         return (
           <MilestoneItem
             key={milestone.id}
-            milestone={{ ...milestone, tenderId }} // tenderId injizieren!
+            milestone={{ ...milestone, tenderId }}
             index={idx}
             totalMilestones={milestones.length}
             employees={employees}
