@@ -50,11 +50,19 @@ const MilestoneTemplateSettings = () => {
       setDescription(existingTemplate.description || '');
       setChecklistItems(existingTemplate.checklist_items || []);
     } else {
+      // Create a new template from default milestone
       const defaultMilestone = defaultMilestones.find(m => m.title === title);
-      if (defaultMilestone) {
-        setSelectedTemplate(null);
-        setDescription(defaultMilestone.description || '');
-        setChecklistItems([]);
+      if (defaultMilestone && user) {
+        const newTemplate: Omit<MilestoneTemplate, 'id' | 'created_at' | 'updated_at'> = {
+          title: defaultMilestone.title,
+          description: defaultMilestone.description || '',
+          checklist_items: [],
+          user_id: user.id
+        };
+        setSelectedTemplate(newTemplate as MilestoneTemplate);
+        setDescription(newTemplate.description);
+        setChecklistItems(newTemplate.checklist_items);
+        console.log('Created new template from default:', newTemplate);
       }
     }
   };
@@ -88,7 +96,7 @@ const MilestoneTemplateSettings = () => {
 
       console.log('Saving template data:', templateData);
 
-      if (selectedTemplate.id) {
+      if ('id' in selectedTemplate && selectedTemplate.id) {
         await updateMilestoneTemplate(selectedTemplate.id, templateData);
       } else {
         await createMilestoneTemplate(templateData);
