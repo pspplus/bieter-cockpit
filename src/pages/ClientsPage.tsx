@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Layout } from "@/components/layout/Layout";
 import { useClient } from "@/context/ClientContext";
@@ -182,13 +183,11 @@ const ClientsPage = () => {
           </CardContent>
         </Card>
 
-        {/* Add the closing div tag here */}
-        <NewClientDialog 
-          open={isCreateDialogOpen}
-          onOpenChange={setIsCreateDialogOpen}
-          onClientCreated={handleClientCreated}
-        />
-      </div>
+      <NewClientDialog 
+        open={isCreateDialogOpen}
+        onOpenChange={setIsCreateDialogOpen}
+        onClientCreated={handleClientCreated}
+      />
     </Layout>
   );
 };
