@@ -12,15 +12,15 @@ export const getDefaultMilestones = (): Partial<Milestone>[] => {
     new Date(today.getFullYear(), today.getMonth(), today.getDate() + 18),  // Kalkulation: in 18 Tagen
     new Date(today.getFullYear(), today.getMonth(), today.getDate() + 25),  // Dokumente prüfen: in 25 Tagen
     new Date(today.getFullYear(), today.getMonth(), today.getDate() + 30),  // Ausschreibung einreichen: in 30 Tagen
-    new Date(today.getFullYear(), today.getMonth(), today.getDate() + 33),  // Aufklärung: in 33 Tagen (z.B. 3 Tage nach Einreichen)
-    new Date(today.getFullYear(), today.getMonth(), today.getDate() + 38),  // Implementierung: in 38 Tagen (z.B. 5 Tage nach Aufklärung)
+    new Date(today.getFullYear(), today.getMonth(), today.getDate() + 33),  // Aufklärung: in 33 Tagen
+    new Date(today.getFullYear(), today.getMonth(), today.getDate() + 38),  // Implementierung: in 38 Tagen
   ];
   
   return [
     {
       title: "Quick Check",
       description: "Erste Analyse der Ausschreibungsanforderungen",
-      status: "pending" as MilestoneStatus,
+      status: "ausstehend" as MilestoneStatus,
       sequenceNumber: 1,
       dueDate: dueDates[0],
       assignees: []
@@ -28,7 +28,7 @@ export const getDefaultMilestones = (): Partial<Milestone>[] => {
     {
       title: "Besichtigung",
       description: "Objektbesichtigung durchführen",
-      status: "pending" as MilestoneStatus,
+      status: "ausstehend" as MilestoneStatus,
       sequenceNumber: 2,
       dueDate: dueDates[1],
       assignees: []
@@ -36,7 +36,7 @@ export const getDefaultMilestones = (): Partial<Milestone>[] => {
     {
       title: "Konzept",
       description: "Konzeptentwicklung für die Ausschreibung",
-      status: "pending" as MilestoneStatus,
+      status: "ausstehend" as MilestoneStatus,
       sequenceNumber: 3,
       dueDate: dueDates[2],
       assignees: []
@@ -44,7 +44,7 @@ export const getDefaultMilestones = (): Partial<Milestone>[] => {
     {
       title: "Kalkulation",
       description: "Kosten- und Leistungskalkulation erstellen",
-      status: "pending" as MilestoneStatus,
+      status: "ausstehend" as MilestoneStatus,
       sequenceNumber: 4,
       dueDate: dueDates[3],
       assignees: []
@@ -52,7 +52,7 @@ export const getDefaultMilestones = (): Partial<Milestone>[] => {
     {
       title: "Dokumente prüfen",
       description: "Finale Prüfung aller Angebotsdokumente",
-      status: "pending" as MilestoneStatus,
+      status: "ausstehend" as MilestoneStatus,
       sequenceNumber: 5,
       dueDate: dueDates[4],
       assignees: []
@@ -60,7 +60,7 @@ export const getDefaultMilestones = (): Partial<Milestone>[] => {
     {
       title: "Ausschreibung einreichen",
       description: "Einreichung des vollständigen Angebots",
-      status: "pending" as MilestoneStatus,
+      status: "ausstehend" as MilestoneStatus,
       sequenceNumber: 6,
       dueDate: dueDates[5],
       assignees: []
@@ -68,7 +68,7 @@ export const getDefaultMilestones = (): Partial<Milestone>[] => {
     {
       title: "Aufklärung",
       description: "Rückfragen und Klärungen zur Ausschreibung bearbeiten",
-      status: "pending" as MilestoneStatus,
+      status: "ausstehend" as MilestoneStatus,
       sequenceNumber: 7,
       dueDate: dueDates[6],
       assignees: []
@@ -76,7 +76,7 @@ export const getDefaultMilestones = (): Partial<Milestone>[] => {
     {
       title: "Implementierung",
       description: "Implementierung der Anforderungen nach Zuschlag",
-      status: "pending" as MilestoneStatus,
+      status: "ausstehend" as MilestoneStatus,
       sequenceNumber: 8,
       dueDate: dueDates[7],
       assignees: []
