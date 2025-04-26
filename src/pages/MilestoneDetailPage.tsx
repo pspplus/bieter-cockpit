@@ -1,22 +1,20 @@
 
+import React from "react";
 import { useParams, Link } from "react-router-dom";
 import { useTender } from "@/hooks/useTender";
 import { Layout } from "@/components/layout/Layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
-import { useState } from "react";
+import { ArrowLeft, Calendar, User2 } from "lucide-react";
+import { format } from "date-fns";
 
 export default function MilestoneDetailPage() {
   const { tenderId, milestoneId } = useParams<{ tenderId: string; milestoneId: string }>();
   const { tenders } = useTender();
-
+  
   const tender = tenders.find((t) => t.id === tenderId);
   const milestone = tender?.milestones.find((m) => m.id === milestoneId);
-
-  // Optional: Den Zustand der Checkboxen lokal verwalten
-  const [checkedStates, setCheckedStates] = useState<{ [idx: number]: boolean }>({});
 
   if (!tender || !milestone) {
     return (
@@ -36,45 +34,66 @@ export default function MilestoneDetailPage() {
     );
   }
 
-  const checklist = milestone.checklist || [
-    "Vertragsunterlagen prüfen",
-    "Dokumente sammeln",
-    "Rückfragen mit dem Kunden klären"
-  ]; // Beispiel-Checkliste als Fallback
-
   return (
     <Layout title={milestone.title}>
-      <div className="max-w-xl mx-auto mt-8">
+      <div className="max-w-3xl mx-auto mt-8">
         <Button asChild variant="ghost" size="sm" className="mb-4">
           <Link to={`/tenders/${tenderId}`}>
             <ArrowLeft className="mr-2 h-4 w-4" />
             Zurück zur Ausschreibung
           </Link>
         </Button>
+
         <Card>
           <CardHeader>
-            <CardTitle>{milestone.title}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div>
-              <h3 className="font-semibold mb-1">Beschreibung</h3>
-              <p className="mb-4">{milestone.description}</p>
-              <h4 className="font-semibold mb-2">Checkliste</h4>
-              <ul className="space-y-2">
-                {checklist.map((item, idx) => (
-                  <li key={idx} className="flex items-center gap-2">
-                    <Checkbox
-                      checked={checkedStates[idx] || false}
-                      onCheckedChange={(val) =>
-                        setCheckedStates((prev) => ({ ...prev, [idx]: Boolean(val) }))
-                      }
-                      id={`check-${idx}`}
-                    />
-                    <label htmlFor={`check-${idx}`}>{item}</label>
-                  </li>
-                ))}
-              </ul>
+            <div className="flex items-center justify-between">
+              <CardTitle>{milestone.title}</CardTitle>
+              <div className={`px-3 py-1 rounded-full text-sm font-medium ${
+                milestone.status === 'ausstehend' ? 'bg-gray-200 text-gray-700' :
+                milestone.status === 'in-bearbeitung' ? 'bg-blue-200 text-blue-700' :
+                milestone.status === 'abgeschlossen' ? 'bg-green-200 text-green-700' :
+                'bg-amber-200 text-amber-700'
+              }`}>
+                {milestone.status === 'ausstehend' ? 'Ausstehend' :
+                 milestone.status === 'in-bearbeitung' ? 'In Bearbeitung' :
+                 milestone.status === 'abgeschlossen' ? 'Abgeschlossen' :
+                 'Übersprungen'}
+              </div>
             </div>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div>
+              <h3 className="font-semibold mb-2">Beschreibung</h3>
+              <p className="text-gray-600">{milestone.description}</p>
+            </div>
+
+            {milestone.dueDate && (
+              <div className="flex items-center text-sm text-gray-500">
+                <Calendar className="h-4 w-4 mr-2" />
+                <span>Fällig am: {format(new Date(milestone.dueDate), 'dd.MM.yyyy')}</span>
+              </div>
+            )}
+
+            {milestone.assignees && milestone.assignees.length > 0 && (
+              <div>
+                <h3 className="font-semibold mb-2 flex items-center">
+                  <User2 className="h-4 w-4 mr-2" />
+                  Zugewiesene Mitarbeiter
+                </h3>
+                <ul className="list-disc list-inside">
+                  {milestone.assignees.map((assignee, index) => (
+                    <li key={index} className="text-gray-600">{assignee}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {milestone.notes && (
+              <div>
+                <h3 className="font-semibold mb-2">Notizen</h3>
+                <p className="text-gray-600">{milestone.notes}</p>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>

@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { Tender, TenderStatus, Milestone, MilestoneStatus, Folder, Vertragsart, Objektart, Zertifikat } from "@/types/tender";
 import { format } from "date-fns";
@@ -401,17 +400,17 @@ export const createMilestone = async (milestone: Partial<Milestone>): Promise<Mi
     ? format(new Date(milestone.completionDate), "yyyy-MM-dd'T'HH:mm:ss'Z'")
     : null;
 
-  // Prepare the milestone data
+  // Prepare the milestone data with default status as "ausstehend"
   const dbMilestone = {
-    tender_id: milestone.tenderId, // This is the tender ID, not the milestone ID
+    tender_id: milestone.tenderId,
     title: milestone.title || "",
     description: milestone.description || "",
-    status: milestone.status || "pending",
+    status: milestone.status || "ausstehend", // Set default status to "ausstehend"
     sequence_number: milestone.sequenceNumber || sequenceNumber,
     due_date: formattedDueDate,
     completion_date: formattedCompletionDate,
     notes: milestone.notes || "",
-    assignees: milestone.assignees || [] // Stelle sicher, dass assignees immer gesetzt ist
+    assignees: milestone.assignees || []
   };
 
   console.log("Creating milestone with data:", dbMilestone);
