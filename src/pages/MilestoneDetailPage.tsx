@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useTender } from "@/hooks/useTender";
@@ -8,6 +7,17 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, Calendar, User2 } from "lucide-react";
 import { format } from "date-fns";
 import { Tender, Milestone } from "@/types/tender";
+import { supabase } from "@/integrations/supabase/client";
+
+interface MilestoneTemplate {
+  id: string;
+  user_id: string;
+  title: string;
+  description: string | null;
+  checklist_items: string[];
+  created_at: string;
+  updated_at: string;
+}
 
 export default function MilestoneDetailPage() {
   const { tenderId, milestoneId } = useParams<{ tenderId: string; milestoneId: string }>();
@@ -16,6 +26,7 @@ export default function MilestoneDetailPage() {
   const [error, setError] = useState<string | null>(null);
   const [tender, setTender] = useState<Tender | null>(null);
   const [milestone, setMilestone] = useState<Milestone | null>(null);
+  const [template, setTemplate] = useState<MilestoneTemplate | null>(null);
 
   useEffect(() => {
     const loadData = async () => {
@@ -26,14 +37,9 @@ export default function MilestoneDetailPage() {
       }
 
       try {
-        console.log("Loading data for tender:", tenderId, "milestone:", milestoneId);
-        
-        // Try to find tender in existing tenders first
         let currentTender = tenders.find(t => t.id === tenderId);
         
-        // If not found, load it
         if (!currentTender) {
-          console.log("Tender not found in context, loading from database...");
           currentTender = await loadTender(tenderId);
         }
 
@@ -52,8 +58,19 @@ export default function MilestoneDetailPage() {
           return;
         }
 
-        console.log("Milestone found:", foundMilestone);
         setMilestone(foundMilestone);
+
+        // Lade die Meilensteinvorlage, falls vorhanden
+        const { data: templateData } = await supabase
+          .from('milestone_templates')
+          .select('*')
+          .eq('title', foundMilestone.title)
+          .single();
+
+        if (templateData) {
+          setTemplate(templateData);
+        }
+
         setIsLoading(false);
       } catch (error) {
         console.error("Error loading milestone data:", error);
@@ -121,6 +138,35 @@ export default function MilestoneDetailPage() {
             </div>
           </CardHeader>
           <CardContent className="space-y-6">
+            {/* Vorlagenbereich */}
+            <div className="border rounded-lg p-4 bg-slate-50">
+              <h3 className="font-semibold mb-2">Meilensteinvorlage</h3>
+              {template ? (
+                <>
+                  <div className="text-sm text-gray-600 mb-4">
+                    <h4 className="font-medium mb-1">Vorlagenbeschreibung:</h4>
+                    <p>{template.description}</p>
+                  </div>
+                  {template.checklist_items && template.checklist_items.length > 0 && (
+                    <div>
+                      <h4 className="font-medium mb-2">Checkliste aus Vorlage:</h4>
+                      <ul className="list-disc list-inside space-y-1">
+                        {template.checklist_items.map((item, index) => (
+                          <li key={index} className="text-sm text-gray-600">{item}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <p className="text-sm text-gray-500">
+                  Für diesen Meilenstein wurde noch keine Vorlage erstellt. 
+                  Sie können eine Vorlage in den Einstellungen erstellen.
+                </p>
+              )}
+            </div>
+
+            {/* Bestehender Meilensteininhalt */}
             <div>
               <h3 className="font-semibold mb-2">Beschreibung</h3>
               <p className="text-gray-600">{milestone.description}</p>
