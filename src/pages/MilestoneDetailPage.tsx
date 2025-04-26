@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import { useTender } from "@/hooks/useTender";
 import { Layout } from "@/components/layout/Layout";
 import { Milestone } from "@/types/tender";
+import { Client } from "@/types/client";  // Corrected import
 import { useClient } from "@/context/ClientContext";
 import { MilestoneDetailLoading } from "@/components/tender/milestone/MilestoneDetailLoading";
 import { MilestoneDetailError } from "@/components/tender/milestone/MilestoneDetailError";
