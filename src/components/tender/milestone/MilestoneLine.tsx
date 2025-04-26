@@ -14,10 +14,10 @@ interface MilestoneLineProps {
   canUpdateMilestoneStatus: (milestone: Milestone, newStatus: MilestoneStatus) => boolean;
   onDueDateChange?: (milestone: Milestone, newDate: Date) => Promise<void>;
   tenderStatus?: TenderStatus;
-  tenderId?: string; // neu: tenderId als prop für die Verknüpfung
+  tenderId?: string;
 }
 
-// Utility type guard to ensure status string is of type TenderStatus
+// Verbesserte Type Guard Funktion
 function isTenderStatus(status: any): status is TenderStatus {
   const validStatuses: TenderStatus[] = [
     "entwurf",
@@ -31,6 +31,27 @@ function isTenderStatus(status: any): status is TenderStatus {
     "nicht-abgegeben"
   ];
   return validStatuses.includes(status);
+}
+
+// Neue Funktion zur Prüfung der Bearbeitungsrechte
+function canEditMilestone(milestone: Milestone, status: TenderStatus | undefined): boolean {
+  if (!status || !isTenderStatus(status)) {
+    return true; // Standardmäßig erlauben, wenn kein Status gesetzt ist
+  }
+
+  if (status === "gewonnen") {
+    return milestone.title === "Implementierung";
+  }
+
+  if (milestone.title === "Aufklärung") {
+    return status === "aufklaerung";
+  }
+
+  if (milestone.title === "Implementierung") {
+    return status === "gewonnen";
+  }
+
+  return true; // Für alle anderen Fälle erlauben
 }
 
 export function MilestoneLine({
@@ -48,18 +69,7 @@ export function MilestoneLine({
   return (
     <div className="flex flex-row w-full">
       {milestones.map((milestone, idx) => {
-        let canEdit = true;
-
-        // Überprüfung des Tender-Status mit Typ-Sicherheit
-        if (isTenderStatus(tenderStatus)) {
-          if (tenderStatus === "gewonnen") {
-            canEdit = milestone.title === "Implementierung";
-          } else if (milestone.title === "Aufklärung") {
-            canEdit = tenderStatus === "aufklaerung";
-          } else if (milestone.title === "Implementierung") {
-            canEdit = tenderStatus === "gewonnen";
-          }
-        }
+        const canEdit = canEditMilestone(milestone, tenderStatus);
 
         return (
           <MilestoneItem
