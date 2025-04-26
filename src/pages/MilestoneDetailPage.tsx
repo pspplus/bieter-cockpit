@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useTender } from "@/hooks/useTender";
@@ -149,7 +148,7 @@ export default function MilestoneDetailPage() {
         </Button>
 
         <div className="space-y-6">
-          {/* Erste Karte: Meilenstein-Details */}
+          {/* Erste Karte: Meilenstein-Details - OHNE Beschreibung */}
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
@@ -168,11 +167,6 @@ export default function MilestoneDetailPage() {
               </div>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div>
-                <h3 className="font-semibold mb-2">Beschreibung</h3>
-                <p className="text-gray-600">{milestone?.description}</p>
-              </div>
-
               {milestone?.dueDate && (
                 <div className="flex items-center text-sm text-gray-500">
                   <Calendar className="h-4 w-4 mr-2" />
