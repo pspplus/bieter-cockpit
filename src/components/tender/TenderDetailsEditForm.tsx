@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Tender, TenderStatus, Vertragsart, Objektart, Zertifikat } from "@/types/tender";
 import { Input } from "@/components/ui/input";
@@ -73,8 +72,8 @@ export function TenderDetailsEditForm({ tender, onSubmit, onCancel }: TenderDeta
   const [dateOpen, setDateOpen] = useState(false);
   const [bindingPeriodDateOpen, setBindingPeriodDateOpen] = useState(false);
   
-  const vertragsartOptions: Vertragsart[] = ['werkvertrag', 'dienstleistungsvertrag', 'mischvertrag', ''];
-  const objektartOptions: Objektart[] = ['grundschule', 'kindergarten', 'buero', ''];
+  const vertragsartOptions: Vertragsart[] = ['werkvertrag', 'dienstleistungsvertrag', 'mischvertrag', 'keine_angabe'];
+  const objektartOptions: Objektart[] = ['grundschule', 'kindergarten', 'buero', 'keine_angabe'];
   const zertifikatOptions: Zertifikat[] = ['din_iso_9001', 'din_iso_14001', 'din_iso_45001'];
   
   const displayVertragsart = (vertragsart: Vertragsart) => {
@@ -350,7 +349,7 @@ export function TenderDetailsEditForm({ tender, onSubmit, onCancel }: TenderDeta
               <SelectContent>
                 {vertragsartOptions.map((option) => (
                   <SelectItem key={option} value={option}>
-                    {option ? displayVertragsart(option) : "Keine Angabe"}
+                    {option === 'keine_angabe' ? "Keine Angabe" : displayVertragsart(option)}
                   </SelectItem>
                 ))}
               </SelectContent>

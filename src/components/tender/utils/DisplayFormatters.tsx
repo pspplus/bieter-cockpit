@@ -22,13 +22,14 @@ export const displayObjektarten = (objektarten?: string[]) => {
       case 'grundschule': return "Grundschule";
       case 'kindergarten': return "Kindergarten";
       case 'buero': return "Büro";
+      case 'keine_angabe': return "-";
       default: return objektart;
     }
   }).join(", ");
 };
 
 export const displayVertragsart = (vertragsart?: Vertragsart) => {
-  if (!vertragsart) return "-";
+  if (!vertragsart || vertragsart === 'keine_angabe') return "-";
   
   switch(vertragsart) {
     case 'werkvertrag': return "Werkvertrag";

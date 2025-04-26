@@ -19,13 +19,13 @@ export type Vertragsart =
   | 'werkvertrag'
   | 'dienstleistungsvertrag'
   | 'mischvertrag'
-  | '';
+  | 'keine_angabe';
 
 export type Objektart = 
   | 'grundschule'
   | 'kindergarten'
   | 'buero'
-  | '';
+  | 'keine_angabe';
 
 export type Zertifikat = 
   | 'din_iso_9001'
