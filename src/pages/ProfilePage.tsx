@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from "react";
 import { Layout } from "@/components/layout/Layout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,10 +10,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/context/AuthContext";
 import { useTranslation } from "react-i18next";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { User, Key, Bell, Upload, Trash2 } from "lucide-react";
+import { User, Key, Bell, Upload, Trash2, CheckCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import { de } from "date-fns/locale";
+import MilestoneTemplateSettings from "@/components/settings/MilestoneTemplateSettings";
 
 export default function ProfilePage() {
   const { user, getUserName, getUserAvatar, getUserEmailNotifications, getLastSignIn, updateUserProfile } = useAuth();
@@ -108,6 +108,10 @@ export default function ProfilePage() {
             <TabsTrigger value="notifications" className="flex items-center gap-2">
               <Bell size={16} />
               {t('general:notifications', 'Benachrichtigungen')}
+            </TabsTrigger>
+            <TabsTrigger value="milestones" className="flex items-center gap-2">
+              <CheckCircle size={16} />
+              {t('general:milestones', 'Meilensteine')}
             </TabsTrigger>
           </TabsList>
           
@@ -332,6 +336,10 @@ export default function ProfilePage() {
                 </CardContent>
               </Card>
             </div>
+          </TabsContent>
+
+          <TabsContent value="milestones">
+            <MilestoneTemplateSettings />
           </TabsContent>
         </Tabs>
       </div>

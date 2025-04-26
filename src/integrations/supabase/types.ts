@@ -317,9 +317,75 @@ export type Database = {
           },
         ]
       }
+      milestone_checklist_progress: {
+        Row: {
+          completed: boolean
+          completed_at: string | null
+          completed_by: string | null
+          id: string
+          item_index: number
+          milestone_id: string
+        }
+        Insert: {
+          completed?: boolean
+          completed_at?: string | null
+          completed_by?: string | null
+          id?: string
+          item_index: number
+          milestone_id: string
+        }
+        Update: {
+          completed?: boolean
+          completed_at?: string | null
+          completed_by?: string | null
+          id?: string
+          item_index?: number
+          milestone_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "milestone_checklist_progress_milestone_id_fkey"
+            columns: ["milestone_id"]
+            isOneToOne: false
+            referencedRelation: "milestones"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      milestone_templates: {
+        Row: {
+          checklist_items: Json | null
+          created_at: string
+          description: string | null
+          id: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          checklist_items?: Json | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          checklist_items?: Json | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       milestones: {
         Row: {
           assignees: string[] | null
+          checklist: Json | null
           completion_date: string | null
           created_at: string
           description: string
@@ -334,6 +400,7 @@ export type Database = {
         }
         Insert: {
           assignees?: string[] | null
+          checklist?: Json | null
           completion_date?: string | null
           created_at?: string
           description: string
@@ -348,6 +415,7 @@ export type Database = {
         }
         Update: {
           assignees?: string[] | null
+          checklist?: Json | null
           completion_date?: string | null
           created_at?: string
           description?: string
