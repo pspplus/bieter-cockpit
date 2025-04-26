@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Milestone } from "@/types/tender";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -12,7 +13,7 @@ interface MilestoneItemProps {
   totalMilestones: number;
   employees?: Array<{ id: string; name: string }>;
   popoverContent: React.ReactNode;
-  canEdit?: boolean; // NEU
+  canEdit?: boolean;
 }
 
 export function MilestoneItem({
@@ -24,17 +25,17 @@ export function MilestoneItem({
   canEdit = true
 }: MilestoneItemProps) {
   const statusColors = {
-    'ausstehend': 'bg-gray-200',
-    'in-bearbeitung': 'bg-blue-200',
-    'abgeschlossen': 'bg-green-200',
-    'uebersprungen': 'bg-amber-200'
+    'ausstehend': 'bg-gray-200 text-gray-700',
+    'in-bearbeitung': 'bg-blue-200 text-blue-700',
+    'abgeschlossen': 'bg-green-200 text-green-700',
+    'uebersprungen': 'bg-amber-200 text-amber-700'
   };
-  
-  const statusTextColors = {
-    'ausstehend': 'text-gray-700',
-    'in-bearbeitung': 'text-blue-700',
-    'abgeschlossen': 'text-green-700',
-    'uebersprungen': 'text-amber-700'
+
+  const statusTextMap = {
+    'ausstehend': 'Ausstehend',
+    'in-bearbeitung': 'In Bearbeitung',
+    'abgeschlossen': 'Abgeschlossen',
+    'uebersprungen': 'Übersprungen'
   };
 
   // Fehlerfall: Fallback-Werte
@@ -43,10 +44,7 @@ export function MilestoneItem({
 
   const isCompleted = status === "abgeschlossen";
   const isActive = status === "in-bearbeitung";
-  const titleColor =
-    isCompleted || isActive
-      ? "text-slate-900"
-      : "text-slate-500";
+  const titleColor = isCompleted || isActive ? "text-slate-900" : "text-slate-500";
 
   const assigneeCount = milestone.assignees?.length || 0;
 
@@ -55,6 +53,12 @@ export function MilestoneItem({
     : null;
 
   const tenderId = milestone.tenderId;
+
+  const circleClasses = cn(
+    "h-12 w-12 rounded-full flex items-center justify-center mb-2",
+    statusColors[status as keyof typeof statusColors],
+    tenderId ? "hover:bg-primary/10 cursor-pointer" : ""
+  );
 
   return (
     <div 
@@ -66,23 +70,20 @@ export function MilestoneItem({
     >
       <Popover>
         <div className="flex flex-col items-center">
-          {/* Kreis mit Meilenstein-Nummer ist jetzt Link */}
           {tenderId ? (
             <Link
               to={`/tenders/${tenderId}/milestones/${milestone.id}`}
-              className="h-12 w-12 rounded-full flex items-center justify-center mb-2 focus-visible:ring-2 ring-primary/60 transition border border-gray-300 bg-white hover:bg-primary/10 cursor-pointer text-center"
+              className={cn(
+                circleClasses,
+                "focus-visible:ring-2 ring-primary/60 transition border border-gray-300"
+              )}
               tabIndex={0}
               aria-label={`Meilensteindetails zu ${title}`}
             >
               <span className="text-sm font-medium">{index + 1}</span>
             </Link>
           ) : (
-            <div
-              className={cn(
-                "h-12 w-12 rounded-full flex items-center justify-center mb-2",
-                statusColors[status as keyof typeof statusColors]
-              )}
-            >
+            <div className={circleClasses}>
               <span className="text-sm font-medium">{index + 1}</span>
             </div>
           )}
@@ -99,11 +100,11 @@ export function MilestoneItem({
           <div className="flex items-center mb-1">
             <span
               className={cn(
-                "text-xs font-medium",
-                statusTextColors[status as keyof typeof statusTextColors]
+                "text-xs font-medium px-2 py-1 rounded-full",
+                statusColors[status as keyof typeof statusColors]
               )}
             >
-              {status}
+              {statusTextMap[status as keyof typeof statusTextMap]}
             </span>
           </div>
           
