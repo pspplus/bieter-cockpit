@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useTender } from "@/hooks/useTender";
@@ -7,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, Calendar, User2, ListCheck } from "lucide-react";
 import { format } from "date-fns";
 import { Tender, Milestone } from "@/types/tender";
+import { Client } from "@/types/client";
 import { supabase } from "@/integrations/supabase/client";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useClient } from "@/context/ClientContext";

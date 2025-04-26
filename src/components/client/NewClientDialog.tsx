@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useClient } from "@/context/ClientContext";
 import { useTranslation } from "react-i18next";
@@ -35,7 +36,9 @@ export function NewClientDialog({ open, onOpenChange, onClientCreated }: NewClie
     implementierung_info: "",
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
@@ -52,10 +55,7 @@ export function NewClientDialog({ open, onOpenChange, onClientCreated }: NewClie
     
     try {
       const newClient = await createClient(formData);
-      
-      toast.success("Kunde erfolgreich erstellt");
-      
-      // Reset form
+      toast.success("Vergabestelle erfolgreich erstellt");
       setFormData({
         name: "",
         contactPerson: "",
@@ -71,17 +71,13 @@ export function NewClientDialog({ open, onOpenChange, onClientCreated }: NewClie
         aufklaerung_info: "",
         implementierung_info: "",
       });
-      
-      // Close dialog
       onOpenChange(false);
-      
-      // Notify parent component
       if (onClientCreated) {
         onClientCreated(newClient);
       }
     } catch (error) {
       console.error("Error creating client:", error);
-      toast.error("Kunde konnte nicht erstellt werden");
+      toast.error("Vergabestelle konnte nicht erstellt werden");
     } finally {
       setIsSubmitting(false);
     }
@@ -264,7 +260,7 @@ export function NewClientDialog({ open, onOpenChange, onClientCreated }: NewClie
                   Erstelle...
                 </>
               ) : (
-                "Kunde erstellen"
+                "Vergabestelle erstellen"
               )}
             </Button>
           </DialogFooter>
