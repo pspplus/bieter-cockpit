@@ -1,19 +1,24 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { Client } from "@/types/client";
 
 // Convert a Supabase client row to our application Client type
-const mapClientFromDB = (client: any): Client => {
-  return {
-    id: client.id,
-    name: client.name,
-    contactPerson: client.contact_person || "",
-    email: client.email || "",
-    phone: client.phone || "",
-    address: client.address || "",
-    createdAt: new Date(client.created_at)
-  };
-};
+const mapClientFromDB = (client: any): Client => ({
+  id: client.id,
+  name: client.name,
+  contactPerson: client.contact_person || "",
+  email: client.email || "",
+  phone: client.phone || "",
+  address: client.address || "",
+  createdAt: new Date(client.created_at),
+  quick_check_info: client.quick_check_info || "",
+  besichtigung_info: client.besichtigung_info || "",
+  konzept_info: client.konzept_info || "",
+  kalkulation_info: client.kalkulation_info || "",
+  dokumente_pruefen_info: client.dokumente_pruefen_info || "",
+  ausschreibung_einreichen_info: client.ausschreibung_einreichen_info || "",
+  aufklaerung_info: client.aufklaerung_info || "",
+  implementierung_info: client.implementierung_info || "",
+});
 
 // Fetch all clients for the current user
 export const fetchClients = async (): Promise<Client[]> => {
@@ -52,24 +57,29 @@ export const fetchClientById = async (id: string): Promise<Client | null> => {
 
 // Create a new client
 export const createClient = async (clientData: Partial<Client>): Promise<Client> => {
-  // Get current user
   const { data: { user } } = await supabase.auth.getUser();
   
   if (!user) {
     throw new Error('User not authenticated');
   }
 
-  // Prepare the data for insertion
   const dbClient = {
     name: clientData.name || "",
     contact_person: clientData.contactPerson || "",
     email: clientData.email || "",
     phone: clientData.phone || "",
     address: clientData.address || "",
+    quick_check_info: clientData.quick_check_info || "",
+    besichtigung_info: clientData.besichtigung_info || "",
+    konzept_info: clientData.konzept_info || "",
+    kalkulation_info: clientData.kalkulation_info || "",
+    dokumente_pruefen_info: clientData.dokumente_pruefen_info || "",
+    ausschreibung_einreichen_info: clientData.ausschreibung_einreichen_info || "",
+    aufklaerung_info: clientData.aufklaerung_info || "",
+    implementierung_info: clientData.implementierung_info || "",
     user_id: user.id
   };
 
-  // Insert the client
   const { data, error } = await supabase
     .from('clients')
     .insert(dbClient)
@@ -90,17 +100,23 @@ export const createClient = async (clientData: Partial<Client>): Promise<Client>
 
 // Update a client
 export const updateClient = async (id: string, updates: Partial<Client>): Promise<void> => {
-  // Convert the updates to the DB format
   const dbUpdates = {
     ...(updates.name !== undefined && { name: updates.name }),
     ...(updates.contactPerson !== undefined && { contact_person: updates.contactPerson }),
     ...(updates.email !== undefined && { email: updates.email }),
     ...(updates.phone !== undefined && { phone: updates.phone }),
     ...(updates.address !== undefined && { address: updates.address }),
+    ...(updates.quick_check_info !== undefined && { quick_check_info: updates.quick_check_info }),
+    ...(updates.besichtigung_info !== undefined && { besichtigung_info: updates.besichtigung_info }),
+    ...(updates.konzept_info !== undefined && { konzept_info: updates.konzept_info }),
+    ...(updates.kalkulation_info !== undefined && { kalkulation_info: updates.kalkulation_info }),
+    ...(updates.dokumente_pruefen_info !== undefined && { dokumente_pruefen_info: updates.dokumente_pruefen_info }),
+    ...(updates.ausschreibung_einreichen_info !== undefined && { ausschreibung_einreichen_info: updates.ausschreibung_einreichen_info }),
+    ...(updates.aufklaerung_info !== undefined && { aufklaerung_info: updates.aufklaerung_info }),
+    ...(updates.implementierung_info !== undefined && { implementierung_info: updates.implementierung_info }),
     updated_at: new Date().toISOString()
   };
 
-  // Update the client
   const { error } = await supabase
     .from('clients')
     .update(dbUpdates)

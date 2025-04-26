@@ -12,34 +12,58 @@ export type Database = {
       clients: {
         Row: {
           address: string | null
+          aufklaerung_info: string | null
+          ausschreibung_einreichen_info: string | null
+          besichtigung_info: string | null
           contact_person: string | null
           created_at: string
+          dokumente_pruefen_info: string | null
           email: string | null
           id: string
+          implementierung_info: string | null
+          kalkulation_info: string | null
+          konzept_info: string | null
           name: string
           phone: string | null
+          quick_check_info: string | null
           updated_at: string
           user_id: string
         }
         Insert: {
           address?: string | null
+          aufklaerung_info?: string | null
+          ausschreibung_einreichen_info?: string | null
+          besichtigung_info?: string | null
           contact_person?: string | null
           created_at?: string
+          dokumente_pruefen_info?: string | null
           email?: string | null
           id?: string
+          implementierung_info?: string | null
+          kalkulation_info?: string | null
+          konzept_info?: string | null
           name: string
           phone?: string | null
+          quick_check_info?: string | null
           updated_at?: string
           user_id: string
         }
         Update: {
           address?: string | null
+          aufklaerung_info?: string | null
+          ausschreibung_einreichen_info?: string | null
+          besichtigung_info?: string | null
           contact_person?: string | null
           created_at?: string
+          dokumente_pruefen_info?: string | null
           email?: string | null
           id?: string
+          implementierung_info?: string | null
+          kalkulation_info?: string | null
+          konzept_info?: string | null
           name?: string
           phone?: string | null
+          quick_check_info?: string | null
           updated_at?: string
           user_id?: string
         }

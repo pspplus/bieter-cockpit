@@ -9,6 +9,8 @@ import { format } from "date-fns";
 import { Tender, Milestone } from "@/types/tender";
 import { supabase } from "@/integrations/supabase/client";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useClient } from "@/context/ClientContext";
+import { ClientMilestoneInfo } from "@/components/tender/milestone/ClientMilestoneInfo";
 
 interface MilestoneTemplate {
   id: string;
@@ -23,12 +25,14 @@ interface MilestoneTemplate {
 export default function MilestoneDetailPage() {
   const { tenderId, milestoneId } = useParams<{ tenderId: string; milestoneId: string }>();
   const { tenders, loadTender } = useTender();
+  const { clients } = useClient();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [tender, setTender] = useState<Tender | null>(null);
   const [milestone, setMilestone] = useState<Milestone | null>(null);
   const [template, setTemplate] = useState<MilestoneTemplate | null>(null);
   const [checkedItems, setCheckedItems] = useState<{ [key: string]: boolean }>({});
+  const [client, setClient] = useState<Client | null>(null);
 
   useEffect(() => {
     const loadData = async () => {
@@ -52,6 +56,12 @@ export default function MilestoneDetailPage() {
         }
 
         setTender(currentTender);
+        
+        // Load client data if tender has a client assigned
+        if (currentTender.client) {
+          const clientData = clients.find(c => c.name === currentTender?.client);
+          setClient(clientData || null);
+        }
         
         const foundMilestone = currentTender.milestones.find(m => m.id === milestoneId);
         if (!foundMilestone) {
@@ -89,7 +99,7 @@ export default function MilestoneDetailPage() {
     };
 
     loadData();
-  }, [tenderId, milestoneId, tenders, loadTender]);
+  }, [tenderId, milestoneId, tenders, loadTender, clients]);
 
   const handleCheckboxChange = (index: number) => {
     setCheckedItems(prev => ({
@@ -244,6 +254,10 @@ export default function MilestoneDetailPage() {
           </Card>
         </div>
       </div>
+      
+      {client && milestone && (
+        <ClientMilestoneInfo client={client} milestone={milestone} />
+      )}
     </Layout>
   );
 }
