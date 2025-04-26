@@ -1,15 +1,35 @@
 
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { Json } from "@/integrations/supabase/types";
 
 export interface MilestoneTemplate {
   id: string;
+  user_id: string;
   title: string;
   description: string | null;
   checklist_items: string[];
   created_at: string;
   updated_at: string;
 }
+
+interface DbMilestoneTemplate {
+  id: string;
+  user_id: string;
+  title: string;
+  description: string | null;
+  checklist_items: Json;
+  created_at: string;
+  updated_at: string;
+}
+
+// Konvertierungsfunktionen
+const toMilestoneTemplate = (dbTemplate: DbMilestoneTemplate): MilestoneTemplate => ({
+  ...dbTemplate,
+  checklist_items: Array.isArray(dbTemplate.checklist_items) 
+    ? dbTemplate.checklist_items as string[]
+    : []
+});
 
 export const fetchMilestoneTemplates = async (): Promise<MilestoneTemplate[]> => {
   const { data, error } = await supabase
@@ -22,7 +42,7 @@ export const fetchMilestoneTemplates = async (): Promise<MilestoneTemplate[]> =>
     throw error;
   }
 
-  return data || [];
+  return (data || []).map(toMilestoneTemplate);
 };
 
 export const getMilestoneTemplate = async (id: string): Promise<MilestoneTemplate | null> => {
@@ -37,13 +57,18 @@ export const getMilestoneTemplate = async (id: string): Promise<MilestoneTemplat
     throw error;
   }
 
-  return data;
+  return data ? toMilestoneTemplate(data) : null;
 };
 
-export const createMilestoneTemplate = async (template: Partial<MilestoneTemplate>): Promise<MilestoneTemplate> => {
+export const createMilestoneTemplate = async (template: Omit<MilestoneTemplate, 'id' | 'created_at' | 'updated_at'>): Promise<MilestoneTemplate> => {
   const { data, error } = await supabase
     .from('milestone_templates')
-    .insert([template])
+    .insert([{
+      title: template.title,
+      description: template.description,
+      checklist_items: template.checklist_items,
+      user_id: template.user_id
+    }])
     .select()
     .single();
 
@@ -52,13 +77,16 @@ export const createMilestoneTemplate = async (template: Partial<MilestoneTemplat
     throw error;
   }
 
-  return data;
+  return toMilestoneTemplate(data);
 };
 
-export const updateMilestoneTemplate = async (id: string, updates: Partial<MilestoneTemplate>): Promise<void> => {
+export const updateMilestoneTemplate = async (id: string, updates: Partial<Omit<MilestoneTemplate, 'id' | 'created_at' | 'updated_at'>>): Promise<void> => {
   const { error } = await supabase
     .from('milestone_templates')
-    .update(updates)
+    .update({
+      ...updates,
+      checklist_items: updates.checklist_items || []
+    })
     .eq('id', id);
 
   if (error) {
