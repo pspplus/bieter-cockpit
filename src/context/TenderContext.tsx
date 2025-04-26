@@ -1,302 +1,48 @@
+
 import React, { createContext, useState, useEffect } from "react";
-import { Tender, Milestone, MilestoneStatus } from "@/types/tender";
+import { Tender } from "@/types/tender";
 import { useAuth } from "@/context/AuthContext";
-import { 
-  fetchTenders, 
-  fetchTenderById,
-  createTender as createTenderService, 
-  updateTender as updateTenderService,
-  deleteTender as deleteTenderService,
-} from "@/services/tenderService";
-import {
-  createMilestone as createMilestoneService,
-  updateMilestone as updateMilestoneService,
-  deleteMilestone as deleteMilestoneService
-} from "@/services/milestoneService";
+import { fetchTenders } from "@/services/tenderService";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
-
-type TenderContextType = {
-  tenders: Tender[];
-  isLoading: boolean;
-  createTender: (tenderData: Partial<Tender>) => Promise<Tender>;
-  updateTender: (id: string, updates: Partial<Tender>) => Promise<void>;
-  deleteTender: (id: string) => Promise<void>;
-  createMilestone: (tenderId: string, milestone: Partial<Milestone>) => Promise<void>;
-  updateMilestone: (milestone: Milestone) => Promise<void>;
-  deleteMilestone: (tenderId: string, milestoneId: string) => Promise<void>;
-  canUpdateMilestoneStatus: (milestone: Milestone, newStatus: MilestoneStatus) => boolean;
-  loadTender: (id: string) => Promise<Tender | null>;
-};
-
-type TenderProviderProps = {
-  children: React.ReactNode;
-};
+import { TenderContextType } from "./tender/types";
+import { useTenderOperations } from "./tender/useTenderOperations";
+import { useMilestoneOperations } from "./tender/useMilestoneOperations";
+import { canUpdateMilestoneStatus } from "./tender/milestoneUtils";
 
 export const TenderContext = createContext<TenderContextType | undefined>(undefined);
 
-export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
+export const TenderProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [tenders, setTenders] = useState<Tender[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const { isAuthenticated } = useAuth();
   const { t } = useTranslation();
 
-  const sortMilestones = (milestones: Milestone[]): Milestone[] => {
-    return [...milestones].sort((a, b) => {
-      const seqA = typeof a.sequenceNumber === 'number' ? a.sequenceNumber : 0;
-      const seqB = typeof b.sequenceNumber === 'number' ? b.sequenceNumber : 0;
-      return seqA - seqB;
-    });
-  };
+  const { createTender, updateTender, deleteTender, loadTender } = useTenderOperations(setTenders, setIsLoading);
+  const { createMilestone, updateMilestone, deleteMilestone } = useMilestoneOperations(setTenders);
 
   useEffect(() => {
     if (isAuthenticated) {
       setIsLoading(true);
       fetchTenders()
-        .then((data) => {
-          const tendersWithSortedMilestones = data.map(tender => ({
-            ...tender,
-            milestones: sortMilestones(tender.milestones)
-          }));
-          setTenders(tendersWithSortedMilestones);
-        })
+        .then((data) => setTenders(data))
         .catch((error) => {
           console.error("Error loading tenders:", error);
           toast.error(t('errorMessages.couldNotLoadTenders'));
         })
-        .finally(() => {
-          setIsLoading(false);
-        });
+        .finally(() => setIsLoading(false));
     }
   }, [isAuthenticated, t]);
 
-  const createTender = async (tenderData: Partial<Tender>): Promise<Tender> => {
-    try {
-      const partialMilestones = tenderData.milestones || [];
-      
-      const { milestones: _, ...tenderDataWithoutMilestones } = tenderData;
-      
-      const newTender = await createTenderService(tenderDataWithoutMilestones);
-      
-      if (partialMilestones.length > 0) {
-        await Promise.all(
-          partialMilestones.map((milestone, index) => 
-            createMilestoneService({
-              ...milestone,
-              sequenceNumber: milestone.sequenceNumber || index + 1,
-              tenderId: newTender.id,
-              assignees: milestone.assignees || []
-            })
-          )
-        );
-        
-        const updatedTender = await fetchTenders()
-          .then(tenders => tenders.find(t => t.id === newTender.id))
-          .catch(error => {
-            console.error("Error fetching updated tender:", error);
-            return newTender;
-          });
-          
-        if (updatedTender) {
-          const sortedMilestones = sortMilestones(updatedTender.milestones);
-          const finalTender = { ...updatedTender, milestones: sortedMilestones };
-          setTenders(prev => [finalTender, ...prev.filter(t => t.id !== finalTender.id)]);
-          return finalTender;
-        }
-      }
-      
-      setTenders(prev => [newTender, ...prev]);
-      return newTender;
-    } catch (error) {
-      console.error("Error creating tender:", error);
-      toast.error(t('errorMessages.couldNotCreateTender'));
-      throw error;
-    }
-  };
-
-  const updateTender = async (id: string, updates: Partial<Tender>): Promise<void> => {
-    try {
-      await updateTenderService(id, updates);
-      setTenders(tenders.map(tender => 
-        tender.id === id ? { ...tender, ...updates } : tender
-      ));
-      toast.success(t('notifications.tenderUpdated'));
-    } catch (error) {
-      console.error("Error updating tender:", error);
-      toast.error(t('errorMessages.couldNotUpdateTender'));
-      throw error;
-    }
-  };
-
-  const deleteTender = async (id: string): Promise<void> => {
-    try {
-      await deleteTenderService(id);
-      setTenders(tenders.filter(tender => tender.id !== id));
-      toast.success(t('notifications.tenderDeleted'));
-    } catch (error) {
-      console.error("Error deleting tender:", error);
-      toast.error(t('errorMessages.couldNotDeleteTender'));
-      throw error;
-    }
-  };
-
-  const canUpdateMilestoneStatus = (milestone: Milestone, newStatus: MilestoneStatus): boolean => {
-    if (newStatus === "ausstehend") {
-      return true;
-    }
-    
-    if (newStatus === "in-bearbeitung") {
-      return true;
-    }
-    
-    if (newStatus === "abgeschlossen") {
-      return milestone.status === "in-bearbeitung";
-    }
-    
-    if (newStatus === "uebersprungen") {
-      return milestone.status === "ausstehend";
-    }
-    
-    return false;
-  };
-
-  const createMilestone = async (tenderId: string, milestone: Partial<Milestone>): Promise<void> => {
-    try {
-      const tender = tenders.find(t => t.id === tenderId);
-      if (!tender) {
-        throw new Error("Tender not found");
-      }
-      
-      if (typeof milestone.sequenceNumber !== 'number') {
-        const maxSequence = Math.max(0, ...tender.milestones.map(m => m.sequenceNumber || 0));
-        milestone.sequenceNumber = maxSequence + 1;
-      }
-      
-      const newMilestone = await createMilestoneService({ 
-        ...milestone, 
-        tenderId,
-        status: milestone.status || 'ausstehend'
-      });
-      
-      setTenders(tenders.map(tender => {
-        if (tender.id === tenderId) {
-          const updatedMilestones = sortMilestones([...tender.milestones, newMilestone]);
-          return {
-            ...tender,
-            milestones: updatedMilestones
-          };
-        }
-        return tender;
-      }));
-      
-      toast.success(t('notifications.milestoneCreated'));
-    } catch (error) {
-      console.error("Error creating milestone:", error);
-      toast.error(t('errorMessages.couldNotCreateMilestone'));
-      throw error;
-    }
-  };
-
-  const updateMilestone = async (milestone: Milestone): Promise<void> => {
-    try {
-      const existingMilestone = tenders
-        .flatMap(t => t.milestones)
-        .find(m => m.id === milestone.id);
-      
-      if (!existingMilestone) {
-        throw new Error("Milestone not found");
-      }
-      
-      if (existingMilestone.status !== milestone.status) {
-        const isAllowed = canUpdateMilestoneStatus(existingMilestone, milestone.status);
-        
-        if (!isAllowed) {
-          toast.error(t('errorMessages.invalidMilestoneTransition'));
-          throw new Error("Invalid milestone status transition");
-        }
-      }
-      
-      const updatedMilestone = {
-        ...milestone,
-        sequenceNumber: milestone.sequenceNumber || 0,
-        assignees: milestone.assignees || []
-      };
-      
-      await updateMilestoneService(updatedMilestone.id, updatedMilestone);
-      
-      setTenders(tenders.map(tender => {
-        const updatedMilestones = tender.milestones.map(m => 
-          m.id === milestone.id ? updatedMilestone : m
-        );
-        
-        return {
-          ...tender,
-          milestones: sortMilestones(updatedMilestones)
-        };
-      }));
-      
-      toast.success(t('notifications.milestoneUpdated'));
-    } catch (error) {
-      console.error("Error updating milestone:", error);
-      if (!(error instanceof Error && error.message === "Invalid milestone status transition")) {
-        toast.error(t('errorMessages.couldNotUpdateMilestone'));
-      }
-      throw error;
-    }
-  };
-
-  const deleteMilestone = async (tenderId: string, milestoneId: string): Promise<void> => {
-    try {
-      await deleteMilestoneService(milestoneId);
-      
-      setTenders(tenders.map(tender => {
-        if (tender.id === tenderId) {
-          return {
-            ...tender,
-            milestones: tender.milestones.filter(m => m.id !== milestoneId)
-          };
-        }
-        return tender;
-      }));
-      
-      toast.success(t('notifications.milestoneDeleted'));
-    } catch (error) {
-      console.error("Error deleting milestone:", error);
-      toast.error(t('errorMessages.couldNotDeleteMilestone'));
-      throw error;
-    }
-  };
-
-  const loadTender = async (id: string): Promise<Tender | null> => {
-    try {
-      console.log("Loading tender with ID:", id);
-      const tender = await fetchTenderById(id);
-      if (tender) {
-        setTenders(prev => {
-          const existing = prev.find(t => t.id === tender.id);
-          if (existing) {
-            return prev.map(t => t.id === tender.id ? tender : t);
-          }
-          return [...prev, tender];
-        });
-      }
-      return tender;
-    } catch (error) {
-      console.error("Error loading tender:", error);
-      toast.error(t("errorMessages.couldNotLoadTender"));
-      return null;
-    }
-  };
-
   return (
-    <TenderContext.Provider value={{ 
-      tenders, 
-      isLoading, 
-      createTender, 
-      updateTender, 
-      deleteTender, 
-      createMilestone, 
-      updateMilestone, 
+    <TenderContext.Provider value={{
+      tenders,
+      isLoading,
+      createTender,
+      updateTender,
+      deleteTender,
+      createMilestone,
+      updateMilestone,
       deleteMilestone,
       canUpdateMilestoneStatus,
       loadTender
