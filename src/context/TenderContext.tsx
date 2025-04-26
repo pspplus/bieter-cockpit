@@ -3,6 +3,7 @@ import { Tender, Milestone, MilestoneStatus } from "@/types/tender";
 import { useAuth } from "@/context/AuthContext";
 import { 
   fetchTenders, 
+  fetchTenderById,
   createTender as createTenderService, 
   updateTender as updateTenderService,
   deleteTender as deleteTenderService,
@@ -25,6 +26,7 @@ type TenderContextType = {
   updateMilestone: (milestone: Milestone) => Promise<void>;
   deleteMilestone: (tenderId: string, milestoneId: string) => Promise<void>;
   canUpdateMilestoneStatus: (milestone: Milestone, newStatus: MilestoneStatus) => boolean;
+  loadTender: (id: string) => Promise<Tender | null>;
 };
 
 type TenderProviderProps = {
@@ -265,6 +267,27 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
     }
   };
 
+  const loadTender = async (id: string): Promise<Tender | null> => {
+    try {
+      console.log("Loading tender with ID:", id);
+      const tender = await fetchTenderById(id);
+      if (tender) {
+        setTenders(prev => {
+          const existing = prev.find(t => t.id === tender.id);
+          if (existing) {
+            return prev.map(t => t.id === tender.id ? tender : t);
+          }
+          return [...prev, tender];
+        });
+      }
+      return tender;
+    } catch (error) {
+      console.error("Error loading tender:", error);
+      toast.error(t("errorMessages.couldNotLoadTender"));
+      return null;
+    }
+  };
+
   return (
     <TenderContext.Provider value={{ 
       tenders, 
@@ -275,7 +298,8 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
       createMilestone, 
       updateMilestone, 
       deleteMilestone,
-      canUpdateMilestoneStatus
+      canUpdateMilestoneStatus,
+      loadTender
     }}>
       {children}
     </TenderContext.Provider>

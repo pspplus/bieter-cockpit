@@ -1,30 +1,89 @@
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useTender } from "@/hooks/useTender";
 import { Layout } from "@/components/layout/Layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Calendar, User2 } from "lucide-react";
 import { format } from "date-fns";
+import { Tender, Milestone } from "@/types/tender";
 
 export default function MilestoneDetailPage() {
   const { tenderId, milestoneId } = useParams<{ tenderId: string; milestoneId: string }>();
-  const { tenders } = useTender();
-  
-  const tender = tenders.find((t) => t.id === tenderId);
-  const milestone = tender?.milestones.find((m) => m.id === milestoneId);
+  const { tenders, loadTender } = useTender();
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [tender, setTender] = useState<Tender | null>(null);
+  const [milestone, setMilestone] = useState<Milestone | null>(null);
 
-  if (!tender || !milestone) {
+  useEffect(() => {
+    const loadData = async () => {
+      if (!tenderId || !milestoneId) {
+        setError("Ungültige Parameter");
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        console.log("Loading data for tender:", tenderId, "milestone:", milestoneId);
+        
+        // Try to find tender in existing tenders first
+        let currentTender = tenders.find(t => t.id === tenderId);
+        
+        // If not found, load it
+        if (!currentTender) {
+          console.log("Tender not found in context, loading from database...");
+          currentTender = await loadTender(tenderId);
+        }
+
+        if (!currentTender) {
+          setError("Ausschreibung nicht gefunden");
+          setIsLoading(false);
+          return;
+        }
+
+        setTender(currentTender);
+        
+        const foundMilestone = currentTender.milestones.find(m => m.id === milestoneId);
+        if (!foundMilestone) {
+          setError("Meilenstein nicht gefunden");
+          setIsLoading(false);
+          return;
+        }
+
+        console.log("Milestone found:", foundMilestone);
+        setMilestone(foundMilestone);
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Error loading milestone data:", error);
+        setError("Fehler beim Laden der Daten");
+        setIsLoading(false);
+      }
+    };
+
+    loadData();
+  }, [tenderId, milestoneId, tenders, loadTender]);
+
+  if (isLoading) {
     return (
-      <Layout title="Meilenstein nicht gefunden">
+      <Layout title="Meilenstein wird geladen...">
+        <div className="flex items-center justify-center h-64">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        </div>
+      </Layout>
+    );
+  }
+
+  if (error || !tender || !milestone) {
+    return (
+      <Layout title="Fehler">
         <Card className="mt-10 mx-auto max-w-xl text-center">
           <CardHeader>
-            <CardTitle>Meilenstein nicht gefunden</CardTitle>
+            <CardTitle>Fehler beim Laden des Meilensteins</CardTitle>
           </CardHeader>
           <CardContent>
-            <p>Der gewünschte Meilenstein konnte nicht gefunden werden.</p>
+            <p>{error || "Ein unerwarteter Fehler ist aufgetreten"}</p>
             <Button asChild className="mt-4" variant="outline">
               <Link to={`/tenders/${tenderId}`}>Zurück zur Ausschreibung</Link>
             </Button>
