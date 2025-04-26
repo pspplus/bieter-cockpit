@@ -13,32 +13,18 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
 import { PlusCircle, Search, Edit, Trash, Loader2 } from "lucide-react";
 import { format } from "date-fns";
 import { Client } from "@/types/client";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { NewClientDialog } from "@/components/client/NewClientDialog";
 
 const ClientsPage = () => {
   const { t } = useTranslation();
-  const { clients, createClient, deleteClient } = useClient();
+  const { clients, deleteClient } = useClient();
   const [searchQuery, setSearchQuery] = useState("");
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [newClient, setNewClient] = useState<Partial<Client>>({
-    name: "",
-    contactPerson: "",
-    email: "",
-    phone: "",
-    address: "",
-  });
   const navigate = useNavigate();
 
   const filteredClients = clients.filter(
@@ -48,32 +34,8 @@ const ClientsPage = () => {
       client.email.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleCreateClient = async () => {
-    if (!newClient.name) return;
-    
-    setIsSubmitting(true);
-    
-    try {
-      const client = await createClient(newClient);
-      setNewClient({
-        name: "",
-        contactPerson: "",
-        email: "",
-        phone: "",
-        address: "",
-      });
-      setIsCreateDialogOpen(false);
-      navigate(`/clients/${client.id}`);
-    } catch (error) {
-      console.error("Error creating client:", error);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setNewClient((prev) => ({ ...prev, [name]: value }));
+  const handleClientCreated = (client: Client) => {
+    navigate(`/clients/${client.id}`);
   };
 
   return (
@@ -163,77 +125,11 @@ const ClientsPage = () => {
         </Card>
       </div>
 
-      <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>{t('clients.createNew', 'Neue Vergabestelle erstellen')}</DialogTitle>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <label htmlFor="name">Name *</label>
-              <Input
-                id="name"
-                name="name"
-                value={newClient.name}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-            <div className="grid gap-2">
-              <label htmlFor="contactPerson">Ansprechpartner</label>
-              <Input
-                id="contactPerson"
-                name="contactPerson"
-                value={newClient.contactPerson}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div className="grid gap-2">
-              <label htmlFor="email">E-Mail</label>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                value={newClient.email}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div className="grid gap-2">
-              <label htmlFor="phone">Telefon</label>
-              <Input
-                id="phone"
-                name="phone"
-                value={newClient.phone}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div className="grid gap-2">
-              <label htmlFor="address">Adresse</label>
-              <Input
-                id="address"
-                name="address"
-                value={newClient.address}
-                onChange={handleInputChange}
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)} disabled={isSubmitting}>
-              {t('general.cancel', 'Abbrechen')}
-            </Button>
-            <Button onClick={handleCreateClient} disabled={!newClient.name || isSubmitting}>
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  {t('general.creating', 'Erstelle...')}
-                </>
-              ) : (
-                t('clients.create', 'Erstellen')
-              )}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <NewClientDialog 
+        open={isCreateDialogOpen}
+        onOpenChange={setIsCreateDialogOpen}
+        onClientCreated={handleClientCreated}
+      />
     </Layout>
   );
 };
