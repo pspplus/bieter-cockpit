@@ -37,7 +37,18 @@ export function ClientMilestoneInfo({ client, milestone }: ClientMilestoneInfoPr
   const milestoneInfo = getMilestoneInfo(milestone, client);
 
   if (!milestoneInfo) {
-    return null;
+    return (
+      <Card className="bg-slate-50 mt-6">
+        <CardHeader>
+          <CardTitle className="text-[#1A1F2C] text-xl">Vergabestellen-Information</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-gray-500 italic">
+            Keine spezifischen Informationen für diesen Meilenstein vorhanden.
+          </p>
+        </CardContent>
+      </Card>
+    );
   }
 
   return (
