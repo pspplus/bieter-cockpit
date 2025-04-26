@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Json } from "@/integrations/supabase/types";
@@ -32,6 +31,7 @@ const toMilestoneTemplate = (dbTemplate: DbMilestoneTemplate): MilestoneTemplate
 });
 
 export const fetchMilestoneTemplates = async (): Promise<MilestoneTemplate[]> => {
+  console.log('Fetching milestone templates');
   const { data, error } = await supabase
     .from('milestone_templates')
     .select('*')
@@ -42,7 +42,9 @@ export const fetchMilestoneTemplates = async (): Promise<MilestoneTemplate[]> =>
     throw error;
   }
 
-  return (data || []).map(toMilestoneTemplate);
+  const templates = (data || []).map(toMilestoneTemplate);
+  console.log('Fetched templates:', templates);
+  return templates;
 };
 
 export const getMilestoneTemplate = async (id: string): Promise<MilestoneTemplate | null> => {
@@ -61,6 +63,7 @@ export const getMilestoneTemplate = async (id: string): Promise<MilestoneTemplat
 };
 
 export const createMilestoneTemplate = async (template: Omit<MilestoneTemplate, 'id' | 'created_at' | 'updated_at'>): Promise<MilestoneTemplate> => {
+  console.log('Creating milestone template:', template);
   const { data, error } = await supabase
     .from('milestone_templates')
     .insert([{
@@ -77,7 +80,9 @@ export const createMilestoneTemplate = async (template: Omit<MilestoneTemplate, 
     throw error;
   }
 
-  return toMilestoneTemplate(data);
+  const createdTemplate = toMilestoneTemplate(data);
+  console.log('Created template:', createdTemplate);
+  return createdTemplate;
 };
 
 export const updateMilestoneTemplate = async (id: string, updates: Partial<Omit<MilestoneTemplate, 'id' | 'created_at' | 'updated_at'>>): Promise<void> => {

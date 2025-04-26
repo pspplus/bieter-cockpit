@@ -11,9 +11,11 @@ import { PlusCircle, X } from "lucide-react";
 import { toast } from "sonner";
 import { MilestoneTemplate, fetchMilestoneTemplates, updateMilestoneTemplate, createMilestoneTemplate } from '@/services/milestoneTemplateService';
 import { getDefaultMilestones } from '@/data/defaultMilestones';
+import { useAuth } from '@/context/AuthContext';
 
 const MilestoneTemplateSettings = () => {
   const { t } = useTranslation(['general']);
+  const { user } = useAuth();
   const [templates, setTemplates] = useState<MilestoneTemplate[]>([]);
   const [selectedTemplate, setSelectedTemplate] = useState<MilestoneTemplate | null>(null);
   const [description, setDescription] = useState('');
@@ -23,20 +25,25 @@ const MilestoneTemplateSettings = () => {
   const defaultMilestones = getDefaultMilestones();
 
   useEffect(() => {
-    loadTemplates();
-  }, []);
+    if (user) {
+      loadTemplates();
+    }
+  }, [user]);
 
   const loadTemplates = async () => {
     try {
       const loadedTemplates = await fetchMilestoneTemplates();
+      console.log('Loaded templates:', loadedTemplates);
       setTemplates(loadedTemplates);
     } catch (error) {
-      toast.error(t('general:errorLoadingTemplates', 'Fehler beim Laden der Vorlagen'));
+      console.error('Error loading templates:', error);
+      toast.error(t('general:errorLoadingTemplates'));
     }
   };
 
   const handleTemplateSelect = async (title: string) => {
     const existingTemplate = templates.find(t => t.title === title);
+    console.log('Selected template:', existingTemplate);
     
     if (existingTemplate) {
       setSelectedTemplate(existingTemplate);
@@ -64,7 +71,11 @@ const MilestoneTemplateSettings = () => {
   };
 
   const handleSave = async () => {
-    if (!selectedTemplate?.title) return;
+    if (!selectedTemplate?.title || !user?.id) {
+      console.error('Missing required data:', { selectedTemplate, userId: user?.id });
+      toast.error('Fehlende Daten für das Speichern der Vorlage');
+      return;
+    }
 
     setIsLoading(true);
     try {
@@ -72,7 +83,10 @@ const MilestoneTemplateSettings = () => {
         title: selectedTemplate.title,
         description,
         checklist_items: checklistItems,
+        user_id: user.id
       };
+
+      console.log('Saving template data:', templateData);
 
       if (selectedTemplate.id) {
         await updateMilestoneTemplate(selectedTemplate.id, templateData);
@@ -80,10 +94,11 @@ const MilestoneTemplateSettings = () => {
         await createMilestoneTemplate(templateData);
       }
 
-      toast.success(t('general:templateSaved', 'Vorlage gespeichert'));
+      toast.success(t('general:templateSaved'));
       await loadTemplates();
     } catch (error) {
-      toast.error(t('general:errorSavingTemplate', 'Fehler beim Speichern der Vorlage'));
+      console.error('Error saving template:', error);
+      toast.error(t('general:errorSavingTemplate'));
     } finally {
       setIsLoading(false);
     }
