@@ -58,7 +58,7 @@ export function TenderDetailsEditForm({ tender, onSubmit, onCancel }: TenderDeta
     erforderlicheZertifikate: tender.erforderlicheZertifikate || [],
     objektbesichtigungErforderlich: tender.objektbesichtigungErforderlich || false,
     objektart: tender.objektart || [],
-    vertragsart: tender.vertragsart || "",
+    vertragsart: tender.vertragsart || "keine_angabe",
     leistungswertvorgaben: tender.leistungswertvorgaben || false,
     stundenvorgaben: tender.stundenvorgaben || "",
     beraterVergabestelle: tender.beraterVergabestelle || "",
@@ -397,7 +397,7 @@ export function TenderDetailsEditForm({ tender, onSubmit, onCancel }: TenderDeta
         <div className="space-y-2">
           <Label>{t("tender.objektart", "Objektart")}</Label>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-            {objektartOptions.filter(option => option !== "").map((option) => (
+            {objektartOptions.filter(option => option !== "keine_angabe").map((option) => (
               <div key={option} className="flex items-center space-x-2">
                 <Checkbox
                   id={`objektart-${option}`}

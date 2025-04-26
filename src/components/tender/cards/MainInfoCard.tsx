@@ -23,7 +23,7 @@ export function MainInfoCard({ tender, onOpenDetailsDialog, onUpdateTender }: Ma
   const [title, setTitle] = useState(tender.title);
   const [externalReference, setExternalReference] = useState(tender.externalReference);
   const [client, setClient] = useState(tender.client);
-  const [vertragsart, setVertragsart] = useState<Vertragsart>(tender.vertragsart || "");
+  const [vertragsart, setVertragsart] = useState<Vertragsart>(tender.vertragsart || "keine_angabe");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSave = async () => {
@@ -49,7 +49,7 @@ export function MainInfoCard({ tender, onOpenDetailsDialog, onUpdateTender }: Ma
     setTitle(tender.title);
     setExternalReference(tender.externalReference);
     setClient(tender.client);
-    setVertragsart(tender.vertragsart || "");
+    setVertragsart(tender.vertragsart || "keine_angabe");
     setEditing(false);
   };
 
