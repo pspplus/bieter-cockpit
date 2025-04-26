@@ -13,18 +13,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { PlusCircle, Search, Edit, Trash, CircleInfo } from "lucide-react";
+import { PlusCircle, Search, Edit, Trash, Loader2 } from "lucide-react";
 import { format } from "date-fns";
 import { Client } from "@/types/client";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { NewClientDialog } from "@/components/client/NewClientDialog";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 
 const ClientsPage = () => {
   const { t } = useTranslation();
@@ -39,37 +33,6 @@ const ClientsPage = () => {
       client.contactPerson.toLowerCase().includes(searchQuery.toLowerCase()) ||
       client.email.toLowerCase().includes(searchQuery.toLowerCase())
   );
-
-  const getMilestoneInfoCount = (client: Client) => {
-    const milestoneFields = [
-      client.quick_check_info,
-      client.besichtigung_info,
-      client.konzept_info,
-      client.kalkulation_info,
-      client.dokumente_pruefen_info,
-      client.ausschreibung_einreichen_info,
-      client.aufklaerung_info,
-      client.implementierung_info,
-    ];
-
-    return milestoneFields.filter(field => field && field.trim() !== '').length;
-  };
-
-  const getMilestoneTooltipContent = (client: Client) => {
-    const milestoneInfo = [];
-    if (client.quick_check_info) milestoneInfo.push("Quick Check");
-    if (client.besichtigung_info) milestoneInfo.push("Besichtigung");
-    if (client.konzept_info) milestoneInfo.push("Konzept");
-    if (client.kalkulation_info) milestoneInfo.push("Kalkulation");
-    if (client.dokumente_pruefen_info) milestoneInfo.push("Dokumente prüfen");
-    if (client.ausschreibung_einreichen_info) milestoneInfo.push("Ausschreibung einreichen");
-    if (client.aufklaerung_info) milestoneInfo.push("Aufklärung");
-    if (client.implementierung_info) milestoneInfo.push("Implementierung");
-
-    return milestoneInfo.length > 0 
-      ? `Vorhandene Meilenstein-Informationen:\n${milestoneInfo.join('\n')}`
-      : "Keine Meilenstein-Informationen vorhanden";
-  };
 
   const handleClientCreated = (client: Client) => {
     navigate(`/clients/${client.id}`);
@@ -111,14 +74,13 @@ const ClientsPage = () => {
                   <TableHead>E-Mail</TableHead>
                   <TableHead>Telefon</TableHead>
                   <TableHead>Erstellt am</TableHead>
-                  <TableHead>Meilenstein-Info</TableHead>
                   <TableHead className="text-right">Aktionen</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredClients.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={7} className="text-center py-10">
+                    <TableCell colSpan={6} className="text-center py-10">
                       Keine Vergabestellen gefunden
                     </TableCell>
                   </TableRow>
@@ -133,27 +95,6 @@ const ClientsPage = () => {
                       <TableCell>{client.phone}</TableCell>
                       <TableCell>
                         {format(new Date(client.createdAt), "PP")}
-                      </TableCell>
-                      <TableCell>
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger>
-                              <div className="flex items-center gap-1">
-                                <CircleInfo className={`h-5 w-5 ${
-                                  getMilestoneInfoCount(client) > 0 
-                                    ? 'text-green-500' 
-                                    : 'text-gray-300'
-                                }`} />
-                                <span className="text-sm">
-                                  {getMilestoneInfoCount(client)}
-                                </span>
-                              </div>
-                            </TooltipTrigger>
-                            <TooltipContent className="whitespace-pre-line">
-                              {getMilestoneTooltipContent(client)}
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-2">
@@ -182,6 +123,7 @@ const ClientsPage = () => {
             </Table>
           </CardContent>
         </Card>
+      </div>
 
       <NewClientDialog 
         open={isCreateDialogOpen}
