@@ -6,10 +6,12 @@ import {
   createTender as createTenderService, 
   updateTender as updateTenderService,
   deleteTender as deleteTenderService,
+} from "@/services/tenderService";
+import {
   createMilestone as createMilestoneService,
   updateMilestone as updateMilestoneService,
   deleteMilestone as deleteMilestoneService
-} from "@/services/tenderService";
+} from "@/services/milestoneService";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 
@@ -70,28 +72,22 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
     try {
       const partialMilestones = tenderData.milestones || [];
       
-      // Entferne die Meilensteine aus den Daten für den ersten API-Aufruf
       const { milestones: _, ...tenderDataWithoutMilestones } = tenderData;
       
-      // Erstelle zuerst die Ausschreibung ohne Meilensteine
       const newTender = await createTenderService(tenderDataWithoutMilestones);
       
-      // Erstelle dann die Meilensteine, wenn welche vorhanden sind
       if (partialMilestones.length > 0) {
-        console.log("Creating milestones:", partialMilestones);
-        
         await Promise.all(
           partialMilestones.map((milestone, index) => 
-            createMilestoneService({ 
+            createMilestoneService({
               ...milestone,
               sequenceNumber: milestone.sequenceNumber || index + 1,
               tenderId: newTender.id,
-              assignees: milestone.assignees || [] // Stelle sicher, dass assignees immer gesetzt ist
+              assignees: milestone.assignees || []
             })
           )
         );
         
-        // Lade die Ausschreibung mit Meilensteinen neu
         const updatedTender = await fetchTenders()
           .then(tenders => tenders.find(t => t.id === newTender.id))
           .catch(error => {
@@ -177,14 +173,12 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
       const newMilestone = await createMilestoneService({ 
         ...milestone, 
         tenderId,
-        // Ensure milestone has proper status
         status: milestone.status || 'ausstehend'
       });
       
       setTenders(tenders.map(tender => {
         if (tender.id === tenderId) {
           const updatedMilestones = sortMilestones([...tender.milestones, newMilestone]);
-          
           return {
             ...tender,
             milestones: updatedMilestones
@@ -211,7 +205,6 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
         throw new Error("Milestone not found");
       }
       
-      // Nur die Statusvalidierung durchführen, wenn sich der Status tatsächlich ändert 
       if (existingMilestone.status !== milestone.status) {
         const isAllowed = canUpdateMilestoneStatus(existingMilestone, milestone.status);
         
@@ -221,18 +214,15 @@ export const TenderProvider: React.FC<TenderProviderProps> = ({ children }) => {
         }
       }
       
-      // Sicherstellen, dass alle notwendigen Felder korrekt gesetzt sind
       const updatedMilestone = {
         ...milestone,
         sequenceNumber: milestone.sequenceNumber || 0,
-        assignees: milestone.assignees || [] // Sicherstellen, dass die Zuweisungen korrekt übergeben werden
+        assignees: milestone.assignees || []
       };
       
-      console.log("Updating milestone with assignees:", updatedMilestone.assignees);
-      await updateMilestoneService(updatedMilestone);
+      await updateMilestoneService(updatedMilestone.id, updatedMilestone);
       
       setTenders(tenders.map(tender => {
-        // Die Meilensteine des betroffenen Tenders aktualisieren
         const updatedMilestones = tender.milestones.map(m => 
           m.id === milestone.id ? updatedMilestone : m
         );
