@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { TenderDocument } from '@/types/tender';
 import { Button } from '@/components/ui/button';
@@ -27,7 +28,6 @@ const DocumentViewer: React.FC<DocumentViewerProps> = ({
       setError(null);
       
       try {
-        // Extract the file path from the URL
         const url = new URL(fileDocument.fileUrl);
         const filePath = url.pathname.split('/').pop();
         
@@ -37,8 +37,6 @@ const DocumentViewer: React.FC<DocumentViewerProps> = ({
         
         console.log('Fetching document with path:', filePath);
         
-        // Get a fresh public URL for the file
-        // Note: getPublicUrl no longer returns an error property in newer Supabase versions
         const { data } = await supabase
           .storage
           .from('tender_documents')
@@ -61,29 +59,18 @@ const DocumentViewer: React.FC<DocumentViewerProps> = ({
   
   const getExcelOnlineUrl = (url: string, mode: 'view' | 'edit'): string => {
     const encodedUrl = encodeURIComponent(url);
-    const baseUrl = 'https://view.officeapps.live.com/op/view.aspx';
-    const params = new URLSearchParams({
-      src: encodedUrl,
-      action: mode,
-      wdAllowInteractivity: 'True',
-      wdHideGridlines: 'False',
-      wdHideHeaders: 'False',
-      ui: 'de-DE',
-      rs: 'de-DE'
-    });
-    return `${baseUrl}?${params.toString()}`;
-  };
-
-  const openInExcel = (url: string, mode: 'view' | 'edit') => {
-    const excelUrl = getExcelOnlineUrl(url, mode);
-    window.open(excelUrl, '_blank');
+    if (mode === 'edit') {
+      return `https://www.office.com/launch/excel/copy?url=${encodedUrl}`;
+    }
+    return `https://excel.officeapps.live.com/x/_layouts/xlviewerinternal.aspx?ui=de-DE&rs=de-DE&WOPISrc=${encodedUrl}`;
   };
 
   const downloadDocument = () => {
     if (fileUrl) {
-      window.open(fileUrl, '_blank');
-    } else {
-      window.open(fileDocument.fileUrl, '_blank');
+      const downloadLink = document.createElement('a');
+      downloadLink.href = fileUrl;
+      downloadLink.download = fileDocument.name;
+      downloadLink.click();
     }
   };
 
@@ -154,18 +141,18 @@ const DocumentViewer: React.FC<DocumentViewerProps> = ({
       case 'spreadsheet':
         return (
           <div className="flex flex-col items-center justify-center py-8 space-y-4">
-            <p className="text-center">Sie können die Excel-Datei direkt im Browser öffnen:</p>
+            <p className="text-center mb-2">Excel-Datei Optionen:</p>
             <div className="flex flex-col gap-4 w-full max-w-md">
               <Button
-                onClick={() => openInExcel(fileUrl!, 'edit')}
+                onClick={() => window.open(getExcelOnlineUrl(fileUrl!, 'edit'), '_blank')}
                 className="flex items-center justify-center w-full"
               >
                 <ExternalLink className="mr-2 h-4 w-4" />
-                In Excel bearbeiten
+                In Microsoft 365 bearbeiten
               </Button>
               <Button
                 variant="outline"
-                onClick={() => openInExcel(fileUrl!, 'view')}
+                onClick={() => window.open(getExcelOnlineUrl(fileUrl!, 'view'), '_blank')}
                 className="flex items-center justify-center w-full"
               >
                 <Eye className="mr-2 h-4 w-4" />
@@ -180,7 +167,7 @@ const DocumentViewer: React.FC<DocumentViewerProps> = ({
                 Herunterladen
               </Button>
               <p className="text-sm text-gray-500 text-center mt-2">
-                Hinweis: Für die Bearbeitung wird ein Microsoft 365 Account benötigt.
+                Hinweis: Zum Bearbeiten wird Ihre Microsoft 365 Business Premium Lizenz verwendet.
               </p>
             </div>
           </div>
