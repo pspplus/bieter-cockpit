@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { TenderDocument } from '@/types/tender';
 import { Button } from '@/components/ui/button';
@@ -60,19 +59,26 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
     }
   }, [isOpen, fileDocument]);
   
+  // Updated function to use Excel Online Editor for spreadsheets
+  const getExcelOnlineUrl = (url: string): string => {
+    const encodedUrl = encodeURIComponent(url);
+    return `https://excel.officeapps.live.com/x/_layouts/xlviewerinternal.aspx?` + 
+           `ui=de-DE&` +
+           `rs=de-DE&` +
+           `edit=1&` +
+           `WOPISrc=${encodedUrl}&` +
+           `wdUserEvent=True&` +
+           `wdRedirect=True&` +
+           `wdNewAndOpenCt=True&` +
+           `wdPreviousSession=True`;
+  };
+
   const downloadDocument = () => {
     if (fileUrl) {
       window.open(fileUrl, '_blank');
     } else {
       window.open(fileDocument.fileUrl, '_blank');
     }
-  };
-
-  // Get Office Online URL for spreadsheets
-  const getExcelOnlineUrl = (url: string): string => {
-    // Encode the URL to be passed as a parameter
-    const encodedUrl = encodeURIComponent(url);
-    return `https://view.officeapps.live.com/op/embed.aspx?src=${encodedUrl}&wdAllowInteractivity=True&wdDownloadButton=True&wdStartOn=1`;
   };
 
   // Display loading state
@@ -149,6 +155,8 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
             className="w-full h-[70vh]"
             title={fileDocument.name}
             frameBorder="0"
+            allow="autoplay; fullscreen; clipboard-read; clipboard-write"
+            sandbox="allow-downloads allow-forms allow-modals allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts allow-top-navigation"
           />
         );
       default:
