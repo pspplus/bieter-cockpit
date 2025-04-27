@@ -10,6 +10,8 @@ import { MilestoneDetailLoading } from "@/components/tender/milestone/MilestoneD
 import { MilestoneDetailError } from "@/components/tender/milestone/MilestoneDetailError";
 import { MilestoneDetailContent } from "@/components/tender/milestone/MilestoneDetailContent";
 import { useMilestoneTemplate } from "@/hooks/useMilestoneTemplate";
+import { TenderDocumentViewerDialog } from "@/components/tender/detail/TenderDocumentViewerDialog";
+import { TenderDocument } from "@/types/tender";
 
 export default function MilestoneDetailPage() {
   const { tenderId, milestoneId } = useParams<{ tenderId: string; milestoneId: string }>();
@@ -20,6 +22,8 @@ export default function MilestoneDetailPage() {
   const [milestone, setMilestone] = useState<Milestone | null>(null);
   const template = useMilestoneTemplate(milestone);
   const [client, setClient] = useState<Client | null>(null);
+  const [selectedDocument, setSelectedDocument] = useState<TenderDocument | null>(null);
+  const [documentViewerOpen, setDocumentViewerOpen] = useState(false);
 
   React.useEffect(() => {
     const loadData = async () => {
@@ -65,6 +69,11 @@ export default function MilestoneDetailPage() {
     loadData();
   }, [tenderId, milestoneId, tenders, loadTender, clients]);
 
+  const handlePreviewDocument = (document: TenderDocument) => {
+    setSelectedDocument(document);
+    setDocumentViewerOpen(true);
+  };
+
   if (isLoading) {
     return <MilestoneDetailLoading />;
   }
@@ -80,6 +89,13 @@ export default function MilestoneDetailPage() {
         template={template}
         client={client}
         tenderId={tenderId!}
+        onPreviewDocument={handlePreviewDocument}
+      />
+      
+      <TenderDocumentViewerDialog 
+        isOpen={documentViewerOpen}
+        onClose={() => setDocumentViewerOpen(false)}
+        document={selectedDocument}
       />
     </Layout>
   );

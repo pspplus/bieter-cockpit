@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -84,14 +83,7 @@ export default function TenderDetailPage() {
 
   const handlePreviewDocument = (document: TenderDocument) => {
     setSelectedDocument(document);
-    
-    const canViewInBrowser = isViewableInBrowser(document.fileType);
-    
-    if (canViewInBrowser) {
-      setDocumentViewerOpen(true);
-    } else {
-      window.open(document.fileUrl, '_blank');
-    }
+    setDocumentViewerOpen(true);
   };
 
   const handleTenderUpdate = async (updates: Partial<Tender>) => {

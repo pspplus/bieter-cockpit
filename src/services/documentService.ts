@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { TenderDocument, ApprovalStatus } from "@/types/tender";
 import { v4 as uuidv4 } from "uuid";
@@ -33,19 +32,30 @@ export const isViewableInBrowser = (fileType: string): boolean => {
     // Video files
     'video/mp4', 'video/webm', 'video/ogg',
     // Audio files
-    'audio/mpeg', 'audio/ogg', 'audio/wav'
+    'audio/mpeg', 'audio/ogg', 'audio/wav',
+    // Excel files
+    'application/vnd.ms-excel', 
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    'application/vnd.ms-excel.sheet.macroEnabled.12'
   ];
   
   return viewableTypes.includes(fileType);
 };
 
 // Helper to get file category for UI display
-export const getFileCategory = (fileType: string): 'image' | 'pdf' | 'video' | 'audio' | 'text' | 'other' => {
+export const getFileCategory = (fileType: string): 'image' | 'pdf' | 'video' | 'audio' | 'text' | 'spreadsheet' | 'other' => {
   if (fileType.startsWith('image/')) return 'image';
   if (fileType === 'application/pdf') return 'pdf';
   if (fileType.startsWith('video/')) return 'video';
   if (fileType.startsWith('audio/')) return 'audio';
   if (fileType.startsWith('text/')) return 'text';
+  if (fileType === 'application/vnd.ms-excel' || 
+      fileType === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
+      fileType === 'application/vnd.ms-excel.sheet.macroEnabled.12' ||
+      fileType.includes('excel') ||
+      fileType.includes('sheet')) {
+    return 'spreadsheet';
+  }
   return 'other';
 };
 

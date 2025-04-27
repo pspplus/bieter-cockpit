@@ -68,6 +68,13 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
     }
   };
 
+  // Get Office Online URL for spreadsheets
+  const getExcelOnlineUrl = (url: string): string => {
+    // Encode the URL to be passed as a parameter
+    const encodedUrl = encodeURIComponent(url);
+    return `https://view.officeapps.live.com/op/embed.aspx?src=${encodedUrl}&wdAllowInteractivity=True&wdDownloadButton=True&wdStartOn=1`;
+  };
+
   // Display loading state
   if (isLoading) {
     return (
@@ -134,6 +141,15 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
           >
             Ihr Browser unterstützt das Audio-Tag nicht.
           </audio>
+        );
+      case 'spreadsheet':
+        return (
+          <iframe 
+            src={getExcelOnlineUrl(fileUrl)}
+            className="w-full h-[70vh]"
+            title={fileDocument.name}
+            frameBorder="0"
+          />
         );
       default:
         return (
