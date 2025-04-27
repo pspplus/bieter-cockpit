@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { TenderDocument } from '@/types/tender';
 import { Button } from '@/components/ui/button';
-import { Download, ExternalLink, AlertCircle } from 'lucide-react';
+import { Download, ExternalLink, Eye, AlertCircle } from 'lucide-react';
 import { getFileCategory, isViewableInBrowser } from '@/services/documentService';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -11,7 +11,7 @@ interface DocumentViewerProps {
   onClose: () => void;
 }
 
-export const DocumentViewer: React.FC<DocumentViewerProps> = ({ 
+const DocumentViewer: React.FC<DocumentViewerProps> = ({ 
   document: fileDocument,
   isOpen,
   onClose
@@ -59,10 +59,24 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
     }
   }, [isOpen, fileDocument]);
   
-  const openInExcel = (url: string) => {
+  const getExcelOnlineUrl = (url: string, mode: 'view' | 'edit'): string => {
     const encodedUrl = encodeURIComponent(url);
-    const excelWebAppUrl = `https://excel.officeapps.live.com/x/_layouts/workbench.aspx?WOPISrc=${encodedUrl}`;
-    window.open(excelWebAppUrl, '_blank');
+    const baseUrl = 'https://view.officeapps.live.com/op/view.aspx';
+    const params = new URLSearchParams({
+      src: encodedUrl,
+      action: mode,
+      wdAllowInteractivity: 'True',
+      wdHideGridlines: 'False',
+      wdHideHeaders: 'False',
+      ui: 'de-DE',
+      rs: 'de-DE'
+    });
+    return `${baseUrl}?${params.toString()}`;
+  };
+
+  const openInExcel = (url: string, mode: 'view' | 'edit') => {
+    const excelUrl = getExcelOnlineUrl(url, mode);
+    window.open(excelUrl, '_blank');
   };
 
   const downloadDocument = () => {
@@ -140,22 +154,34 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
       case 'spreadsheet':
         return (
           <div className="flex flex-col items-center justify-center py-8 space-y-4">
-            <p className="text-center">Für die beste Bearbeitungserfahrung öffnen Sie die Excel-Datei direkt in Microsoft 365.</p>
-            <div className="flex gap-4">
+            <p className="text-center">Sie können die Excel-Datei direkt im Browser öffnen:</p>
+            <div className="flex flex-col gap-4 w-full max-w-md">
               <Button
-                onClick={() => openInExcel(fileUrl)}
-                className="flex items-center"
+                onClick={() => openInExcel(fileUrl!, 'edit')}
+                className="flex items-center justify-center w-full"
               >
                 <ExternalLink className="mr-2 h-4 w-4" />
-                In Excel öffnen
+                In Excel bearbeiten
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => openInExcel(fileUrl!, 'view')}
+                className="flex items-center justify-center w-full"
+              >
+                <Eye className="mr-2 h-4 w-4" />
+                In Excel anzeigen
               </Button>
               <Button
                 variant="outline"
                 onClick={downloadDocument}
+                className="flex items-center justify-center w-full"
               >
                 <Download className="mr-2 h-4 w-4" />
                 Herunterladen
               </Button>
+              <p className="text-sm text-gray-500 text-center mt-2">
+                Hinweis: Für die Bearbeitung wird ein Microsoft 365 Account benötigt.
+              </p>
             </div>
           </div>
         );
@@ -178,3 +204,5 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
     </div>
   );
 };
+
+export default DocumentViewer;
