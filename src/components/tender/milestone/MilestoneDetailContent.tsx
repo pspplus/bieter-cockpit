@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Client } from "@/types/client";  // Corrected import
+import { Client } from "@/types/client";
 import { Milestone } from "@/types/tender";
 import { ArrowLeft, Calendar, ListCheck, User2 } from "lucide-react";
 import { Link } from "react-router-dom";
