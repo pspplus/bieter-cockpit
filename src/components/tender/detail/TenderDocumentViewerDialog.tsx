@@ -1,9 +1,8 @@
-
 import { TenderDocument } from "@/types/tender";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogClose } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
-import { DocumentViewer } from "@/components/document/DocumentViewer";
+import DocumentViewer from "@/components/document/DocumentViewer";
 
 interface TenderDocumentViewerDialogProps {
   isOpen: boolean;
