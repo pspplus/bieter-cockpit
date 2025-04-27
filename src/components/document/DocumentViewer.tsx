@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { TenderDocument } from '@/types/tender';
 import { Button } from '@/components/ui/button';
-import { Download, AlertCircle } from 'lucide-react';
+import { Download, ExternalLink, AlertCircle } from 'lucide-react';
 import { getFileCategory, isViewableInBrowser } from '@/services/documentService';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -59,19 +59,10 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
     }
   }, [isOpen, fileDocument]);
   
-  // Updated function to use Office Online Viewer with edit capabilities
-  const getExcelOnlineUrl = (url: string): string => {
+  const openInExcel = (url: string) => {
     const encodedUrl = encodeURIComponent(url);
-    return `https://view.officeapps.live.com/op/embed.aspx?` +
-           `src=${encodedUrl}&` +
-           `allowEdit=1&` +
-           `wdStartOn=1&` +
-           `wdEmbedCode=0&` +
-           `item=Excel&` +
-           `wdHideGridlines=0&` +
-           `wdHideHeaders=0&` +
-           `ui=de-DE&` +
-           `rs=de-DE`;
+    const excelWebAppUrl = `https://excel.officeapps.live.com/x/_layouts/workbench.aspx?WOPISrc=${encodedUrl}`;
+    window.open(excelWebAppUrl, '_blank');
   };
 
   const downloadDocument = () => {
@@ -82,7 +73,6 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
     }
   };
 
-  // Display loading state
   if (isLoading) {
     return (
       <div className="w-full flex items-center justify-center py-12">
@@ -93,7 +83,6 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
     );
   }
   
-  // Display error state
   if (error || !fileUrl) {
     return (
       <div className="w-full flex flex-col items-center justify-center py-8 text-center">
@@ -108,7 +97,6 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
     );
   }
 
-  // Render different content based on file type
   const renderContent = () => {
     switch (fileCategory) {
       case 'pdf':
@@ -151,14 +139,25 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
         );
       case 'spreadsheet':
         return (
-          <iframe 
-            src={getExcelOnlineUrl(fileUrl)}
-            className="w-full h-[70vh]"
-            title={fileDocument.name}
-            frameBorder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-            sandbox="allow-downloads allow-forms allow-modals allow-orientation-lock allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-presentation allow-same-origin allow-scripts allow-top-navigation allow-top-navigation-by-user-activation"
-          />
+          <div className="flex flex-col items-center justify-center py-8 space-y-4">
+            <p className="text-center">Für die beste Bearbeitungserfahrung öffnen Sie die Excel-Datei direkt in Microsoft 365.</p>
+            <div className="flex gap-4">
+              <Button
+                onClick={() => openInExcel(fileUrl)}
+                className="flex items-center"
+              >
+                <ExternalLink className="mr-2 h-4 w-4" />
+                In Excel öffnen
+              </Button>
+              <Button
+                variant="outline"
+                onClick={downloadDocument}
+              >
+                <Download className="mr-2 h-4 w-4" />
+                Herunterladen
+              </Button>
+            </div>
+          </div>
         );
       default:
         return (
