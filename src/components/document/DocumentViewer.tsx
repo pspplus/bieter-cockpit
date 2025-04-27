@@ -59,18 +59,19 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
     }
   }, [isOpen, fileDocument]);
   
-  // Updated function to use Excel Online Editor for spreadsheets
+  // Updated function to use Office Online Viewer with edit capabilities
   const getExcelOnlineUrl = (url: string): string => {
     const encodedUrl = encodeURIComponent(url);
-    return `https://excel.officeapps.live.com/x/_layouts/xlviewerinternal.aspx?` + 
+    return `https://view.officeapps.live.com/op/embed.aspx?` +
+           `src=${encodedUrl}&` +
+           `allowEdit=1&` +
+           `wdStartOn=1&` +
+           `wdEmbedCode=0&` +
+           `item=Excel&` +
+           `wdHideGridlines=0&` +
+           `wdHideHeaders=0&` +
            `ui=de-DE&` +
-           `rs=de-DE&` +
-           `edit=1&` +
-           `WOPISrc=${encodedUrl}&` +
-           `wdUserEvent=True&` +
-           `wdRedirect=True&` +
-           `wdNewAndOpenCt=True&` +
-           `wdPreviousSession=True`;
+           `rs=de-DE`;
   };
 
   const downloadDocument = () => {
@@ -155,8 +156,8 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
             className="w-full h-[70vh]"
             title={fileDocument.name}
             frameBorder="0"
-            allow="autoplay; fullscreen; clipboard-read; clipboard-write"
-            sandbox="allow-downloads allow-forms allow-modals allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts allow-top-navigation"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+            sandbox="allow-downloads allow-forms allow-modals allow-orientation-lock allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-presentation allow-same-origin allow-scripts allow-top-navigation allow-top-navigation-by-user-activation"
           />
         );
       default:
