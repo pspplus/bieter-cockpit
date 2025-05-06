@@ -6,6 +6,7 @@ import { ObjectInfoCard } from "./cards/ObjectInfoCard";
 import { RequirementsCard } from "./cards/RequirementsCard";
 import { ContactCard } from "./cards/ContactCard";
 import { NotesCard } from "./cards/NotesCard";
+import { RelatedTendersCard } from "./cards/RelatedTendersCard";
 import { useTender } from "@/hooks/useTender";
 import { useState } from "react";
 
@@ -73,6 +74,10 @@ export function TenderDetails({
         />
         
         <NotesCard tender={tender} />
+
+        {tender.client && (
+          <RelatedTendersCard tender={tender} />
+        )}
       </div>
     </div>
   );

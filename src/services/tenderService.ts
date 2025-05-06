@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { Tender, TenderStatus } from "@/types/tender";
 import { format } from "date-fns";
@@ -255,3 +254,28 @@ export const deleteTender = async (id: string): Promise<void> => {
   }
 };
 
+// Fetch tenders from the same client with won/lost status
+export const fetchRelatedTendersByClient = async (
+  client: string,
+  currentTenderId: string
+): Promise<Tender[]> => {
+  if (!client || !currentTenderId) {
+    return [];
+  }
+  
+  const { data: tenderData, error } = await supabase
+    .from('tenders')
+    .select('*')
+    .eq('client', client)
+    .in('status', ['gewonnen', 'verloren'])
+    .neq('id', currentTenderId) // Exclude current tender
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching related tenders:', error);
+    throw error;
+  }
+
+  const tenders = await Promise.all((tenderData || []).map(mapTenderFromDB));
+  return tenders;
+};

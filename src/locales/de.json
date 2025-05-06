@@ -1,3 +1,4 @@
+
 {
   "tender": {
     "title": "Titel",
@@ -21,7 +22,9 @@
     "evaluationSchemePlaceholder": "Details zum Wertungsschema eintragen",
     "internalReference": "Interne Referenznummer",
     "internalReferenceHelp": "Wird beim Erstellen automatisch generiert",
-    "externalReferenceHelp": "Die vom Kunden vergebene Referenznummer"
+    "externalReferenceHelp": "Die vom Kunden vergebene Referenznummer",
+    "clientHistory": "Vergabestellen-Historie",
+    "noRelatedTenders": "Keine früheren Ausschreibungen für diese Vergabestelle gefunden"
   },
   "tenderStatus": {
     "draft": "Entwurf",
@@ -121,7 +124,8 @@
   "errorMessages": {
     "couldNotLoadTenders": "Fehler beim Laden der Ausschreibungen",
     "couldNotDeleteTender": "Fehler beim Löschen der Ausschreibung",
-    "couldNotUpdateTender": "Fehler beim Aktualisieren der Ausschreibung"
+    "couldNotUpdateTender": "Fehler beim Aktualisieren der Ausschreibung",
+    "couldNotLoadRelatedTenders": "Fehler beim Laden verwandter Ausschreibungen"
   },
   "tenders": {
     "cancel": "Abbrechen",
