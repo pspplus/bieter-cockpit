@@ -267,7 +267,7 @@ export const fetchRelatedTendersByClient = async (
     .from('tenders')
     .select('*')
     .eq('client', client)
-    .in('status', ['gewonnen', 'verloren'])
+    .in('status', ['gewonnen', 'verloren', 'nicht-abgegeben', 'ausgeschlossen'])
     .neq('id', currentTenderId) // Exclude current tender
     .order('created_at', { ascending: false });
 

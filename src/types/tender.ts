@@ -1,3 +1,4 @@
+
 export type TenderStatus = 
   | 'entwurf'
   | 'in-pruefung'
@@ -6,7 +7,7 @@ export type TenderStatus =
   | 'aufklaerung'
   | 'gewonnen'
   | 'verloren'
-  | 'abgeschlossen'
+  | 'ausgeschlossen'
   | 'nicht-abgegeben';
 
 export type MilestoneStatus = 

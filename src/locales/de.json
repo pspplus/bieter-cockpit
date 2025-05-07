@@ -1,4 +1,3 @@
-
 {
   "tender": {
     "title": "Titel",
@@ -34,7 +33,7 @@
     "clarification": "Aufklärung",
     "won": "Gewonnen",
     "lost": "Verloren",
-    "completed": "Abgeschlossen",
+    "excluded": "Ausgeschlossen",
     "entwurf": "Entwurf",
     "in-pruefung": "In Prüfung",
     "in-bearbeitung": "In Bearbeitung",
@@ -42,7 +41,9 @@
     "aufklaerung": "Aufklärung",
     "gewonnen": "Gewonnen",
     "verloren": "Verloren",
-    "abgeschlossen": "Abgeschlossen"
+    "ausgeschlossen": "Ausgeschlossen",
+    "notSubmitted": "Nicht abgegeben",
+    "nicht-abgegeben": "Nicht abgegeben"
   },
   "milestoneStatus": {
     "completed": "Abgeschlossen",
