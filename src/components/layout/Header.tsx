@@ -1,3 +1,4 @@
+
 import { cn } from "@/lib/utils";
 import { Bell, ChevronDown, Menu, PlusCircle, Search, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -23,7 +24,7 @@ interface HeaderProps {
   title?: string;
 }
 
-export function Header({ toggleSidebar, title = "Tender Management" }: HeaderProps) {
+export function Header({ toggleSidebar, title = "Bieter Cockpit" }: HeaderProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
   const { user, isAuthenticated, logout, getUserName } = useAuth();

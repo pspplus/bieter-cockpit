@@ -49,7 +49,7 @@ export default function SubmissionsPage() {
   };
 
   return (
-    <Layout title={t('submissions')}>
+    <Layout title="Eingereichte Ausschreibungen">
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <DropdownMenu>
@@ -57,7 +57,7 @@ export default function SubmissionsPage() {
               <Button variant="outline" className="flex items-center gap-2 w-full sm:w-auto">
                 <Filter className="h-4 w-4" />
                 {filterStatus === "all" 
-                  ? t('allSubmissions') 
+                  ? "Alle eingereichten Ausschreibungen" 
                   : t(`tenders.${filterStatus}`)}
               </Button>
             </DropdownMenuTrigger>
@@ -67,7 +67,7 @@ export default function SubmissionsPage() {
                 onValueChange={(value) => setFilterStatus(value as TenderStatus | "all")}
               >
                 <DropdownMenuRadioItem value="all">
-                  {t('allSubmissions')}
+                  Alle eingereichten Ausschreibungen
                 </DropdownMenuRadioItem>
                 <DropdownMenuRadioItem value="abgegeben">
                   {t('tenders.abgegeben')}
@@ -101,7 +101,7 @@ export default function SubmissionsPage() {
                     <div>
                       <CardTitle className="mb-1">{tender.title}</CardTitle>
                       <CardDescription>
-                        {t('tender.referenz')}: {getDisplayReference(tender)}
+                        Referenz: {getDisplayReference(tender)}
                       </CardDescription>
                     </div>
                     <div className={cn(
@@ -116,13 +116,13 @@ export default function SubmissionsPage() {
                   <div className="grid md:grid-cols-3 gap-4">
                     <div>
                       <div className="text-sm font-medium text-tender-500 dark:text-tender-400">
-                        {t('tender.vergabestelle')}
+                        Vergabestelle
                       </div>
                       <div>{tender.client || "-"}</div>
                     </div>
                     <div>
                       <div className="text-sm font-medium text-tender-500 dark:text-tender-400">
-                        {t('submittedDate')}
+                        Eingereicht am
                       </div>
                       <div>
                         {new Date(tender.updatedAt).toLocaleDateString('de-DE')}
@@ -130,7 +130,7 @@ export default function SubmissionsPage() {
                     </div>
                     <div>
                       <div className="text-sm font-medium text-tender-500 dark:text-tender-400">
-                        {t('tender.budget')}
+                        Budget
                       </div>
                       <div>
                         {tender.budget 
@@ -147,7 +147,7 @@ export default function SubmissionsPage() {
                     <Button variant="outline" asChild>
                       <Link to={`/tenders/${tender.id}`} className="flex items-center gap-2">
                         <FileCheck className="h-4 w-4" />
-                        {t('viewSubmission')}
+                        Ausschreibung ansehen
                       </Link>
                     </Button>
                   </div>
@@ -159,14 +159,12 @@ export default function SubmissionsPage() {
           <div className="text-center py-16">
             <FileCheck className="mx-auto h-12 w-12 text-tender-300 dark:text-tender-600" />
             <h3 className="mt-4 text-lg font-medium">
-              {t('noSubmissionsFound')}
+              Keine eingereichten Ausschreibungen gefunden
             </h3>
             <p className="mt-2 text-tender-500 dark:text-tender-400 max-w-md mx-auto">
               {filterStatus === "all"
-                ? t('noSubmissionsCreated')
-                : t('noSubmissionsWithStatus', { 
-                    status: t(`tenders.${filterStatus}`) 
-                  })}
+                ? "Sie haben noch keine Ausschreibungen eingereicht"
+                : `Es wurden keine Ausschreibungen mit dem Status "${t(`tenders.${filterStatus}`)}" gefunden`}
             </p>
           </div>
         )}

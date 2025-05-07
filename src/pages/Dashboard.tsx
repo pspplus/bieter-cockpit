@@ -97,45 +97,45 @@ export default function Dashboard() {
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <Card className="animate-blur-in">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Total Tenders</CardTitle>
+              <CardTitle className="text-sm font-medium">Ausschreibungen Gesamt</CardTitle>
               <FileText className="h-4 w-4 text-bieter-blue" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{totalTenders}</div>
-              <p className="text-xs text-tender-500">All tender projects</p>
+              <p className="text-xs text-tender-500">Alle Ausschreibungsprojekte</p>
             </CardContent>
           </Card>
           
           <Card className="animate-blur-in" style={{ animationDelay: "50ms" }}>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Active Tenders</CardTitle>
+              <CardTitle className="text-sm font-medium">Aktive Ausschreibungen</CardTitle>
               <Clock className="h-4 w-4 text-bieter-blue" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{tendersInProgress}</div>
-              <p className="text-xs text-tender-500">Currently in progress</p>
+              <p className="text-xs text-tender-500">Aktuell in Bearbeitung</p>
             </CardContent>
           </Card>
           
           <Card className="animate-blur-in" style={{ animationDelay: "100ms" }}>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Submitted</CardTitle>
+              <CardTitle className="text-sm font-medium">Eingereicht</CardTitle>
               <FileCheck className="h-4 w-4 text-bieter-blue" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{tendersSubmitted}</div>
-              <p className="text-xs text-tender-500">Awaiting response</p>
+              <p className="text-xs text-tender-500">Wartet auf Antwort</p>
             </CardContent>
           </Card>
           
           <Card className="animate-blur-in" style={{ animationDelay: "150ms" }}>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Won Tenders</CardTitle>
+              <CardTitle className="text-sm font-medium">Gewonnene Ausschreibungen</CardTitle>
               <Flag className="h-4 w-4 text-bieter-blue" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{tendersWon}</div>
-              <p className="text-xs text-tender-500">Success rate: {totalTenders > 0 ? Math.round((tendersWon / totalTenders) * 100) : 0}%</p>
+              <p className="text-xs text-tender-500">Erfolgsquote: {totalTenders > 0 ? Math.round((tendersWon / totalTenders) * 100) : 0}%</p>
             </CardContent>
           </Card>
         </div>
@@ -151,7 +151,7 @@ export default function Dashboard() {
                 <div className="flex-1">
                   <div className="text-2xl font-bold">{successRate}%</div>
                   <p className="text-xs text-tender-500">
-                    {tendersWon} won out of {allSubmittedTenders} submitted tenders
+                    {tendersWon} gewonnen von {allSubmittedTenders} eingereichten Ausschreibungen
                   </p>
                 </div>
                 <div className="h-2 flex-1 bg-gray-200 rounded-full overflow-hidden">
@@ -221,9 +221,9 @@ export default function Dashboard() {
         <div className="grid gap-6 md:grid-cols-2">
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-medium">Active Tenders</h2>
+              <h2 className="text-lg font-medium">Aktive Ausschreibungen</h2>
               <Link to="/tenders" className="text-sm text-bieter-blue flex items-center hover:underline">
-                View all
+                Alle anzeigen
                 <ArrowRight className="h-3.5 w-3.5 ml-1" />
               </Link>
             </div>
@@ -237,7 +237,7 @@ export default function Dashboard() {
             ) : (
               <Card className="bg-tender-50/50">
                 <CardContent className="py-8 text-center text-tender-500">
-                  <p>No active tenders at the moment</p>
+                  <p>Keine aktiven Ausschreibungen vorhanden</p>
                 </CardContent>
               </Card>
             )}
@@ -246,7 +246,7 @@ export default function Dashboard() {
           <div>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <h2 className="text-lg font-medium">Upcoming Deadlines</h2>
+                <h2 className="text-lg font-medium">Anstehende Fristen</h2>
               </div>
               
               {upcomingDeadlines.length > 0 ? (
@@ -274,7 +274,7 @@ export default function Dashboard() {
                               </div>
                               <div className={`rounded-full px-3 py-1 text-sm flex items-center gap-1.5 ${urgencyClass} font-medium`}>
                                 <AlertCircle className="h-4 w-4" />
-                                {daysLeft} {daysLeft === 1 ? "day" : "days"} left
+                                {daysLeft} {daysLeft === 1 ? "Tag" : "Tage"} übrig
                               </div>
                             </div>
                           </CardContent>
@@ -286,7 +286,7 @@ export default function Dashboard() {
               ) : (
                 <Card className="bg-tender-50/50">
                   <CardContent className="py-8 text-center text-tender-500">
-                    <p>No upcoming deadlines in the next 7 days</p>
+                    <p>Keine anstehenden Fristen in den nächsten 7 Tagen</p>
                   </CardContent>
                 </Card>
               )}
@@ -294,7 +294,7 @@ export default function Dashboard() {
             
             <div className="mt-6 space-y-4">
               <div className="flex items-center justify-between">
-                <h2 className="text-lg font-medium">Draft Tenders</h2>
+                <h2 className="text-lg font-medium">Entwürfe</h2>
               </div>
               
               {draftTenders.length > 0 ? (
@@ -306,7 +306,7 @@ export default function Dashboard() {
               ) : (
                 <Card className="bg-tender-50/50">
                   <CardContent className="py-8 text-center text-tender-500">
-                    <p>No draft tenders</p>
+                    <p>Keine Entwürfe vorhanden</p>
                   </CardContent>
                 </Card>
               )}
