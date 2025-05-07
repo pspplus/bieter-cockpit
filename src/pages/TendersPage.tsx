@@ -34,7 +34,8 @@ export default function TendersPage() {
     { value: "aufklaerung", label: "Aufklärung" },
     { value: "gewonnen", label: "Gewonnen" },
     { value: "verloren", label: "Verloren" },
-    { value: "abgeschlossen", label: "Abgeschlossen" },
+    { value: "ausgeschlossen", label: "Ausgeschlossen" },
+    { value: "nicht-abgegeben", label: "Nicht abgegeben" }
   ];
   
   const filteredTenders = filterBy === "all" 
