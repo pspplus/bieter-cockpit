@@ -16,8 +16,9 @@ import { useNavigate } from "react-router-dom";
 import { Tender } from "@/types/tender";
 import { useTranslation } from "react-i18next";
 import { Skeleton } from "@/components/ui/skeleton";
+import { statusGroups } from "@/utils/statusUtils";
 
-type FilterOption = "all" | Tender["status"];
+type FilterOption = "all" | "entwurf" | "in-pruefung" | "in-bearbeitung";
 
 export default function TendersPage() {
   const { t } = useTranslation();
@@ -25,22 +26,21 @@ export default function TendersPage() {
   const [filterBy, setFilterBy] = useState<FilterOption>("all");
   const navigate = useNavigate();
   
+  // Filtern der Ausschreibungen, um diejenigen auszuschließen, die auf der Submissions-Seite angezeigt werden
+  const activeTenders = tenders.filter(tender => 
+    !statusGroups.allSubmitted.includes(tender.status as any)
+  );
+  
   const filterOptions: { value: FilterOption; label: string }[] = [
-    { value: "all", label: "Alle Ausschreibungen" },
+    { value: "all", label: "Alle aktiven Ausschreibungen" },
     { value: "entwurf", label: "Entwurf" },
     { value: "in-pruefung", label: "In Prüfung" },
-    { value: "in-bearbeitung", label: "In Bearbeitung" },
-    { value: "abgegeben", label: "Abgegeben" },
-    { value: "aufklaerung", label: "Aufklärung" },
-    { value: "gewonnen", label: "Gewonnen" },
-    { value: "verloren", label: "Verloren" },
-    { value: "ausgeschlossen", label: "Ausgeschlossen" },
-    { value: "nicht-abgegeben", label: "Nicht abgegeben" }
+    { value: "in-bearbeitung", label: "In Bearbeitung" }
   ];
   
   const filteredTenders = filterBy === "all" 
-    ? tenders 
-    : tenders.filter(tender => tender.status === filterBy);
+    ? activeTenders 
+    : activeTenders.filter(tender => tender.status === filterBy);
   
   // Sort tenders by due date (ascending)
   const sortedTenders = [...filteredTenders].sort(
@@ -106,11 +106,11 @@ export default function TendersPage() {
           </div>
         ) : (
           <div className="text-center py-16">
-            <h3 className="text-lg font-medium mb-2">Keine Ausschreibungen gefunden</h3>
+            <h3 className="text-lg font-medium mb-2">Keine aktiven Ausschreibungen gefunden</h3>
             <p className="text-tender-500 mb-6">
               {filterBy === "all"
-                ? "Sie haben noch keine Ausschreibungen erstellt"
-                : `Es gibt keine Ausschreibungen mit dem Status "${filterOptions.find(option => option.value === filterBy)?.label}"`}
+                ? "Sie haben noch keine aktiven Ausschreibungen"
+                : `Es gibt keine aktiven Ausschreibungen mit dem Status "${filterOptions.find(option => option.value === filterBy)?.label}"`}
             </p>
             
             <Button onClick={() => navigate("/tenders/new")}>
