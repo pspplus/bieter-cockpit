@@ -30,7 +30,10 @@ export function LanguageSwitcher() {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem className="bg-tender-100">
-          Deutsch
+          Deutsch (Standard)
+        </DropdownMenuItem>
+        <DropdownMenuItem disabled className="text-gray-400 cursor-not-allowed">
+          English (nicht verfügbar)
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

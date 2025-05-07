@@ -1,3 +1,4 @@
+
 {
   "tender": {
     "title": "Titel",
@@ -23,7 +24,11 @@
     "internalReferenceHelp": "Wird beim Erstellen automatisch generiert",
     "externalReferenceHelp": "Die vom Kunden vergebene Referenznummer",
     "clientHistory": "Vergabestellen-Historie",
-    "noRelatedTenders": "Keine früheren Ausschreibungen für diese Vergabestelle gefunden"
+    "noRelatedTenders": "Keine früheren Ausschreibungen für diese Vergabestelle gefunden",
+    "vergabeplattform": "Vergabeplattform",
+    "vertragsart": "Vertragsart",
+    "selectVertragsart": "Vertragsart auswählen",
+    "internalReferenceTooltip": "Wird automatisch vergeben (Format: JJJJ-0000)"
   },
   "tenderStatus": {
     "draft": "Entwurf",
@@ -98,6 +103,7 @@
     "tenderInformation": "Ausschreibungsinformationen",
     "contactInformation": "Kontaktinformationen",
     "created": "Erstellt am",
+    "updated": "Aktualisiert am",
     "email": "E-Mail",
     "phone": "Telefon",
     "noContactInfo": "Keine Kontaktinformationen verfügbar",
@@ -110,7 +116,11 @@
     "editDetails": "Ausschreibungsdetails bearbeiten",
     "editDetailsDescription": "Aktualisieren Sie die grundlegenden Informationen dieser Ausschreibung.",
     "editContact": "Kontaktinformationen bearbeiten",
-    "editContactDescription": "Aktualisieren Sie die Kontaktinformationen dieser Ausschreibung."
+    "editContactDescription": "Aktualisieren Sie die Kontaktinformationen dieser Ausschreibung.",
+    "mainInformation": "Hauptinformationen",
+    "objectInformation": "Objektinformationen",
+    "contract": "Vertrag",
+    "requirements": "Anforderungen"
   },
   "cancel": "Abbrechen",
   "yes": "Ja",
@@ -134,5 +144,12 @@
     "descriptionPlaceholder": "Geben Sie eine Beschreibung für die Ausschreibung ein",
     "selectClient": "Vergabestelle auswählen",
     "newTender": "Neue Ausschreibung"
+  },
+  "general": {
+    "saving": "Speichern..."
+  },
+  "edit": "Bearbeiten",
+  "AI": {
+    "analysisAddedToNotes": "KI-Analyse wurde zu den Notizen hinzugefügt"
   }
 }

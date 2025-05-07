@@ -36,10 +36,10 @@ export function MainInfoCard({ tender, onOpenDetailsDialog, onUpdateTender }: Ma
         vertragsart
       });
       setEditing(false);
-      toast.success(t("notifications.tenderUpdated", "Änderungen gespeichert"));
+      toast.success(t("notifications.tenderUpdated"));
     } catch (error) {
       console.error("Error updating tender:", error);
-      toast.error(t("errorMessages.couldNotUpdateTender", "Fehler beim Speichern"));
+      toast.error(t("errorMessages.couldNotUpdateTender"));
     } finally {
       setIsSubmitting(false);
     }
@@ -59,7 +59,7 @@ export function MainInfoCard({ tender, onOpenDetailsDialog, onUpdateTender }: Ma
         <div className="flex items-center gap-2">
           <FileText className="h-5 w-5 text-primary" />
           <div>
-            <CardTitle>{t("tenderDetails.mainInformation", "Hauptinformationen")}</CardTitle>
+            <CardTitle>{t("tenderDetails.mainInformation")}</CardTitle>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -69,7 +69,7 @@ export function MainInfoCard({ tender, onOpenDetailsDialog, onUpdateTender }: Ma
               size="icon" 
               onClick={() => setEditing(true)} 
               className="h-8 w-8"
-              title={t("edit", "Bearbeiten")}
+              title={t("edit")}
             >
               <Edit className="h-4 w-4" />
             </Button>
@@ -137,20 +137,20 @@ export function MainInfoCard({ tender, onOpenDetailsDialog, onUpdateTender }: Ma
           </div>
           {tender.vergabeplattform && !editing && (
             <div>
-              <div className="text-sm font-medium">{t("tender.vergabeplattform", "Vergabeplattform")}</div>
+              <div className="text-sm font-medium">{t("tender.vergabeplattform")}</div>
               <div className="text-sm">{tender.vergabeplattform}</div>
             </div>
           )}
 
           <div>
-            <div className="text-sm font-medium">{t("tender.vertragsart", "Vertragsart")}</div>
+            <div className="text-sm font-medium">{t("tender.vertragsart")}</div>
             {editing ? (
               <Select
                 value={vertragsart}
                 onValueChange={(value) => setVertragsart(value as Vertragsart)}
               >
                 <SelectTrigger className="w-full mt-1">
-                  <SelectValue placeholder={t("tender.selectVertragsart", "Vertragsart auswählen")} />
+                  <SelectValue placeholder={t("tender.selectVertragsart")} />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="werkvertrag">Werkvertrag</SelectItem>
@@ -167,7 +167,7 @@ export function MainInfoCard({ tender, onOpenDetailsDialog, onUpdateTender }: Ma
           {/* Internal Reference Display, always read-only, not editable */}
           <div className="flex flex-col">
             <div className="text-sm font-medium flex items-center gap-1">
-              {t("tender.internalReference", "Interne Referenz")}
+              {t("tender.internalReference")}
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -176,7 +176,7 @@ export function MainInfoCard({ tender, onOpenDetailsDialog, onUpdateTender }: Ma
                     </span>
                   </TooltipTrigger>
                   <TooltipContent side="top">
-                    {t("tender.internalReferenceTooltip", "Wird automatisch vergeben (Format: JJJJ-0000)")}
+                    {t("tender.internalReferenceTooltip")}
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
@@ -203,4 +203,3 @@ export function MainInfoCard({ tender, onOpenDetailsDialog, onUpdateTender }: Ma
     </Card>
   );
 }
-

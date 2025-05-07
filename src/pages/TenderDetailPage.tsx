@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -111,7 +112,7 @@ export default function TenderDetailPage() {
       
       // Update the tender
       await handleTenderUpdate({ notes: updatedNotes });
-      toast.success(t("AI analysis added to tender notes"));
+      toast.success(t("AI.analysisAddedToNotes", "KI-Analyse wurde zu den Notizen hinzugefügt"));
     } catch (error) {
       console.error("Error updating tender with AI analysis:", error);
       toast.error(t("errorMessages.couldNotUpdateTender"));
@@ -202,9 +203,9 @@ export default function TenderDetailPage() {
       <Dialog open={detailsDialogOpen} onOpenChange={setDetailsDialogOpen}>
         <DialogContent className="sm:max-w-[600px]">
           <DialogHeader>
-            <DialogTitle>{t("tenderDetails.editDetails", "Ausschreibungsdetails bearbeiten")}</DialogTitle>
+            <DialogTitle>{t("tenderDetails.editDetails")}</DialogTitle>
             <DialogDescription>
-              {t("tenderDetails.editDetailsDescription", "Aktualisieren Sie die grundlegenden Informationen dieser Ausschreibung.")}
+              {t("tenderDetails.editDetailsDescription")}
             </DialogDescription>
           </DialogHeader>
           <TenderDetailsEditForm 
@@ -221,9 +222,9 @@ export default function TenderDetailPage() {
       <Dialog open={contactDialogOpen} onOpenChange={setContactDialogOpen}>
         <DialogContent className="sm:max-w-[600px]">
           <DialogHeader>
-            <DialogTitle>{t("tenderDetails.editContact", "Kontaktinformationen bearbeiten")}</DialogTitle>
+            <DialogTitle>{t("tenderDetails.editContact")}</DialogTitle>
             <DialogDescription>
-              {t("tenderDetails.editContactDescription", "Aktualisieren Sie die Kontaktinformationen dieser Ausschreibung.")}
+              {t("tenderDetails.editContactDescription")}
             </DialogDescription>
           </DialogHeader>
           <TenderContactEditForm 

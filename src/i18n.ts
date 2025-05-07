@@ -29,7 +29,7 @@ i18n
     interpolation: {
       escapeValue: false, // React escapes already by default
     },
-    defaultNS: 'general',
+    defaultNS: 'translation', // Ändere den Default-Namespace auf 'translation', um die Legacy-Übersetzungen zu verwenden
   });
 
 export default i18n;
