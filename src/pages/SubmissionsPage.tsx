@@ -23,9 +23,9 @@ export default function SubmissionsPage() {
   const { tenders } = useTender();
   const [filterStatus, setFilterStatus] = useState<TenderStatus | "all">("all");
   
-  // Filter tenders that are in submitted status or beyond (won, lost)
+  // Filter tenders that are in submitted status or beyond (won, lost, excluded, not submitted)
   const submittedTenders = tenders.filter(tender => 
-    ["abgegeben", "aufklaerung", "gewonnen", "verloren"].includes(tender.status)
+    ["abgegeben", "aufklaerung", "gewonnen", "verloren", "ausgeschlossen", "nicht-abgegeben"].includes(tender.status)
   );
   
   // Apply additional filter if selected
@@ -40,7 +40,7 @@ export default function SubmissionsPage() {
 
   const getStatusBadgeStyles = (status: TenderStatus) => {
     const statusColor = getStatusColors(status);
-    return `${statusColor.bg} ${statusColor.text} dark:bg-${status === 'abgegeben' ? 'blue' : status === 'aufklaerung' ? 'purple' : status === 'gewonnen' ? 'green' : 'gray'}-900/30 dark:text-${status === 'abgegeben' ? 'blue' : status === 'aufklaerung' ? 'purple' : status === 'gewonnen' ? 'green' : 'gray'}-400`;
+    return `${statusColor.bg} ${statusColor.text} dark:bg-${status === 'abgegeben' ? 'blue' : status === 'aufklaerung' ? 'purple' : status === 'gewonnen' ? 'green' : status === 'ausgeschlossen' ? 'teal' : status === 'nicht-abgegeben' ? 'gray' : 'gray'}-900/30 dark:text-${status === 'abgegeben' ? 'blue' : status === 'aufklaerung' ? 'purple' : status === 'gewonnen' ? 'green' : status === 'ausgeschlossen' ? 'teal' : status === 'nicht-abgegeben' ? 'gray' : 'gray'}-400`;
   };
 
   // Get display reference - use internal reference as primary, fallback to external reference
@@ -80,6 +80,12 @@ export default function SubmissionsPage() {
                 </DropdownMenuRadioItem>
                 <DropdownMenuRadioItem value="verloren">
                   {t('tenders.verloren')}
+                </DropdownMenuRadioItem>
+                <DropdownMenuRadioItem value="ausgeschlossen">
+                  {t('tenders.ausgeschlossen')}
+                </DropdownMenuRadioItem>
+                <DropdownMenuRadioItem value="nicht-abgegeben">
+                  {t('tenders.nicht-abgegeben')}
                 </DropdownMenuRadioItem>
               </DropdownMenuRadioGroup>
             </DropdownMenuContent>
