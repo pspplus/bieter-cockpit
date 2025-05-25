@@ -22,7 +22,7 @@ import { NewClientDialog } from "@/components/client/NewClientDialog";
 
 const ClientsPage = () => {
   const { t } = useTranslation();
-  const { clients, deleteClient } = useClient();
+  const { clients, deleteClient, isLoading, error } = useClient();
   const [searchQuery, setSearchQuery] = useState("");
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const navigate = useNavigate();
@@ -48,7 +48,12 @@ const ClientsPage = () => {
             {t('clients.createNew', 'Neue Vergabestelle erstellen')}
           </Button>
         </div>
-
+        {/* Fehleranzeige */}
+        {error && (
+          <div className="mb-4 rounded bg-red-100 text-red-800 px-5 py-3 border border-red-300">
+            <b>Fehler:</b> {error.message || "Unbekannter Fehler beim Laden der Vergabestellen."}
+          </div>
+        )}
         <Card>
           <CardHeader className="px-6 py-4">
             <div className="flex items-center justify-between">
@@ -78,7 +83,13 @@ const ClientsPage = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredClients.length === 0 ? (
+                {isLoading ? (
+                  <TableRow>
+                    <TableCell colSpan={6} className="text-center py-10">
+                      <Loader2 className="inline h-5 w-5 animate-spin mr-2" /> Lade Vergabestellen...
+                    </TableCell>
+                  </TableRow>
+                ) : filteredClients.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={6} className="text-center py-10">
                       Keine Vergabestellen gefunden
@@ -124,7 +135,6 @@ const ClientsPage = () => {
           </CardContent>
         </Card>
       </div>
-
       <NewClientDialog 
         open={isCreateDialogOpen}
         onOpenChange={setIsCreateDialogOpen}
