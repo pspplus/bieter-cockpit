@@ -23,7 +23,7 @@ export function MainInfoCard({ tender, onOpenDetailsDialog, onUpdateTender }: Ma
   const [title, setTitle] = useState(tender.title);
   const [externalReference, setExternalReference] = useState(tender.externalReference);
   const [client, setClient] = useState(tender.client);
-  const [vertragsart, setVertragsart] = useState<Vertragsart>(tender.vertragsart || "keine_angabe");
+  const [vertragsart, setVertragsart] = useState<Vertragsart | "">(tender.vertragsart || "");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSave = async () => {
@@ -33,7 +33,7 @@ export function MainInfoCard({ tender, onOpenDetailsDialog, onUpdateTender }: Ma
         title,
         externalReference,
         client,
-        vertragsart
+        vertragsart: vertragsart === "" ? null : vertragsart
       });
       setEditing(false);
       toast.success(t("notifications.tenderUpdated"));
@@ -49,7 +49,7 @@ export function MainInfoCard({ tender, onOpenDetailsDialog, onUpdateTender }: Ma
     setTitle(tender.title);
     setExternalReference(tender.externalReference);
     setClient(tender.client);
-    setVertragsart(tender.vertragsart || "keine_angabe");
+    setVertragsart(tender.vertragsart || "");
     setEditing(false);
   };
 
@@ -146,17 +146,17 @@ export function MainInfoCard({ tender, onOpenDetailsDialog, onUpdateTender }: Ma
             <div className="text-sm font-medium">{t("tender.vertragsart")}</div>
             {editing ? (
               <Select
-                value={vertragsart}
-                onValueChange={(value) => setVertragsart(value as Vertragsart)}
+                value={vertragsart || ""}
+                onValueChange={(value) => setVertragsart(value === "" ? "" : value as Vertragsart)}
               >
                 <SelectTrigger className="w-full mt-1">
                   <SelectValue placeholder={t("tender.selectVertragsart")} />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="">-</SelectItem>
                   <SelectItem value="werkvertrag">Werkvertrag</SelectItem>
                   <SelectItem value="dienstleistungsvertrag">Dienstleistungsvertrag</SelectItem>
                   <SelectItem value="mischvertrag">Mischvertrag</SelectItem>
-                  <SelectItem value="">-</SelectItem>
                 </SelectContent>
               </Select>
             ) : (

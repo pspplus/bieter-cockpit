@@ -8,7 +8,6 @@ import { ContactCard } from "./cards/ContactCard";
 import { NotesCard } from "./cards/NotesCard";
 import { RelatedTendersCard } from "./cards/RelatedTendersCard";
 import { useTender } from "@/hooks/useTender";
-import { useState } from "react";
 
 interface TenderDetailsProps {
   tender: Tender;
@@ -17,26 +16,24 @@ interface TenderDetailsProps {
 }
 
 export function TenderDetails({ 
-  tender: initialTender, 
+  tender, 
   onOpenDetailsDialog, 
   onOpenContactDialog,
 }: TenderDetailsProps) {
   const { updateTender } = useTender();
-  const [tender, setTender] = useState(initialTender);
 
   const handleStatusChange = async (status: TenderStatus) => {
     try {
       await updateTender(tender.id, { status });
-      setTender(prev => ({ ...prev, status }));
     } catch (error) {
       console.error("Error updating tender status:", error);
+      throw error;
     }
   };
   
   const handleUpdateTender = async (updates: Partial<Tender>) => {
     try {
       await updateTender(tender.id, updates);
-      setTender(prev => ({ ...prev, ...updates }));
     } catch (error) {
       console.error("Error updating tender:", error);
       throw error;
